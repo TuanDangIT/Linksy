@@ -1,5 +1,6 @@
 ﻿using Linksy.Application.Shared.Exceptions;
 using Linksy.Domain.Exceptions;
+using Linksy.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

@@ -79,7 +79,7 @@ namespace Linksy.Infrastructure.Auth
             {
                 rng.GetBytes(randomNumber);
                 var refreshToken = Convert.ToBase64String(randomNumber);
-                var expiryDate = _timeProvider.GetUtcNow().LocalDateTime.AddDays(_authOptions.RefreshTokenExpiryInDays);
+                var expiryDate = _timeProvider.GetUtcNow().UtcDateTime.AddDays(_authOptions.RefreshTokenExpiryInDays);
                 return new RefreshTokenDto()
                 {
                     RefreshToken = refreshToken,

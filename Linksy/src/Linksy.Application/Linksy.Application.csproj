@@ -10,6 +10,7 @@
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="MediatR" Version="13.0.0" />
+    <PackageReference Include="Scrutor" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,9 +30,6 @@
     <Folder Include="Statistics\DTO\" />
     <Folder Include="Statistics\Exceptions\" />
     <Folder Include="Statistics\Features\" />
-    <Folder Include="Urls\DTO\" />
-    <Folder Include="Urls\Exceptions\" />
-    <Folder Include="Urls\Features\" />
   </ItemGroup>
 
 </Project>

@@ -10,7 +10,7 @@ namespace Linksy.API.Controllers
     public abstract class BaseController : ControllerBase
     {
         private const string _notFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
-        private readonly IMediator _mediator;
+        protected readonly IMediator _mediator;
 
         protected BaseController(IMediator mediator)
         {

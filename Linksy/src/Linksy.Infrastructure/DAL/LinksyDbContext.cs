@@ -13,6 +13,7 @@ namespace Linksy.Infrastructure.DAL
 {
     internal class LinksyDbContext : IdentityDbContext<User, Role, int>
     {
+        public DbSet<Url> Urls { get; set; }
         private readonly TimeProvider _timeProvider;
         public LinksyDbContext(DbContextOptions<LinksyDbContext> options, TimeProvider timeProvider) : base(options)
         {

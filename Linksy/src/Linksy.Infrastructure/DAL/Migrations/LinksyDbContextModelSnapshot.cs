@@ -66,7 +66,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("LandingPage", t =>
+                    b.ToTable("LandingPage", null, t =>
                         {
                             t.HasCheckConstraint("CK_LandingPage_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -117,7 +117,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("LandingPageItem");
+                    b.ToTable("LandingPageItem", (string)null);
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.QrCodePage", b =>
@@ -154,7 +154,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("QrCodeId")
                         .IsUnique();
 
-                    b.ToTable("QrCodePage", t =>
+                    b.ToTable("QrCodePage", null, t =>
                         {
                             t.HasCheckConstraint("CK_QrCodePage_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -243,7 +243,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("ScanCode", t =>
+                    b.ToTable("ScanCode", null, t =>
                         {
                             t.HasCheckConstraint("CK_ScanCode_ScanCount", "\"ScanCount\" >= 0");
                         });
@@ -281,7 +281,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasIndex("QrCodeId");
 
-                    b.ToTable("UmtParameter", t =>
+                    b.ToTable("UmtParameter", null, t =>
                         {
                             t.HasCheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -320,7 +320,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Url", t =>
+                    b.ToTable("Url", null, t =>
                         {
                             t.HasCheckConstraint("CK_Url_VisitCount", "\"VisitCount\" >= 0");
                         });

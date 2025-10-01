@@ -13,6 +13,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Url> builder)
         {
+            builder.ToTable("Url");
             builder.Property(u => u.OriginalUrl)
                 .IsRequired();
             builder.Property(u => u.Code)

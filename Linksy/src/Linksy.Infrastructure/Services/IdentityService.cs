@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.Services
@@ -27,6 +28,7 @@ namespace Linksy.Infrastructure.Services
         private readonly ILogger<IdentityService> _logger;
         private readonly RoleManager<Role> _roleManager;
         private readonly TimeProvider _timeProvider;
+        private readonly string _passwordPattern = @"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$";
 
         public IdentityService(UserManager<User> userManager, IAuthManager authManager, ILogger<IdentityService> logger,
             RoleManager<Role> roleManager, TimeProvider timeProvider)
@@ -45,14 +47,27 @@ namespace Linksy.Infrastructure.Services
             {
                 throw new NotSupportedException();
             }
+            if (await _userManager.FindByEmailAsync(dto.Email) is not null)
+            {
+                throw new EmailAlreadyExistsException(dto.Email);
+            }
+            if (await _userManager.FindByNameAsync(dto.Username) is not null)
+            {
+                throw new UsernameAlreadyExistsException(dto.Username);
+            }
+            var passwordRegex = new Regex(_passwordPattern);
+            if (!passwordRegex.IsMatch(dto.Password))
+            {
+                throw new WeakPasswordException();
+            }
             var user = new User(dto.Email, dto.Username, dto.FirstName, dto.LastName, (Gender)gender);
             await DoUserManagerActionAsync(async () => await _userManager.CreateAsync(user, dto.Password));
-            await DoUserManagerActionAsync(async () => await _userManager.AddToRoleAsync(user, "User"));
             user = await _userManager.FindByEmailAsync(dto.Email);
             if (user is null)
             {
                 throw new NullReferenceException("User is null.");
             }
+            await DoUserManagerActionAsync(async () => await _userManager.AddToRoleAsync(user, "User"));
             await DoUserManagerActionAsync(async () =>
             {
                 return await _userManager.AddClaimsAsync(user, new List<Claim>()
@@ -63,6 +78,7 @@ namespace Linksy.Infrastructure.Services
                 });
             });
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            _logger.LogInformation("User with email {email} has registered.", dto.Email);
             return code;
         }
 
@@ -106,11 +122,11 @@ namespace Linksy.Infrastructure.Services
         {
             var principal = _authManager.GetPrincipalFromExpiredToken(dto.JwtToken);
             var email = principal.FindFirst(c => c.Type == ClaimTypes.Email)?.Value
-                ?? throw new NullReferenceException("Email is null.");
+                ?? throw new InvalidCredentialException("Given JWT token is invalid.");
             var user = await _userManager.FindByEmailAsync(email);
             var hashedInputRefreshToken = HashToken(dto.RefreshToken);
-            var localNow = _timeProvider.GetUtcNow().LocalDateTime;
-            if(user is null || user.RefreshToken != hashedInputRefreshToken || user.RefreshTokenExpiryDate <= localNow)
+            var now = _timeProvider.GetUtcNow();
+            if(user is null || user.RefreshToken != hashedInputRefreshToken || user.RefreshTokenExpiryDate <= now)
             {
                 throw new InvalidCredentialException("Invalid refresh token.");
             }

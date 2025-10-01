@@ -1,5 +1,7 @@
 ﻿using Linksy.Infrastructure.Auth;
 using Linksy.Infrastructure.BackgroundServices;
+using Linksy.Infrastructure.Configuration;
+using Linksy.Infrastructure.Contexts;
 using Linksy.Infrastructure.DAL;
 using Linksy.Infrastructure.Services;
 using Linksy.Infrastructure.Swagger;
@@ -21,6 +23,8 @@ namespace Linksy.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddPostgres(configuration);
+            services.AddContext();
+            services.AddLinksyConfig();
             services.AddAuth();
             services.AddVersioning();
             services.AddDocumentation();
