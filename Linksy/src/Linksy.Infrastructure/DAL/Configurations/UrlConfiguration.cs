@@ -18,6 +18,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .IsRequired();
             builder.Property(u => u.Code)
                 .IsRequired();
+            builder.HasIndex(u => u.Code)
+                .IsUnique();
             builder.Property(u => u.IsActive)
                 .IsRequired();
             builder.Property(u => u.VisitCount)
