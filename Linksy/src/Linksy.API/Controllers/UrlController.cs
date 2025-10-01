@@ -1,4 +1,5 @@
-﻿using Linksy.Application.Urls.Features.ShortenUrl;
+﻿using Linksy.Application.Urls.Features.RedirectToOriginalUrl;
+using Linksy.Application.Urls.Features.ShortenUrl;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,13 @@ namespace Linksy.API.Controllers
         {
             var result = await _mediator.Send(command);
             return Ok(result);
+        }
+        [AllowAnonymous]
+        [HttpGet("{code}")]
+        public async Task<IActionResult> RedirectToOriginalUrl([FromRoute] string code)
+        {
+            var result = await _mediator.Send(new RedirectToOriginalUrl(code));
+            return Redirect(result.OriginalUrl);
         }
     }
 }
