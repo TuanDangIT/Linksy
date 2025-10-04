@@ -1,5 +1,6 @@
 ﻿using Linksy.Domain.Abstractions;
 using Linksy.Domain.Entities;
+using Linksy.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,13 +16,17 @@ namespace Linksy.Infrastructure.DAL
     {
         public DbSet<Url> Urls { get; set; }
         private readonly TimeProvider _timeProvider;
-        public LinksyDbContext(DbContextOptions<LinksyDbContext> options, TimeProvider timeProvider) : base(options)
+        private readonly IMultiTenancyService _multiTenancyService;
+
+        public LinksyDbContext(DbContextOptions<LinksyDbContext> options, TimeProvider timeProvider, IMultiTenancyService multiTenancyService) : base(options)
         {
             _timeProvider = timeProvider;
+            _multiTenancyService = multiTenancyService;
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            builder.Entity<Url>().HasQueryFilter(u => u.UserId == _multiTenancyService.CurrentTenantId);
             base.OnModelCreating(builder);
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

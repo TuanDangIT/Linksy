@@ -1,6 +1,8 @@
 ﻿using Linksy.Domain.Entities;
+using Linksy.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,6 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Url> builder)
         {
-            builder.ToTable("Url");
             builder.Property(u => u.OriginalUrl)
                 .IsRequired();
             builder.Property(u => u.Code)
@@ -24,7 +25,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .IsRequired();
             builder.Property(u => u.VisitCount)
                 .IsRequired();
-            builder.ToTable(u =>
+            builder.ToTable("Url", u =>
             {
                 u.HasCheckConstraint("CK_Url_VisitCount", "\"VisitCount\" >= 0");
             });

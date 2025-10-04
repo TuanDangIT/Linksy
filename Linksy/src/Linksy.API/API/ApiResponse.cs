@@ -17,5 +17,6 @@ namespace Linksy.API.API
             Code = code;
             Data = data;
         }
+        public ApiResponse(T? data = default) : this(HttpStatusCode.OK, data) { }
     }
 }

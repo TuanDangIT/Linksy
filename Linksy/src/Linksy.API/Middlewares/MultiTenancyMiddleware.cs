@@ -24,7 +24,7 @@ namespace Linksy.API.Middlewares
             {
                 var id = int.Parse(user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)!.Value);
                 _multiTenancyService.SetCurrentTenant(id);
-                _logger.LogDebug("Tenant was set to {tenantId}", id);
+                _logger.LogDebug("Tenant was set to {tenantId}.", id);
             }
             await next(context);
         }

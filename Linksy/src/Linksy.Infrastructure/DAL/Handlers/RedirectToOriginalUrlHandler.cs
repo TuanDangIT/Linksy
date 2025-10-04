@@ -25,6 +25,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
         public async Task<RedirectOriginalUrlDto> Handle(RedirectToOriginalUrl request, CancellationToken cancellationToken)
         {
             var url = await _dbContext.Urls
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(u => u.Code == request.Code, cancellationToken) ?? throw new UrlNotFoundException(request.Code);
             url.IncrementVisitsCounter();
             await _dbContext.SaveChangesAsync(cancellationToken);
