@@ -8,9 +8,11 @@ namespace Linksy.Domain.Entities
 {
     public class Barcode : ScanCode
     {
-        public Barcode(Url url, string imageUrl, List<string> tags) : base(url, imageUrl, tags)
+        private Barcode(Url url, string imageUrl, IEnumerable<string> tags, int userId) : base(url, imageUrl, tags, userId)
         {
         }
         private Barcode() { }
+        public static Barcode CreateBarcode(Url url, string imageUrl, IEnumerable<string> tags, int userId)
+            => new(url, imageUrl, tags, userId);
     }
 }

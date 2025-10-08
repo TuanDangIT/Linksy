@@ -1,6 +1,7 @@
 ﻿using Linksy.Application.Shared.Auth;
 using Linksy.Application.Users.DTO;
 using Linksy.Infrastructure.Exceptions;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Linksy.Infrastructure.Auth
             _authOptions = authOptions;
             _timeProvider = timeProvider;
             _securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authOptions.SigningKey));
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
         public JwtDto CreateJwt(int userId, string username, string email, List<string> roles)
         {
@@ -58,12 +60,15 @@ namespace Linksy.Infrastructure.Auth
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = true, 
-                ValidateIssuer = true,
-                ValidateIssuerSigningKey = true,
+                ValidIssuer = _authOptions.Issuer,
+                ValidAudience = _authOptions.Audience,
+                ValidateAudience = _authOptions.ValidateAudience,
+                ValidateIssuer = _authOptions.ValidateIssuer,
+                ValidateIssuerSigningKey = _authOptions.ValidateIssuerSigningKey,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authOptions.SigningKey)),
-                ValidateLifetime = false 
+                ValidateLifetime = false
             };
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
             if (securityToken is not JwtSecurityToken jwtSecurityToken || 

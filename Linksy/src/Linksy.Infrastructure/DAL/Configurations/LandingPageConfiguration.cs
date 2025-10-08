@@ -1,5 +1,6 @@
 ﻿using Linksy.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,21 +11,19 @@ namespace Linksy.Infrastructure.DAL.Configurations
 {
     internal class LandingPageConfiguration : IEntityTypeConfiguration<LandingPage>
     {
-        public void Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder<LandingPage> builder)
+        public void Configure(EntityTypeBuilder<LandingPage> builder)
         {
-            builder.Property(builder => builder.Title)
-                .HasMaxLength(64)
+            builder.HasOne(l => l.Url)
+                .WithOne(u => u.LandingPage)
+                .HasForeignKey<LandingPage>(l => l.UrlId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(l => l.Title)
+                .HasMaxLength(128)
                 .IsRequired();
-            builder.Property(builder => builder.Description)
-                .HasMaxLength(256);
-            builder.Property(l => l.VisitCount)
-                .IsRequired();
-            builder.Property(l => l.Code)
-                .IsRequired();
-            builder.ToTable(l =>
-            {
-                l.HasCheckConstraint("CK_LandingPage_VisitCount", "\"VisitCount\" >= 0");
-            });
+            builder.Property(l => l.Description)
+                .HasMaxLength(512);
+            builder.Property(l => l.BackgroundColor)
+                .HasMaxLength(64);
         }
     }
 }

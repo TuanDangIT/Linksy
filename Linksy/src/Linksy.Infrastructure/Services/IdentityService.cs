@@ -40,9 +40,17 @@ namespace Linksy.Infrastructure.Services
             _timeProvider = timeProvider;
         }
 
-        //Have to set uniqueness for email or username or both
         public async Task<string> RegisterAsync(RegisterDto dto)
         {
+            if(dto.Password != dto.ConfirmPassword)
+            {
+                throw new PasswordNotMatchConfirmPasswordException();
+            }
+            var passwordRegex = new Regex(_passwordPattern);
+            if (!passwordRegex.IsMatch(dto.Password))
+            {
+                throw new WeakPasswordException();
+            }
             if (!Enum.TryParse(typeof(Gender), dto.Gender, out var gender))
             {
                 throw new NotSupportedException();
@@ -55,11 +63,6 @@ namespace Linksy.Infrastructure.Services
             {
                 throw new UsernameAlreadyExistsException(dto.Username);
             }
-            var passwordRegex = new Regex(_passwordPattern);
-            if (!passwordRegex.IsMatch(dto.Password))
-            {
-                throw new WeakPasswordException();
-            }
             var user = new User(dto.Email, dto.Username, dto.FirstName, dto.LastName, (Gender)gender);
             await DoUserManagerActionAsync(async () => await _userManager.CreateAsync(user, dto.Password));
             user = await _userManager.FindByEmailAsync(dto.Email);
@@ -68,15 +71,6 @@ namespace Linksy.Infrastructure.Services
                 throw new NullReferenceException("User is null.");
             }
             await DoUserManagerActionAsync(async () => await _userManager.AddToRoleAsync(user, "User"));
-            await DoUserManagerActionAsync(async () =>
-            {
-                return await _userManager.AddClaimsAsync(user, new List<Claim>()
-                {
-                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new(ClaimTypes.Email, user.Email!),
-                    new(ClaimTypes.Name, user.UserName!)
-                });
-            });
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             _logger.LogInformation("User with email {email} has registered.", dto.Email);
             return code;
@@ -145,14 +139,14 @@ namespace Linksy.Infrastructure.Services
 
         public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email) ?? throw new InvalidEmailException();
+            var user = await _userManager.FindByEmailAsync(dto.Email) ?? throw new InvalidEmailException(dto.Email);
             await DoUserManagerActionAsync(async () => await _userManager.ConfirmEmailAsync(user, dto.Code));
             _logger.LogInformation("User with email {email} has confirmed their email.", dto.Email);
         }
 
         public async Task<string> GetResetPasswordTokenAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email) ?? throw new InvalidEmailException();
+            var user = await _userManager.FindByEmailAsync(email) ?? throw new InvalidEmailException(email);
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             _logger.LogInformation("User with email {email} has requested a password reset.", email);
             return token;
@@ -160,7 +154,11 @@ namespace Linksy.Infrastructure.Services
 
         public async Task ResetPasswordAsync(ResetPasswordDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email) ?? throw new InvalidEmailException();
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                throw new PasswordNotMatchConfirmPasswordException();
+            }
+            var user = await _userManager.FindByEmailAsync(dto.Email) ?? throw new InvalidEmailException(dto.Email);
             await DoUserManagerActionAsync(async () => await _userManager.ResetPasswordAsync(user, dto.Token, dto.Password));
             _logger.LogInformation("User with email {email} has resetted password.", user.Email);
         }

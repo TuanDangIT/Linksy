@@ -1,0 +1,17 @@
+﻿using Linksy.Application.Shared.Configuration;
+using Linksy.Domain.Exceptions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Linksy.Infrastructure.Exceptions
+{
+    internal class PasswordNotMatchConfirmPasswordException : LinksyException
+    {
+        public PasswordNotMatchConfirmPasswordException() : base("Password and confirmation password do not match.")
+        {
+        }
+    }
+}

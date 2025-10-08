@@ -18,11 +18,10 @@ namespace Linksy.Domain.DomainServices
         {
             _timeProvider = timeProvider;
         }
-        public Url GenerateShortenedUrl(string originalUrl)
-        {
-            var generatedCode = GenerateCode(originalUrl);  
-            return new Url(originalUrl, generatedCode);
-        }
+        public Url GenerateShortenedUrl(string originalUrl, IEnumerable<UmtParameter>? umtParameters, int userId)
+            => Url.CreateShortenedUrl(originalUrl, GenerateCode(originalUrl), umtParameters, userId);
+        public Url GenerateShortenedUrlWithCustomCode(string originalUrl, string customCode, IEnumerable<UmtParameter>? umtParameters, int userId)
+            => Url.CreateShortenedUrl(originalUrl, customCode, umtParameters, userId);
         private string GenerateCode(string url)
         {
             using (var sha256 = SHA256.Create())

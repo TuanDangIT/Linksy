@@ -9,6 +9,13 @@ namespace Linksy.Domain.Abstractions
     public abstract class BaseEntityWithMultitenancy : BaseEntity
     {
         public int UserId { get; private set; }
-        public void SetUserId(int userId) => UserId = userId;
+        protected BaseEntityWithMultitenancy(int userId)
+        {
+            UserId = userId;
+        }
+        protected BaseEntityWithMultitenancy()
+        {
+            
+        }
     }
 }

@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Linksy.API.Controllers
 {
-    public class UsersController : BaseController
+    [ApiController]
+    [Route("api/v{v:apiVersion}" + "/[controller]")]
+    public class UsersController : ControllerBase
     {
         private readonly IIdentityService _identityService;
 
-        public UsersController(IIdentityService userService, IMediator mediator) : base(mediator)
+        public UsersController(IIdentityService userService) 
         {
             _identityService = userService;
         }

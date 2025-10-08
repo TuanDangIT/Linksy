@@ -26,10 +26,14 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .IsRequired();
             builder.HasOne(l => l.Url)
                 .WithOne(u => u.LandingPageItem)
-                .HasForeignKey<LandingPageItem>(l => l.UrlId);
+                .HasForeignKey<LandingPageItem>(l => l.UrlId)
+                .OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(l => l.LandingPage)
                 .WithMany(lp => lp.LandingPageItems)
                 .HasForeignKey(l => l.LandingPageId);
+            builder.HasOne(l => l.QrCode)
+                .WithMany(q => q.LandingPageItems)
+                .HasForeignKey(l => l.QrCodeId);
         }
     }
 }

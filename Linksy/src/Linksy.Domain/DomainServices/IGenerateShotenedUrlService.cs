@@ -9,6 +9,7 @@ namespace Linksy.Domain.DomainServices
 {
     public interface IGenerateShotenedUrlService
     {
-        Url GenerateShortenedUrl(string originalUrl);
+        Url GenerateShortenedUrl(string originalUrl, IEnumerable<UmtParameter>? umtParameters, int userId);
+        Url GenerateShortenedUrlWithCustomCode(string originalUrl, string customCode, IEnumerable<UmtParameter>? umtParameters, int userId);
     }
 }

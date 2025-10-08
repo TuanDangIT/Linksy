@@ -12,5 +12,9 @@ namespace Linksy.Infrastructure.Exceptions
         public UrlNotFoundException(string code) : base($"Url was not found for code: {code}.")
         {
         }
+        public UrlNotFoundException(int id) : base($"Url was not found for id: {id}.")
+        {
+            
+        }
     }
 }

@@ -13,15 +13,18 @@ namespace Linksy.Domain.Entities
         public string BackgroundColor { get; private set; } = string.Empty;
         public string FontColor { get; private set; } = string.Empty;
         public int Order { get; private set; }
-        public Url Url { get; private set; } = default!;
-        public int UrlId { get; private set; }
+        public Url? Url { get; private set; } = default!;
+        public int? UrlId { get; private set; }
+        public QrCode? QrCode { get; private set; } = default!;
+        public int? QrCodeId { get; private set; }
         public LandingPage LandingPage { get; private set; } = default!;
         public int LandingPageId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public LandingPageItem(Url url, LandingPage landingPage, string content, string fontColor, string backgroundColor, int order)
+        private LandingPageItem(Url? url, QrCode? qrCode, LandingPage landingPage, string content, string fontColor, string backgroundColor, int order)
         {
             Url = url;
+            QrCode = qrCode;
             LandingPage = landingPage;
             Content = content;
             Order = order;
@@ -29,5 +32,7 @@ namespace Linksy.Domain.Entities
             BackgroundColor = backgroundColor;
         }
         private LandingPageItem() { }
+        public static LandingPageItem CreateLandingPageItem(Url? url, QrCode? qrCode, LandingPage landingPage, string content, string fontColor, string backgroundColor, int order)
+            => new(url, qrCode, landingPage, content, fontColor, backgroundColor, order);
     }
 }

@@ -16,11 +16,15 @@ namespace Linksy.API.Controllers
         {
             _mediator = mediator;
         }
+        protected ActionResult<ApiResponse<T>> Ok<T>(T model)
+        {
+            return base.Ok(new ApiResponse<T>(HttpStatusCode.OK, model));
+        }
         protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, string entityName)
         {
             if (model is not null)
             {
-                return Ok(new ApiResponse<TResponse>(HttpStatusCode.OK, model));
+                return Ok(model);
             }
             return NotFound(new ProblemDetails()
             {

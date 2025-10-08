@@ -13,12 +13,10 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<QrCode> builder)
         {
-            builder.Property(q => q.ScanCount)
-                .IsRequired();
-            builder.Property(q => q.ImageUrlPath)
-                .IsRequired();
-            builder.Property(q => q.IsUmtOn)
-                .IsRequired(); 
+            builder.ToTable(s =>
+            {
+                s.HasCheckConstraint("CK_QrCode_ScanCount", "\"ScanCount\" >= 0");
+            });
         }
     }
 }

@@ -13,10 +13,10 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Barcode> builder)
         {
-            builder.Property(b => b.ScanCount)
-                .IsRequired();
-            builder.Property(b => b.ImageUrlPath)
-                .IsRequired();
+            builder.ToTable(s =>
+            {
+                s.HasCheckConstraint("CK_Barcode_ScanCount", "\"ScanCount\" >= 0");
+            });
         }
     }
 }

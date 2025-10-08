@@ -14,9 +14,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<ScanCode> builder)
         {
-            builder.HasOne(s => s.Url)
-                .WithOne(u => u.ScanCode)
-                .HasForeignKey<ScanCode>(s => s.UrlId);
+            builder.UseTpcMappingStrategy();
             builder.Property(s => s.Tags)
                 .HasConversion(
                     v => v != null ? string.Join(',', v) : string.Empty,
@@ -25,10 +23,6 @@ namespace Linksy.Infrastructure.DAL.Configurations
                         (c1, c2) => c1!.SequenceEqual(c2!),
                         c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                         c => c.ToList()));
-            builder.ToTable(s =>
-            {
-                s.HasCheckConstraint("CK_ScanCode_ScanCount", "\"ScanCount\" >= 0");
-            });
             builder.HasDiscriminator()
                 .HasValue<QrCode>(nameof(QrCode))
                 .HasValue<Barcode>(nameof(Barcode));    

@@ -1,6 +1,5 @@
 ﻿using Linksy.Application.Abstractions;
 using Linksy.Application.Shared.Configuration;
-using Linksy.Application.Urls.DTO;
 using Linksy.Application.Urls.Exceptions;
 using Linksy.Domain.DomainServices;
 using Linksy.Domain.Entities;
@@ -33,22 +32,23 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
         }
         public async Task<ShortenedUrlDto> Handle(ShortenUrl request, CancellationToken cancellationToken)
         {
-            Url url ;
-            if(request.CustomCode is not null)
+            Url url;
+            var userId = _contextService.Identity!.Id;
+            var umtParameterDtos = request.UmtParameters;
+            var umtParameters = umtParameterDtos?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign));
+            if (request.CustomCode is not null)
             {
                 var isCustomCodeTaken = await _urlRepository.IsUrlCodeInUseAsync(request.CustomCode, cancellationToken);
                 if(isCustomCodeTaken)
                 {
                     throw new CustomCodeInUseException(request.CustomCode);
                 }
-                url = new Url(request.OriginalUrl, request.CustomCode);
+                url = _generateShotenedUrlService.GenerateShortenedUrlWithCustomCode(request.OriginalUrl, request.CustomCode, umtParameters, userId);
             }
             else
             {
-                url = _generateShotenedUrlService.GenerateShortenedUrl(request.OriginalUrl);
+                url = _generateShotenedUrlService.GenerateShortenedUrl(request.OriginalUrl, umtParameters, userId);
             }
-            var userId = _contextService.Identity!.Id;
-            url.SetUserId(userId);
             await _urlRepository.CreateUrlAsync(url, cancellationToken);
             var shortenedUrl = _linksyConfig.BaseUrl + "/" + url.Code;
             _logger.LogInformation("URL shortened: {OriginalUrl} -> {ShortenedCode} by user with ID: {userId}.", request.OriginalUrl, shortenedUrl, userId);

@@ -1,5 +1,4 @@
 ﻿using Linksy.Application.Abstractions;
-using Linksy.Application.Urls.DTO;
 using Linksy.Application.Urls.Features.BrowseUrls;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -27,9 +26,11 @@ namespace Linksy.Infrastructure.DAL.Handlers
         {
             var urls = await _dbContext.Urls
                 .AsNoTracking()
-                .Include(u => u.ScanCode)
+                .Include(u => u.QrCode)
+                .Include(u => u.Barcode)
                 .Include(u => u.LandingPageItem)
-                .Select(u => new BrowseUrlDto(u.Id, u.OriginalUrl, u.Code, u.VisitCount, u.IsActive, u.ScanCode != null, u.LandingPageItem != null))
+                .Select(u => new BrowseUrlDto(u.Id, u.OriginalUrl, u.Code, u.VisitCount, u.IsActive, u.QrCode != null, 
+                u.Barcode != null, u.LandingPageItem != null, u.CreatedAt, u.UpdatedAt))
                 .ToListAsync(cancellationToken);
             _logger.LogInformation("User with ID: {userId} browsed URLs.", _contextService.Identity?.Id);
             return urls;

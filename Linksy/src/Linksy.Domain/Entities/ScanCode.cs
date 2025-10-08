@@ -16,11 +16,11 @@ namespace Linksy.Domain.Entities
         public List<string>? Tags { get; private set; } = [];
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        protected ScanCode(Url url, string imageUrlPath, List<string>? tags)
+        protected ScanCode(Url url, string imageUrlPath, IEnumerable<string>? tags, int userId) : base(userId)
         {
             Url = url;
             ImageUrlPath = imageUrlPath;
-            Tags = tags;
+            Tags = tags?.ToList();
         }
         protected ScanCode() { } 
         public void IncrementScanCounter()

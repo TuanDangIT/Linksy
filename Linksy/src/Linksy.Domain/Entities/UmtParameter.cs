@@ -10,19 +10,39 @@ namespace Linksy.Domain.Entities
 {
     public class UmtParameter : BaseEntity, IAuditable
     {
-        public UmtType Type { get; private set; }
+        public string? UmtSource { get; private set; } 
+        public string? UmtMedium { get; private set; }
+        public string? UmtCampaign { get; private set; }
         public int VisitCount { get; private set; } = 0;
-        public QrCode QrCode { get; private set; } = default!;
-        public int QrCodeId { get; private set; }
+        public Url Url { get; private set; } = default!;
+        public int UrlId { get; private set; }
+        public QrCode? QrCode { get; private set; }
+        public int? QrCodeId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        public UmtParameter(UmtType umtType, QrCode qrCode)
+        private UmtParameter(string? umtSource, string? umtMedium, string? umtCampaign)
         {
-            Type = umtType;
-            QrCode = qrCode;
+            UmtSource = umtSource;
+            UmtMedium = umtMedium;
+            UmtCampaign = umtCampaign;
         }
         private UmtParameter() { }
+        public static UmtParameter CreateUmtParameter(string? umtSource, string? umtMedium, string? umtCampaign)
+            => new(umtSource, umtMedium, umtCampaign);
+        public void AddQrCode(QrCode qrCode)
+        {
+            //if (QrCode is not null)
+            //    throw new UmtParameterAlreadyHasQrCodeException();
+            QrCode = qrCode;
+            //QrCodeId = qrCode.Id;
+        }   
         public void IncrementVisits()
             => VisitCount++;
+        public void UpdateSource(string source)
+            => UmtSource = source;
+        public void UpdateMedium(string medium)
+            => UmtMedium = medium;
+        public void UpdateCampaign(string campaign)
+            => UmtCampaign = campaign;
     }
 }

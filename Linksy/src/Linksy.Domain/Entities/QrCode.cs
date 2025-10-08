@@ -9,15 +9,15 @@ namespace Linksy.Domain.Entities
 {
     public class QrCode : ScanCode
     {
-        public bool IsUmtOn { get; set; }
-        private readonly List<UmtParameter> _umtParameters = [];
-        public IEnumerable<UmtParameter> UmtParameters => _umtParameters;
-        public QrCodePage? QrCodePage { get; set; }
-        public QrCode(Url url, string imageUrl, List<string> tags, bool isUmtOn, List<UmtParameter> umtParameters) : base(url, imageUrl, tags)
+        private readonly IEnumerable<LandingPageItem> _landingPageItems = [];
+        public IEnumerable<LandingPageItem> LandingPageItems => _landingPageItems;
+        //private readonly List<UmtParameter>? UmtParameters = [];
+        //public IEnumerable<UmtParameter>? UmtParametersList => UmtParameters;    
+        private QrCode(Url url, string imageUrl, IEnumerable<string> tags, int userId) : base(url, imageUrl, tags, userId)
         {
-            IsUmtOn = isUmtOn;
-            _umtParameters = umtParameters;
         }
         private QrCode() { }
+        public static QrCode CreateQrCode(Url url, string imageUrl, IEnumerable<string> tags, int userId)
+            => new(url, imageUrl, tags, userId);
     }
 }

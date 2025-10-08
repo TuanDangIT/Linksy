@@ -14,6 +14,7 @@ namespace Linksy.Infrastructure.Auth
         public bool ValidateIssuer { get; set; } = true;
         public bool ValidateAudience { get; set; } = true;
         public bool ValidateLifetime { get; set; } = true;
+        public bool ValidateIssuerSigningKey { get; set; } = true;
         public int ExpiryInMinutes { get; set; }
         public int RefreshTokenExpiryInDays { get; set; }
     }

@@ -18,9 +18,8 @@ namespace Linksy.Infrastructure.Versioning
                 options.ReportApiVersions = true;
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.ApiVersionReader = ApiVersionReader.Combine(
-                    new UrlSegmentApiVersionReader(),
-                    new HeaderApiVersionReader("X-Api-Version"));
-                //options.ApiVersionReader = new UrlSegmentApiVersionReader();
+                    new UrlSegmentApiVersionReader());
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
             }).AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'V";

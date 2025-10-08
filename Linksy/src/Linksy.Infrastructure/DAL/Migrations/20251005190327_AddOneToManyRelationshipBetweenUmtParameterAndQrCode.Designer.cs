@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Linksy.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(LinksyDbContext))]
-    [Migration("20251001212723_AddedUniqueIndexToCodeForUrl")]
-    partial class AddedUniqueIndexToCodeForUrl
+    [Migration("20251005190327_AddOneToManyRelationshipBetweenUmtParameterAndQrCode")]
+    partial class AddOneToManyRelationshipBetweenUmtParameterAndQrCode
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,6 +25,29 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.HasSequence("ScanCodeSequence");
+
+            modelBuilder.Entity("Linksy.Domain.Entities.Engagement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UrlId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UrlId");
+
+                    b.ToTable("Engagement");
+                });
+
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
                 {
                     b.Property<int>("Id")
@@ -34,45 +57,42 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BackgroundColor")
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("BackgroundImageUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("ImageUrlPath")
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UrlId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("VisitCount")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("LandingPage", t =>
-                        {
-                            t.HasCheckConstraint("CK_LandingPage_VisitCount", "\"VisitCount\" >= 0");
-                        });
+                    b.HasIndex("UrlId")
+                        .IsUnique();
+
+                    b.ToTable("LandingPages");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPageItem", b =>
@@ -101,66 +121,34 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("LandingPageId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Order")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("QrCodeId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UrlId")
+                    b.Property<int?>("UrlId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("LandingPageId");
 
+                    b.HasIndex("QrCodeId");
+
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("LandingPageItem");
-                });
-
-            modelBuilder.Entity("Linksy.Domain.Entities.QrCodePage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BackgroundColor")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("QrCodeId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("VisitCount")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QrCodeId")
-                        .IsUnique();
-
-                    b.ToTable("QrCodePage", t =>
-                        {
-                            t.HasCheckConstraint("CK_QrCodePage_VisitCount", "\"VisitCount\" >= 0");
-                        });
+                    b.ToTable("LandingPageItems");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Role", b =>
@@ -210,17 +198,13 @@ namespace Linksy.Infrastructure.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("nextval('\"ScanCodeSequence\"')");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)");
 
                     b.Property<string>("ImageUrlPath")
                         .IsRequired()
@@ -243,17 +227,9 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UrlId")
-                        .IsUnique();
+                    b.ToTable((string)null);
 
-                    b.ToTable("ScanCode", t =>
-                        {
-                            t.HasCheckConstraint("CK_ScanCode_ScanCount", "\"ScanCount\" >= 0");
-                        });
-
-                    b.HasDiscriminator().HasValue("ScanCode");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.UmtParameter", b =>
@@ -267,15 +243,26 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("QrCodeId")
+                    b.Property<int?>("QrCodeId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<string>("UmtCampaign")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("UmtMedium")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("UmtSource")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UrlId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("VisitCount")
                         .HasColumnType("integer");
@@ -283,6 +270,8 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("QrCodeId");
+
+                    b.HasIndex("UrlId");
 
                     b.ToTable("UmtParameter", t =>
                         {
@@ -326,7 +315,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Url", null, t =>
+                    b.ToTable("Urls", t =>
                         {
                             t.HasCheckConstraint("CK_Url_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -534,27 +523,48 @@ namespace Linksy.Infrastructure.DAL.Migrations
                 {
                     b.HasBaseType("Linksy.Domain.Entities.ScanCode");
 
-                    b.ToTable(t =>
-                        {
-                            t.HasCheckConstraint("CK_ScanCode_ScanCount", "\"ScanCount\" >= 0");
-                        });
+                    b.HasIndex("UrlId")
+                        .IsUnique();
 
-                    b.HasDiscriminator().HasValue("Barcode");
+                    b.ToTable("Barcodes", t =>
+                        {
+                            t.HasCheckConstraint("CK_Barcode_ScanCount", "\"ScanCount\" >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.QrCode", b =>
                 {
                     b.HasBaseType("Linksy.Domain.Entities.ScanCode");
 
-                    b.Property<bool>("IsUmtOn")
-                        .HasColumnType("boolean");
+                    b.HasIndex("UrlId")
+                        .IsUnique();
 
-                    b.ToTable(t =>
+                    b.ToTable("QrCodes", t =>
                         {
-                            t.HasCheckConstraint("CK_ScanCode_ScanCount", "\"ScanCount\" >= 0");
+                            t.HasCheckConstraint("CK_QrCode_ScanCount", "\"ScanCount\" >= 0");
                         });
+                });
 
-                    b.HasDiscriminator().HasValue("QrCode");
+            modelBuilder.Entity("Linksy.Domain.Entities.Engagement", b =>
+                {
+                    b.HasOne("Linksy.Domain.Entities.Url", "Url")
+                        .WithMany("Engagements")
+                        .HasForeignKey("UrlId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Url");
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
+                {
+                    b.HasOne("Linksy.Domain.Entities.Url", "Url")
+                        .WithOne("LandingPage")
+                        .HasForeignKey("Linksy.Domain.Entities.LandingPage", "UrlId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Url");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPageItem", b =>
@@ -565,35 +575,18 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Linksy.Domain.Entities.QrCode", "QrCode")
+                        .WithMany("LandingPageItems")
+                        .HasForeignKey("QrCodeId");
+
                     b.HasOne("Linksy.Domain.Entities.Url", "Url")
                         .WithOne("LandingPageItem")
                         .HasForeignKey("Linksy.Domain.Entities.LandingPageItem", "UrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("LandingPage");
 
-                    b.Navigation("Url");
-                });
-
-            modelBuilder.Entity("Linksy.Domain.Entities.QrCodePage", b =>
-                {
-                    b.HasOne("Linksy.Domain.Entities.QrCode", "QrCode")
-                        .WithOne("QrCodePage")
-                        .HasForeignKey("Linksy.Domain.Entities.QrCodePage", "QrCodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("QrCode");
-                });
-
-            modelBuilder.Entity("Linksy.Domain.Entities.ScanCode", b =>
-                {
-                    b.HasOne("Linksy.Domain.Entities.Url", "Url")
-                        .WithOne("ScanCode")
-                        .HasForeignKey("Linksy.Domain.Entities.ScanCode", "UrlId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Url");
                 });
@@ -601,12 +594,18 @@ namespace Linksy.Infrastructure.DAL.Migrations
             modelBuilder.Entity("Linksy.Domain.Entities.UmtParameter", b =>
                 {
                     b.HasOne("Linksy.Domain.Entities.QrCode", "QrCode")
+                        .WithMany()
+                        .HasForeignKey("QrCodeId");
+
+                    b.HasOne("Linksy.Domain.Entities.Url", "Url")
                         .WithMany("UmtParameters")
-                        .HasForeignKey("QrCodeId")
+                        .HasForeignKey("UrlId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("QrCode");
+
+                    b.Navigation("Url");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -660,6 +659,28 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Linksy.Domain.Entities.Barcode", b =>
+                {
+                    b.HasOne("Linksy.Domain.Entities.Url", "Url")
+                        .WithOne("Barcode")
+                        .HasForeignKey("Linksy.Domain.Entities.Barcode", "UrlId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Url");
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.QrCode", b =>
+                {
+                    b.HasOne("Linksy.Domain.Entities.Url", "Url")
+                        .WithOne("QrCode")
+                        .HasForeignKey("Linksy.Domain.Entities.QrCode", "UrlId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Url");
+                });
+
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
                 {
                     b.Navigation("LandingPageItems");
@@ -667,16 +688,22 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
             modelBuilder.Entity("Linksy.Domain.Entities.Url", b =>
                 {
+                    b.Navigation("Barcode");
+
+                    b.Navigation("Engagements");
+
+                    b.Navigation("LandingPage");
+
                     b.Navigation("LandingPageItem");
 
-                    b.Navigation("ScanCode");
+                    b.Navigation("QrCode");
+
+                    b.Navigation("UmtParameters");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.QrCode", b =>
                 {
-                    b.Navigation("QrCodePage");
-
-                    b.Navigation("UmtParameters");
+                    b.Navigation("LandingPageItems");
                 });
 #pragma warning restore 612, 618
         }

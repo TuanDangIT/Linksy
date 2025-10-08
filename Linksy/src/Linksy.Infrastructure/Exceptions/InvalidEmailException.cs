@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.Exceptions
 {
-    internal class InvalidEmailException : LinksyException
+    internal class InvalidEmailException(string email) : LinksyException($"Invalid email: {email}.")
     {
-        public InvalidEmailException() : base("Invalid email.")
-        {
-        }
     }
 }

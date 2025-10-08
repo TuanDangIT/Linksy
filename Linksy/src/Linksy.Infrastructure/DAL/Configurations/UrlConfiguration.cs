@@ -25,10 +25,18 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .IsRequired();
             builder.Property(u => u.VisitCount)
                 .IsRequired();
-            builder.ToTable("Url", u =>
+            builder.ToTable(u =>
             {
                 u.HasCheckConstraint("CK_Url_VisitCount", "\"VisitCount\" >= 0");
             });
+            builder.HasOne(u => u.QrCode)
+                .WithOne(q => q.Url)
+                .HasForeignKey<QrCode>(q => q.UrlId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(u => u.Barcode)
+                .WithOne(b => b.Url)
+                .HasForeignKey<Barcode>(b => b.UrlId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

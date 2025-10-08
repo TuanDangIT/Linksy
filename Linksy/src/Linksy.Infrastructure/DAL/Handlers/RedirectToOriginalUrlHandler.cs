@@ -1,5 +1,4 @@
 ﻿using Linksy.Application.Abstractions;
-using Linksy.Application.Urls.DTO;
 using Linksy.Application.Urls.Features.RedirectToOriginalUrl;
 using Linksy.Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.DAL.Handlers
 {
-    internal class RedirectToOriginalUrlHandler : IQueryHandler<RedirectToOriginalUrl, RedirectOriginalUrlDto>
+    internal class RedirectToOriginalUrlHandler : IQueryHandler<RedirectToOriginalUrl, OriginalUrlDto>
     {
         private readonly LinksyDbContext _dbContext;
         private readonly ILogger<RedirectToOriginalUrlHandler> _logger;
@@ -22,7 +21,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             _dbContext = dbContext;
             _logger = logger;
         }
-        public async Task<RedirectOriginalUrlDto> Handle(RedirectToOriginalUrl request, CancellationToken cancellationToken)
+        public async Task<OriginalUrlDto> Handle(RedirectToOriginalUrl request, CancellationToken cancellationToken)
         {
             var url = await _dbContext.Urls
                 .IgnoreQueryFilters()
@@ -30,7 +29,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             url.IncrementVisitsCounter();
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Redirecting to original URL: {OriginalUrl} for code: {Code}.", url.OriginalUrl, request.Code);
-            return new RedirectOriginalUrlDto(url.OriginalUrl);
+            return new OriginalUrlDto(url.OriginalUrl);
         }
     }
 }

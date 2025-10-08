@@ -15,6 +15,10 @@ namespace Linksy.Infrastructure.DAL
     internal class LinksyDbContext : IdentityDbContext<User, Role, int>
     {
         public DbSet<Url> Urls { get; set; }
+        public DbSet<QrCode> QrCodes { get; set; }
+        public DbSet<Barcode> Barcodes { get; set; }
+        public DbSet<LandingPage> LandingPages { get; set; }
+        public DbSet<LandingPageItem> LandingPageItems { get; set; }
         private readonly TimeProvider _timeProvider;
         private readonly IMultiTenancyService _multiTenancyService;
 

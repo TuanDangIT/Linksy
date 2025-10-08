@@ -13,14 +13,20 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<UmtParameter> builder)
         {
-            builder.Property(u => u.Type)
-                .HasConversion<string>()
-                .IsRequired();
+            builder.HasOne(u => u.Url)
+                .WithMany(u => u.UmtParameters)
+                .HasForeignKey(u => u.UrlId);
+            builder.HasOne(u => u.QrCode)
+                .WithMany()
+                .HasForeignKey(u => u.QrCodeId);
             builder.Property(u => u.VisitCount)
                 .IsRequired();
-            builder.HasOne(u => u.QrCode)
-                .WithMany(q => q.UmtParameters)
-                .HasForeignKey(u => u.QrCodeId);
+            builder.Property(u => u.UmtSource)
+                .HasMaxLength(128);
+            builder.Property(u => u.UmtMedium)
+                .HasMaxLength(128);
+            builder.Property(u => u.UmtCampaign)
+                .HasMaxLength(128);
             builder.ToTable(u =>
             {
                 u.HasCheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
