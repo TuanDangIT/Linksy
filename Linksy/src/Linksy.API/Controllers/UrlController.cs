@@ -1,5 +1,6 @@
 ﻿using Linksy.API.API;
 using Linksy.Application.Urls.Features.BrowseUrls;
+using Linksy.Application.Urls.Features.DeleteUrl;
 using Linksy.Application.Urls.Features.GetUrl;
 using Linksy.Application.Urls.Features.RedirectToOriginalUrl;
 using Linksy.Application.Urls.Features.ShortenUrl;
@@ -40,5 +41,11 @@ namespace Linksy.API.Controllers
         [HttpGet("{urlId:int}")]
         public async Task<ActionResult<ApiResponse<GetUrlDto>>> GetUrlById([FromRoute] int urlId)
             => OkOrNotFound(await _mediator.Send(new GetUrl(urlId)), nameof(Url), urlId);
+        [HttpDelete("{urlId:int}")]
+        public async Task<ActionResult> DeleteUrlById([FromRoute] int urlId)
+        {
+            await _mediator.Send(new DeleteUrl(urlId));
+            return NoContent();
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace Linksy.Domain.Repositories
     {
         Task CreateUrlAsync(Url url, CancellationToken cancellationToken = default);
         Task<bool> IsUrlCodeInUseAsync(string code, CancellationToken cancellationToken = default);
+        Task DeleteAsync(int id, CancellationToken cancellationToken = default);
     }
 }

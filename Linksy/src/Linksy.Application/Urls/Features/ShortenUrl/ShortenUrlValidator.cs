@@ -14,6 +14,8 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
             RuleFor(s => s.OriginalUrl)
                 .NotEmpty()
                 .NotNull();
+            RuleFor(s => s.CustomCode)
+                .NotEmpty();
         }
     }
 }

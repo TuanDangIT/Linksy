@@ -23,6 +23,9 @@ namespace Linksy.Infrastructure.DAL.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
+        public Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+            => _dbContext.Urls.Where(u => u.Id == id).ExecuteDeleteAsync(cancellationToken);
+
         public async Task<bool> IsUrlCodeInUseAsync(string code, CancellationToken cancellationToken = default)
             => await _dbContext.Urls.AnyAsync(u => u.Code == code, cancellationToken);
     }
