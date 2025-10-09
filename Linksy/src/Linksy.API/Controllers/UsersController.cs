@@ -1,9 +1,11 @@
 ﻿using Asp.Versioning;
+using Linksy.API.API;
 using Linksy.Application.Users.DTO;
 using Linksy.Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security;
 
 namespace Linksy.API.Controllers
 {
@@ -16,6 +18,13 @@ namespace Linksy.API.Controllers
         public UsersController(IIdentityService userService) 
         {
             _identityService = userService;
+        }
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<UserDto>> GetUser()
+        {
+            var user = await _identityService.GetUserAsync() ?? throw new SecurityException("User's token is invalid.");
+            return Ok(user);
         }
         [HttpPost("register")]
         public async Task<ActionResult<string>> Register([FromBody] RegisterDto dto)

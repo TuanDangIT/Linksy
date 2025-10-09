@@ -1,4 +1,5 @@
-﻿using Linksy.Application.Shared.Auth;
+﻿using Linksy.Application.Abstractions;
+using Linksy.Application.Shared.Auth;
 using Linksy.Application.Users.DTO;
 using Linksy.Domain.Entities;
 using Linksy.Domain.Enums;
@@ -28,16 +29,18 @@ namespace Linksy.Infrastructure.Services
         private readonly ILogger<IdentityService> _logger;
         private readonly RoleManager<Role> _roleManager;
         private readonly TimeProvider _timeProvider;
+        private readonly IContextService _contextService;
         private readonly string _passwordPattern = @"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$";
 
         public IdentityService(UserManager<User> userManager, IAuthManager authManager, ILogger<IdentityService> logger,
-            RoleManager<Role> roleManager, TimeProvider timeProvider)
+            RoleManager<Role> roleManager, TimeProvider timeProvider, IContextService contextService)
         {
             _userManager = userManager;
             _authManager = authManager;
             _logger = logger;
             _roleManager = roleManager;
             _timeProvider = timeProvider;
+            _contextService = contextService;
         }
 
         public async Task<string> RegisterAsync(RegisterDto dto)
@@ -179,6 +182,14 @@ namespace Linksy.Infrastructure.Services
                 var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
                 return Convert.ToBase64String(bytes);
             }
+        }
+
+        public async Task<UserDto?> GetUserAsync()
+        {
+            var userId = _contextService.Identity!.Id;
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if(user is null) return null;
+            return new UserDto(user.Id, user.UserName!, user.Email!, user.FirstName, user.LastName, user.Gender.ToString(), user.CreatedAt, user.UpdatedAt);
         }
     }
 }
