@@ -39,6 +39,6 @@ namespace Linksy.API.Controllers
         }
         [HttpGet("{urlId:int}")]
         public async Task<ActionResult<ApiResponse<GetUrlDto>>> GetUrlById([FromRoute] int urlId)
-            => OkOrNotFound(await _mediator.Send(new GetUrl(urlId)), nameof(Url));
+            => OkOrNotFound(await _mediator.Send(new GetUrl(urlId)), nameof(Url), urlId);
     }
 }

@@ -33,5 +33,18 @@ namespace Linksy.API.Controllers
                 Status = (int)HttpStatusCode.NotFound
             });
         }
+        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntityId>(TResponse? model, string entityName, TEntityId id)
+        {
+            if (model is not null)
+            {
+                return Ok(model);
+            }
+            return NotFound(new ProblemDetails()
+            {
+                Type = _notFoundTypeUrl,
+                Title = $"{entityName} with ID: {id} was not found.",
+                Status = (int)HttpStatusCode.NotFound
+            });
+        }
     }
 }
