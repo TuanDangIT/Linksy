@@ -17,6 +17,8 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
+        public Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default)
+            => _dbContext.Urls.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         public async Task CreateUrlAsync(Url url, CancellationToken cancellationToken = default)
         {
             await _dbContext.Urls.AddAsync(url, cancellationToken);
@@ -28,5 +30,8 @@ namespace Linksy.Infrastructure.DAL.Repositories
 
         public async Task<bool> IsUrlCodeInUseAsync(string code, CancellationToken cancellationToken = default)
             => await _dbContext.Urls.AnyAsync(u => u.Code == code, cancellationToken);
+
+        public Task UpdateAsync(CancellationToken cancellationToken = default)
+            => _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

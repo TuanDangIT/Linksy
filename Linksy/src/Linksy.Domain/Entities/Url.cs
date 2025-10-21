@@ -43,6 +43,8 @@ namespace Linksy.Domain.Entities
         //    => new(code, userId);
         public void IncrementVisitsCounter()
             => VisitCount++;
+        public void ChangeOrginalUrl(string newOriginalUrl)
+            => OriginalUrl = newOriginalUrl;
         public void SetActive(bool isActive)
             => IsActive = isActive; 
         public void AddQrCode(QrCode qrCode)
