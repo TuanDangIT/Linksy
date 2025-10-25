@@ -10,6 +10,7 @@ namespace Linksy.Domain.Repositories
     public interface IBarcodeRepository
     {
         Task CreateAsync(Barcode barcode, CancellationToken cancellationToken = default);
+        Task DeleteAsync(int barcodeId, bool includeUrlInDeletion, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
     }
 }

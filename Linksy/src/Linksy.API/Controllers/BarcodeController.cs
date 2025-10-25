@@ -1,5 +1,6 @@
 ﻿using Linksy.API.API;
 using Linksy.Application.Barcodes.Features.CreateBarcode;
+using Linksy.Application.Barcodes.Features.DeleteBarcode;
 using Linksy.Application.Barcodes.Features.DownloadBarcode;
 using Linksy.Application.QrCodes.Features.CreateQrCode;
 using Linksy.Application.QrCodes.Features.DownloadQrCode;
@@ -23,5 +24,12 @@ namespace Linksy.API.Controllers
         [HttpGet("{barcodeId:int}")]
         public async Task<FileStreamResult> DownloadBarcode([FromRoute] int barcodeId, CancellationToken cancellationToken)
             => await _mediator.Send(new DownloadBarcode(barcodeId), cancellationToken);
+
+        [HttpDelete("{barcodeId:int}")]
+        public async Task<ActionResult> DeleteBarcode([FromRoute] int barcodeId, [FromQuery] bool includeUrlInDeletion, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new DeleteBarcode(barcodeId, includeUrlInDeletion), cancellationToken);
+            return NoContent();
+        }
     }
 }

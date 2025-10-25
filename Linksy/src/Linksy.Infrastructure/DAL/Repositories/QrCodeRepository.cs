@@ -1,5 +1,6 @@
 ﻿using Linksy.Domain.Entities;
 using Linksy.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,22 @@ namespace Linksy.Infrastructure.DAL.Repositories
             await _dbContext.QrCodes.AddAsync(qrCode, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task DeleteAsync(int qrCodeId, bool includeUrlInDeletion, CancellationToken cancellationToken = default)
+        {
+            if (!includeUrlInDeletion)
+            {
+                await _dbContext.QrCodes.Where(b => b.Id == qrCodeId).ExecuteDeleteAsync(cancellationToken);
+                return;
+            }
+            var qrCode = await _dbContext.QrCodes.Include(b => b.Url).FirstOrDefaultAsync(b => b.Id == qrCodeId, cancellationToken);
+            if (qrCode is not null)
+            {
+                _dbContext.Urls.Remove(qrCode.Url);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+        }
+
 
         public Task UpdateAsync(CancellationToken cancellationToken = default)
             => _dbContext.SaveChangesAsync(cancellationToken);

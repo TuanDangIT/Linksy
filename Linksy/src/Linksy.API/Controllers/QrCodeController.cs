@@ -1,5 +1,6 @@
 ﻿using Linksy.API.API;
 using Linksy.Application.QrCodes.Features.CreateQrCode;
+using Linksy.Application.QrCodes.Features.DeleteQrCode;
 using Linksy.Application.QrCodes.Features.DownloadQrCode;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,5 +22,12 @@ namespace Linksy.API.Controllers
         [HttpGet("{qrCodeId:int}")]
         public async Task<FileStreamResult> DownloadQrCode([FromRoute] int qrCodeId, CancellationToken cancellationToken)
             => await _mediator.Send(new DownloadQrCode(qrCodeId), cancellationToken);
+
+        [HttpDelete("{qrCodeId:int}")]
+        public async Task<ActionResult> DeleteQrCode([FromRoute] int qrCodeId, [FromQuery] bool includeUrlInDeletion, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new DeleteQrCode(qrCodeId, includeUrlInDeletion), cancellationToken);
+            return NoContent();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Linksy.Domain.Entities;
 using Linksy.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,21 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             await _dbContext.Barcodes.AddAsync(barcode, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task DeleteAsync(int barcodeId, bool includeUrlInDeletion, CancellationToken cancellationToken = default)
+        {
+            if(!includeUrlInDeletion)
+            {
+                await _dbContext.Barcodes.Where(b => b.Id == barcodeId).ExecuteDeleteAsync(cancellationToken);
+                return;
+            }
+            var barcode = await _dbContext.Barcodes.Include(b => b.Url).FirstOrDefaultAsync(b => b.Id == barcodeId, cancellationToken);
+            if(barcode is not null)
+            {
+                _dbContext.Urls.Remove(barcode.Url);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
         }
 
         public Task UpdateAsync(CancellationToken cancellationToken = default)
