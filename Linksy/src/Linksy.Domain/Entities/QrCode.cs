@@ -13,11 +13,11 @@ namespace Linksy.Domain.Entities
         public IEnumerable<LandingPageItem> LandingPageItems => _landingPageItems;
         //private readonly List<UmtParameter>? UmtParameters = [];
         //public IEnumerable<UmtParameter>? UmtParametersList => UmtParameters;    
-        private QrCode(Url url, string imageUrl, IEnumerable<string> tags, int userId) : base(url, imageUrl, tags, userId)
+        private QrCode(Url url, string imageUrl, IEnumerable<string>? tags, int userId) : base(url, imageUrl, tags, userId)
         {
         }
         private QrCode() { }
-        public static QrCode CreateQrCode(Url url, string imageUrl, IEnumerable<string> tags, int userId)
+        public static QrCode CreateQrCode(Url url, string imageUrl, IEnumerable<string>? tags, int userId)
             => new(url, imageUrl, tags, userId);
     }
 }

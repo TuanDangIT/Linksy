@@ -11,7 +11,7 @@ using Linksy.Infrastructure.Exceptions;
 
 namespace Linksy.Infrastructure.DAL.Handlers
 {
-    internal class GetUrlHandler : IQueryHandler<GetUrl, GetUrlDto?>
+    internal class GetUrlHandler : IQueryHandler<GetUrl, GetUrlResponse?>
     {
         private readonly LinksyDbContext _dbContext;
         private readonly IContextService _contextService;
@@ -23,7 +23,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             _contextService = contextService;
             _logger = logger;
         }
-        public async Task<GetUrlDto?> Handle(GetUrl request, CancellationToken cancellationToken)
+        public async Task<GetUrlResponse?> Handle(GetUrl request, CancellationToken cancellationToken)
         {
             var url = await _dbContext.Urls
                 .Where(u => u.Id == request.Id)
@@ -35,7 +35,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Include(u => u.UmtParameters!)
                     .ThenInclude(up => up.QrCode)
                 .AsNoTracking()
-                .Select(u => new GetUrlDto(
+                .Select(u => new GetUrlResponse(
                     u.Id,
                     u.OriginalUrl,
                     u.Code,

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.DAL.Handlers
 {
-    internal class BrowseUrlsHandler : IQueryHandler<BrowseUrls, IEnumerable<BrowseUrlDto>>
+    internal class BrowseUrlsHandler : IQueryHandler<BrowseUrls, BrowseUrlResponse>
     {
         private readonly LinksyDbContext _dbContext;
         private readonly IContextService _contextService;
@@ -22,7 +22,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             _contextService = contextService;
             _logger = logger;
         }
-        public async Task<IEnumerable<BrowseUrlDto>> Handle(BrowseUrls request, CancellationToken cancellationToken)
+        public async Task<BrowseUrlResponse> Handle(BrowseUrls request, CancellationToken cancellationToken)
         {
             var urls = await _dbContext.Urls
                 .AsNoTracking()
@@ -33,7 +33,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 u.Barcode != null, u.LandingPageItem != null, u.CreatedAt, u.UpdatedAt))
                 .ToListAsync(cancellationToken);
             _logger.LogInformation("User with ID: {userId} browsed URLs.", _contextService.Identity?.Id);
-            return urls;
+            return new BrowseUrlResponse(urls);
         }
     }
 }

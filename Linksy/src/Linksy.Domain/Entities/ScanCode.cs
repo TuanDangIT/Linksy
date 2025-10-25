@@ -25,5 +25,7 @@ namespace Linksy.Domain.Entities
         protected ScanCode() { } 
         public void IncrementScanCounter()
             => ScanCount++;
+        public void SetImageUrlPath(string imageUrlPath)
+            => ImageUrlPath = imageUrlPath;
     }
 }

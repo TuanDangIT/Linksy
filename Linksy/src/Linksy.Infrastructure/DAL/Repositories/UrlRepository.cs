@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,8 +18,16 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default)
-            => _dbContext.Urls.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        public async Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] inclues)
+        {
+            var query = _dbContext.Urls.AsQueryable();
+            foreach(var include in inclues)
+            {
+                query = query.Include(include);
+            }
+            var url = await query.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            return url;
+        }
         public async Task CreateUrlAsync(Url url, CancellationToken cancellationToken = default)
         {
             await _dbContext.Urls.AddAsync(url, cancellationToken);

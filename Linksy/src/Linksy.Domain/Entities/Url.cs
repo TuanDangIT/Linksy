@@ -30,17 +30,9 @@ namespace Linksy.Domain.Entities
             OriginalUrl = originalUrl;
             _umtParameters = umtParameters?.ToList();
         }
-        //private Url(string code, int userId) : base(userId)
-        //{
-        //    Code = code;
-        //}
         private Url() { }   
         public static Url CreateShortenedUrl(string originalUrl, string code, IEnumerable<UmtParameter>? umtParameters, int userId)
             => new(originalUrl, code, umtParameters, userId);
-        //public static Url CreateLandingPageUrl(string code, int userId)
-        //    => new(code, userId); 
-        //public static Url CreateLandingPageItemUrl(string code, int userId)
-        //    => new(code, userId);
         public void IncrementVisitsCounter()
             => VisitCount++;
         public void ChangeOrginalUrl(string newOriginalUrl)

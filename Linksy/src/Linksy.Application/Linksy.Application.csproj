@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BarcodeLib" Version="3.1.5" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="MediatR" Version="13.0.0" />
+    <PackageReference Include="QRCoder" Version="1.7.0" />
     <PackageReference Include="Scrutor" Version="6.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="8.1.4" />
   </ItemGroup>
@@ -20,14 +22,10 @@
 
   <ItemGroup>
     <Folder Include="Barcodes\DTO\" />
-    <Folder Include="Barcodes\Exceptions\" />
-    <Folder Include="Barcodes\Features\" />
     <Folder Include="LandingPages\DTO\" />
     <Folder Include="LandingPages\Exceptions\" />
     <Folder Include="LandingPages\Features\" />
     <Folder Include="QrCodes\DTO\" />
-    <Folder Include="QrCodes\Exceptions\" />
-    <Folder Include="QrCodes\Features\" />
     <Folder Include="Statistics\DTO\" />
     <Folder Include="Statistics\Exceptions\" />
     <Folder Include="Statistics\Features\" />

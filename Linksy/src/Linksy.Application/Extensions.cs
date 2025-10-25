@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Linksy.Application.Shared.Behaviors;
+using Linksy.Application.Shared.ScanCodes;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Linksy.Application
             services.AddMediatR(cfg =>
             {
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton(TimeProvider.System);

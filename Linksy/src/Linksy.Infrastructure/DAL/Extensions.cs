@@ -1,5 +1,6 @@
 ﻿using Linksy.Domain.Repositories;
 using Linksy.Infrastructure.DAL.Repositories;
+using Linksy.Infrastructure.DAL.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,7 @@ namespace Linksy.Infrastructure.DAL
         public static IServiceCollection AddPostgres(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<LinksyDbContext>(o => o.UseNpgsql(configuration.GetConnectionString(_postgresSectionName)));
+            services.AddUnitOfWork();
             services.AddScoped<IUrlRepository, UrlRepository>();
             return services;
         }

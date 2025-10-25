@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.ShortenUrl
 {
-    public record class ShortenedUrlDto(string ShortenedUrl);
+    public record class ShortenedUrlResponse(string ShortenedUrl);
 }

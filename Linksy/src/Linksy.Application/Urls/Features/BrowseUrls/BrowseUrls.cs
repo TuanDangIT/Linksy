@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.BrowseUrls
 {
-    public record class BrowseUrls : IQuery<IEnumerable<BrowseUrlDto>>;
+    public record class BrowseUrls : IQuery<BrowseUrlResponse>;
 }

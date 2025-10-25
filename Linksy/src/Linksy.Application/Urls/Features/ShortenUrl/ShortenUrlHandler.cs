@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.ShortenUrl
 {
-    internal class ShortenUrlHandler : ICommandHandler<ShortenUrl, ShortenedUrlDto>
+    internal class ShortenUrlHandler : ICommandHandler<ShortenUrl, ShortenedUrlResponse>
     {
         private readonly IGenerateShotenedUrlService _generateShotenedUrlService;
         private readonly IUrlRepository _urlRepository;
@@ -30,7 +30,7 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
             _contextService = contextService;
             _logger = logger;
         }
-        public async Task<ShortenedUrlDto> Handle(ShortenUrl request, CancellationToken cancellationToken)
+        public async Task<ShortenedUrlResponse> Handle(ShortenUrl request, CancellationToken cancellationToken)
         {
             Url url;
             var userId = _contextService.Identity!.Id;
@@ -52,7 +52,7 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
             await _urlRepository.CreateUrlAsync(url, cancellationToken);
             var shortenedUrl = _linksyConfig.BaseUrl + "/" + url.Code;
             _logger.LogInformation("URL shortened: {OriginalUrl} -> {ShortenedCode} by user with ID: {userId}.", request.OriginalUrl, shortenedUrl, userId);
-            return new ShortenedUrlDto(shortenedUrl);
+            return new ShortenedUrlResponse(shortenedUrl);
         }
     }
 }

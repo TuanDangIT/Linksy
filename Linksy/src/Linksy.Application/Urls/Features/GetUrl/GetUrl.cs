@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.GetUrl
 {
-    public record class GetUrl(int Id) : IQuery<GetUrlDto?>;
+    public record class GetUrl(int Id) : IQuery<GetUrlResponse?>;
 }

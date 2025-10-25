@@ -1,8 +1,10 @@
 ﻿using Linksy.Infrastructure.Auth;
 using Linksy.Infrastructure.BackgroundServices;
+using Linksy.Infrastructure.BlobStorage;
 using Linksy.Infrastructure.Configuration;
 using Linksy.Infrastructure.Contexts;
 using Linksy.Infrastructure.DAL;
+using Linksy.Infrastructure.ScanCodes;
 using Linksy.Infrastructure.Services;
 using Linksy.Infrastructure.Swagger;
 using Linksy.Infrastructure.Versioning;
@@ -33,6 +35,8 @@ namespace Linksy.Infrastructure
             services.AddAuth();
             services.AddVersioning();
             services.AddDocumentation();
+            services.AddBloblStorage(configuration);
+            services.AddScanCodes();
             services.AddServices();
             services.AddBackgroundServices();
             services.AddControllers();
