@@ -12,7 +12,7 @@ namespace Linksy.Domain
     {
         public static IServiceCollection AddDomain(this IServiceCollection services)
         {
-            services.AddSingleton<IGenerateShotenedUrlService, GenerateShotenedUrlService>();
+            services.AddScoped<IGenerateShotenedUrlService, GenerateShotenedUrlService>();
             return services;
         }
     }

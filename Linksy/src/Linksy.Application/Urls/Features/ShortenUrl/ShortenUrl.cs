@@ -1,4 +1,5 @@
 ﻿using Linksy.Application.Abstractions;
+using Linksy.Application.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

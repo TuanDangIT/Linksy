@@ -20,6 +20,8 @@ namespace Linksy.Infrastructure.DAL
             services.AddDbContext<LinksyDbContext>(o => o.UseNpgsql(configuration.GetConnectionString(_postgresSectionName)));
             services.AddUnitOfWork();
             services.AddScoped<IUrlRepository, UrlRepository>();
+            services.AddScoped<IQrCodeRepository, QrCodeRepository>();
+            services.AddScoped<IBarcodeRepository, BarcodeRepository>();
             return services;
         }
     }

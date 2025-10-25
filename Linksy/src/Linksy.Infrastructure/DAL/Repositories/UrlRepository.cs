@@ -28,7 +28,7 @@ namespace Linksy.Infrastructure.DAL.Repositories
             var url = await query.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
             return url;
         }
-        public async Task CreateUrlAsync(Url url, CancellationToken cancellationToken = default)
+        public async Task CreateAsync(Url url, CancellationToken cancellationToken = default)
         {
             await _dbContext.Urls.AddAsync(url, cancellationToken);
             await _dbContext.SaveChangesAsync(cancellationToken);
