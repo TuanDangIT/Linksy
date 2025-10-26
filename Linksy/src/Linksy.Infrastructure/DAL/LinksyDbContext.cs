@@ -15,6 +15,7 @@ namespace Linksy.Infrastructure.DAL
     internal class LinksyDbContext : IdentityDbContext<User, Role, int>
     {
         public DbSet<Url> Urls { get; set; }
+        public DbSet<UmtParameter> UmtParameters { get; set; }
         public DbSet<QrCode> QrCodes { get; set; }
         public DbSet<Barcode> Barcodes { get; set; }
         public DbSet<LandingPage> LandingPages { get; set; }
@@ -37,18 +38,29 @@ namespace Linksy.Infrastructure.DAL
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var entries = ChangeTracker.Entries<IAuditable>();
-            foreach (var entry in entries)
+            var auditableEntries = ChangeTracker.Entries<IAuditable>();
+            var now = _timeProvider.GetUtcNow().UtcDateTime;
+            foreach (var entry in auditableEntries)
             {
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.CreatedAt)).CurrentValue = now;
                 }
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = _timeProvider.GetUtcNow().UtcDateTime;
+                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = now;
                 }
             }
+
+            var hasEngagementTimeEntries = ChangeTracker.Entries<IHasEngagementTime>();
+            foreach (var entry in hasEngagementTimeEntries)
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Property(nameof(IHasEngagementTime.EngagedAt)).CurrentValue = now;
+                }
+            }
+
             return base.SaveChangesAsync(cancellationToken);
         }
     }

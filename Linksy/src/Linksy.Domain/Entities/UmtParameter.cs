@@ -18,6 +18,8 @@ namespace Linksy.Domain.Entities
         public int UrlId { get; private set; }
         public QrCode? QrCode { get; private set; }
         public int? QrCodeId { get; private set; }
+        private readonly List<UmtParameterEngagement> _umtParameterEngagements = [];
+        public IReadOnlyCollection<UmtParameterEngagement> UmtParameterEngagements => _umtParameterEngagements.AsReadOnly();
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         private UmtParameter(string? umtSource, string? umtMedium, string? umtCampaign)
@@ -44,5 +46,7 @@ namespace Linksy.Domain.Entities
             => UmtMedium = medium;
         public void UpdateCampaign(string campaign)
             => UmtCampaign = campaign;
+        public void AddEngagement(UmtParameterEngagement engagement)
+            => _umtParameterEngagements.Add(engagement);
     }
 }

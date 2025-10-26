@@ -32,7 +32,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("EngagedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UrlId")
@@ -42,7 +42,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasIndex("UrlId");
 
-                    b.ToTable("Engagement", (string)null);
+                    b.ToTable("Engagement");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
@@ -89,7 +89,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("LandingPages", (string)null);
+                    b.ToTable("LandingPages");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPageItem", b =>
@@ -118,9 +118,6 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("LandingPageId")
                         .HasColumnType("integer");
 
@@ -145,7 +142,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("LandingPageItems", (string)null);
+                    b.ToTable("LandingPageItems");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Role", b =>
@@ -270,10 +267,31 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasIndex("UrlId");
 
-                    b.ToTable("UmtParameter", null, t =>
+                    b.ToTable("UmtParameters", t =>
                         {
                             t.HasCheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
                         });
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.UmtParameterEngagement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EngagedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UmtParameterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UmtParameterId");
+
+                    b.ToTable("UmtParameterEngagement");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Url", b =>
@@ -312,7 +330,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Urls", null, t =>
+                    b.ToTable("Urls", t =>
                         {
                             t.HasCheckConstraint("CK_Url_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -523,7 +541,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("Barcodes", null, t =>
+                    b.ToTable("Barcodes", t =>
                         {
                             t.HasCheckConstraint("CK_Barcode_ScanCount", "\"ScanCount\" >= 0");
                         });
@@ -536,7 +554,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("QrCodes", null, t =>
+                    b.ToTable("QrCodes", t =>
                         {
                             t.HasCheckConstraint("CK_QrCode_ScanCount", "\"ScanCount\" >= 0");
                         });
@@ -603,6 +621,17 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Navigation("QrCode");
 
                     b.Navigation("Url");
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.UmtParameterEngagement", b =>
+                {
+                    b.HasOne("Linksy.Domain.Entities.UmtParameter", "UmtParameter")
+                        .WithMany("UmtParameterEngagements")
+                        .HasForeignKey("UmtParameterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UmtParameter");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -681,6 +710,11 @@ namespace Linksy.Infrastructure.DAL.Migrations
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
                 {
                     b.Navigation("LandingPageItems");
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.UmtParameter", b =>
+                {
+                    b.Navigation("UmtParameterEngagements");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Url", b =>

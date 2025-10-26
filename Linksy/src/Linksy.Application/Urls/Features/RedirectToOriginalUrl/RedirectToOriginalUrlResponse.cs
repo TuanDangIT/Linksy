@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.RedirectToOriginalUrl
 {
-    public record class OriginalUrlDto(string OriginalUrl);
+    public record class RedirectToOriginalUrlResponse(string OriginalUrl);
 }

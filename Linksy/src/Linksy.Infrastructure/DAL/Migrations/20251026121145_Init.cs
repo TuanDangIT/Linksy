@@ -223,7 +223,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UrlId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    EngagedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -289,38 +289,11 @@ namespace Linksy.Infrastructure.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UmtParameter",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UmtSource = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    UmtMedium = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    UmtCampaign = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    VisitCount = table.Column<int>(type: "integer", nullable: false),
-                    UrlId = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UmtParameter", x => x.Id);
-                    table.CheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
-                    table.ForeignKey(
-                        name: "FK_UmtParameter_Urls_UrlId",
-                        column: x => x.UrlId,
-                        principalTable: "Urls",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "LandingPageItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     Content = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     BackgroundColor = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     FontColor = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
@@ -349,6 +322,58 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         name: "FK_LandingPageItems_Urls_UrlId",
                         column: x => x.UrlId,
                         principalTable: "Urls",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UmtParameters",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UmtSource = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    UmtMedium = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    UmtCampaign = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    VisitCount = table.Column<int>(type: "integer", nullable: false),
+                    UrlId = table.Column<int>(type: "integer", nullable: false),
+                    QrCodeId = table.Column<int>(type: "integer", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UmtParameters", x => x.Id);
+                    table.CheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
+                    table.ForeignKey(
+                        name: "FK_UmtParameters_QrCodes_QrCodeId",
+                        column: x => x.QrCodeId,
+                        principalTable: "QrCodes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UmtParameters_Urls_UrlId",
+                        column: x => x.UrlId,
+                        principalTable: "Urls",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UmtParameterEngagement",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UmtParameterId = table.Column<int>(type: "integer", nullable: false),
+                    EngagedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UmtParameterEngagement", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UmtParameterEngagement_UmtParameters_UmtParameterId",
+                        column: x => x.UmtParameterId,
+                        principalTable: "UmtParameters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -439,8 +464,18 @@ namespace Linksy.Infrastructure.DAL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UmtParameter_UrlId",
-                table: "UmtParameter",
+                name: "IX_UmtParameterEngagement_UmtParameterId",
+                table: "UmtParameterEngagement",
+                column: "UmtParameterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UmtParameters_QrCodeId",
+                table: "UmtParameters",
+                column: "QrCodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UmtParameters_UrlId",
+                table: "UmtParameters",
                 column: "UrlId");
 
             migrationBuilder.CreateIndex(
@@ -478,7 +513,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                 name: "LandingPageItems");
 
             migrationBuilder.DropTable(
-                name: "UmtParameter");
+                name: "UmtParameterEngagement");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -488,6 +523,9 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "LandingPages");
+
+            migrationBuilder.DropTable(
+                name: "UmtParameters");
 
             migrationBuilder.DropTable(
                 name: "QrCodes");

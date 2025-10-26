@@ -1,5 +1,6 @@
 ﻿using Linksy.Application.Abstractions;
 using Linksy.Application.Urls.Features.RedirectToOriginalUrl;
+using Linksy.Domain.Entities;
 using Linksy.Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.DAL.Handlers
 {
-    internal class RedirectToOriginalUrlHandler : IQueryHandler<RedirectToOriginalUrl, OriginalUrlDto>
+    internal class RedirectToOriginalUrlHandler : IQueryHandler<RedirectToOriginalUrl, RedirectToOriginalUrlResponse>
     {
         private readonly LinksyDbContext _dbContext;
         private readonly ILogger<RedirectToOriginalUrlHandler> _logger;
@@ -21,15 +22,33 @@ namespace Linksy.Infrastructure.DAL.Handlers
             _dbContext = dbContext;
             _logger = logger;
         }
-        public async Task<OriginalUrlDto> Handle(RedirectToOriginalUrl request, CancellationToken cancellationToken)
+        public async Task<RedirectToOriginalUrlResponse> Handle(RedirectToOriginalUrl request, CancellationToken cancellationToken)
         {
             var url = await _dbContext.Urls
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(u => u.Code == request.Code, cancellationToken) ?? throw new UrlNotFoundException(request.Code);
             url.IncrementVisitsCounter();
+            url.AddEngagement(Engagement.CreateEngagement(url));
+
+            if (request.UmtParameter is not null)
+            {
+                var umtParameter = await _dbContext.UmtParameters
+                    .Include(u => u.Url)
+                    .Where(u => u.UrlId == url.Id)
+                    .Where(u => u.UmtSource == request.UmtParameter.UmtSource && 
+                        u.UmtMedium == request.UmtParameter.UmtMedium && 
+                        u.UmtCampaign == request.UmtParameter.UmtCampaign)
+                    .FirstOrDefaultAsync(cancellationToken);
+                if(umtParameter is not null)
+                {
+                    umtParameter.AddEngagement(UmtParameterEngagement.CreateUmtEngagementParameter(umtParameter));
+                    umtParameter.IncrementVisits();
+                }
+            }
+            
             await _dbContext.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Redirecting to original URL: {OriginalUrl} for code: {Code}.", url.OriginalUrl, request.Code);
-            return new OriginalUrlDto(url.OriginalUrl);
+            return new RedirectToOriginalUrlResponse(url.OriginalUrl);
         }
     }
 }

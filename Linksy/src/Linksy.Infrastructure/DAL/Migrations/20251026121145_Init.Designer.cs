@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Linksy.Infrastructure.DAL.Migrations
 {
     [DbContext(typeof(LinksyDbContext))]
-    [Migration("20251005164211_Init")]
+    [Migration("20251026121145_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("EngagedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UrlId")
@@ -120,9 +120,6 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("LandingPageId")
                         .HasColumnType("integer");
@@ -243,6 +240,9 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int?>("QrCodeId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UmtCampaign")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
@@ -266,12 +266,35 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QrCodeId");
+
                     b.HasIndex("UrlId");
 
-                    b.ToTable("UmtParameter", t =>
+                    b.ToTable("UmtParameters", t =>
                         {
                             t.HasCheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
                         });
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.UmtParameterEngagement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EngagedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UmtParameterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UmtParameterId");
+
+                    b.ToTable("UmtParameterEngagement");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Url", b =>
@@ -588,13 +611,30 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
             modelBuilder.Entity("Linksy.Domain.Entities.UmtParameter", b =>
                 {
+                    b.HasOne("Linksy.Domain.Entities.QrCode", "QrCode")
+                        .WithMany()
+                        .HasForeignKey("QrCodeId");
+
                     b.HasOne("Linksy.Domain.Entities.Url", "Url")
                         .WithMany("UmtParameters")
                         .HasForeignKey("UrlId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("QrCode");
+
                     b.Navigation("Url");
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.UmtParameterEngagement", b =>
+                {
+                    b.HasOne("Linksy.Domain.Entities.UmtParameter", "UmtParameter")
+                        .WithMany("UmtParameterEngagements")
+                        .HasForeignKey("UmtParameterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UmtParameter");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -673,6 +713,11 @@ namespace Linksy.Infrastructure.DAL.Migrations
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
                 {
                     b.Navigation("LandingPageItems");
+                });
+
+            modelBuilder.Entity("Linksy.Domain.Entities.UmtParameter", b =>
+                {
+                    b.Navigation("UmtParameterEngagements");
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Url", b =>

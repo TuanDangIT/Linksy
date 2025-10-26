@@ -43,5 +43,7 @@ namespace Linksy.Domain.Entities
             => QrCode = qrCode; 
         public void AddBarcode(Barcode barcode)
             => Barcode = barcode;
+        public void AddEngagement(Engagement engagement)
+            => _engagements!.Add(engagement);   
     }
 }

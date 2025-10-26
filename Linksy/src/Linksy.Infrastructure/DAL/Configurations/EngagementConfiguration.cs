@@ -17,7 +17,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .WithMany(u => u.Engagements)
                 .HasForeignKey(e => e.UrlId)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder.Property(e => e.CreatedAt)
+            builder.Property(e => e.EngagedAt)
                 .IsRequired();
         }
     }

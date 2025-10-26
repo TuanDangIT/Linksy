@@ -1,4 +1,5 @@
 ﻿using Linksy.API.API;
+using Linksy.Application.Shared.DTO;
 using Linksy.Application.Urls.Features.AddBarcode;
 using Linksy.Application.Urls.Features.AddQrCode;
 using Linksy.Application.Urls.Features.BrowseUrls;
@@ -29,9 +30,18 @@ namespace Linksy.API.Controllers
         }
         [AllowAnonymous]
         [HttpGet("/{code}")]
-        public async Task<ActionResult<ApiResponse<object>>> RedirectToOriginalUrl([FromRoute] string code, CancellationToken cancellationToken)
+        public async Task<ActionResult<ApiResponse<object>>> RedirectToOriginalUrl([FromRoute] string code, [FromQuery] string? umtSource, 
+            [FromQuery] string? umtMedium, [FromQuery] string? umtCampaign, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new RedirectToOriginalUrl(code), cancellationToken);
+            RedirectToOriginalUrlResponse result;
+            if (umtSource is not null || umtMedium is not null || umtCampaign is not null)
+            {
+                result = await _mediator.Send(new RedirectToOriginalUrl(code, new UmtParameterDto(umtSource, umtMedium, umtCampaign)), cancellationToken);
+            }
+            else
+            {
+                result = await _mediator.Send(new RedirectToOriginalUrl(code, null), cancellationToken);
+            }
             return Request.Headers.ContainsKey("Referer") && Request.Headers.Referer.ToString().Contains("swagger") ?
                 Ok<object>(new { redirectUrl = result.OriginalUrl, additionalMessage = "Response for swagger only." }) :
                 Redirect(result.OriginalUrl);

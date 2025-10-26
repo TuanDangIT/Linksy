@@ -7,21 +7,20 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities
 {
-    public class Engagement : BaseEntity
+    public class Engagement : BaseEntity, IHasEngagementTime
     {
         public Url Url { get; set; } = default!;
         public int UrlId { get; set; }
-        public DateTime CreatedAt { get; private set; }
-        private Engagement(Url url, DateTime createdAt)
+        public DateTime EngagedAt { get; private set; }
+        private Engagement(Url url)
         {
             Url = url;
-            CreatedAt = createdAt;
         }
         private Engagement()
         {
             
         }
         public static Engagement CreateEngagement(Url url)
-            => new(url, DateTime.UtcNow);
+            => new(url);
     }
 }
