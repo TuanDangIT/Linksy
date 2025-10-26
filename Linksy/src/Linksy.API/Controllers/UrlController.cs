@@ -2,6 +2,7 @@
 using Linksy.Application.Shared.DTO;
 using Linksy.Application.Urls.Features.AddBarcode;
 using Linksy.Application.Urls.Features.AddQrCode;
+using Linksy.Application.Urls.Features.AddUmtParameterToUrl;
 using Linksy.Application.Urls.Features.BrowseUrls;
 using Linksy.Application.Urls.Features.ChangeOriginalUrl;
 using Linksy.Application.Urls.Features.DeleteUrl;
@@ -93,6 +94,13 @@ namespace Linksy.API.Controllers
             command = command with { UrlId = urlId };
             var result = await _mediator.Send(command, cancellationToken);
             return Ok(result);
+        }
+
+        [HttpPost("{urlId:int}/umt-parameters")]
+        public async Task<ActionResult> AddUmtParameterToUrl([FromRoute] int urlId, [FromBody] AddUmtParameterToUrl command, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(command with { UrlId = urlId }, cancellationToken);
+            return Ok();
         }
     }
 }

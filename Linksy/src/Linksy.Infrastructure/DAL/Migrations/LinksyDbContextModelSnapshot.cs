@@ -42,7 +42,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasIndex("UrlId");
 
-                    b.ToTable("Engagement");
+                    b.ToTable("Engagement", (string)null);
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage", b =>
@@ -89,7 +89,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("LandingPages");
+                    b.ToTable("LandingPages", (string)null);
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPageItem", b =>
@@ -142,7 +142,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("LandingPageItems");
+                    b.ToTable("LandingPageItems", (string)null);
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Role", b =>
@@ -267,7 +267,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasIndex("UrlId");
 
-                    b.ToTable("UmtParameters", t =>
+                    b.ToTable("UmtParameters", null, t =>
                         {
                             t.HasCheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -291,7 +291,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.HasIndex("UmtParameterId");
 
-                    b.ToTable("UmtParameterEngagement");
+                    b.ToTable("UmtParameterEngagement", (string)null);
                 });
 
             modelBuilder.Entity("Linksy.Domain.Entities.Url", b =>
@@ -330,7 +330,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Urls", t =>
+                    b.ToTable("Urls", null, t =>
                         {
                             t.HasCheckConstraint("CK_Url_VisitCount", "\"VisitCount\" >= 0");
                         });
@@ -541,7 +541,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("Barcodes", t =>
+                    b.ToTable("Barcodes", null, t =>
                         {
                             t.HasCheckConstraint("CK_Barcode_ScanCount", "\"ScanCount\" >= 0");
                         });
@@ -554,7 +554,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.HasIndex("UrlId")
                         .IsUnique();
 
-                    b.ToTable("QrCodes", t =>
+                    b.ToTable("QrCodes", null, t =>
                         {
                             t.HasCheckConstraint("CK_QrCode_ScanCount", "\"ScanCount\" >= 0");
                         });

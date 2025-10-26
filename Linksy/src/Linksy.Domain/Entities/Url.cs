@@ -18,21 +18,32 @@ namespace Linksy.Domain.Entities
         public Barcode? Barcode { get; set; }
         public LandingPage? LandingPage { get; set; }
         public LandingPageItem? LandingPageItem { get; set; }
-        private readonly List<UmtParameter>? _umtParameters = [];
-        public IEnumerable<UmtParameter>? UmtParameters => _umtParameters;
-        private readonly List<Engagement>? _engagements = [];
-        public IEnumerable<Engagement>? Engagements => _engagements;
+        private readonly List<UmtParameter> _umtParameters = [];
+        public IEnumerable<UmtParameter> UmtParameters => _umtParameters;
+        private readonly List<Engagement> _engagements = [];
+        public IEnumerable<Engagement> Engagements => _engagements;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        private Url(string originalUrl, string code, IEnumerable<UmtParameter>? umtParameters, int userId) /*: this(code, userId)*/ : base(userId)
+        private Url(string originalUrl, string code, IEnumerable<UmtParameter> umtParameters, int userId) : base(userId)
         {
             Code = code;
             OriginalUrl = originalUrl;
-            _umtParameters = umtParameters?.ToList();
+            _umtParameters = [.. umtParameters];
+        }
+        private Url(string originalUrl, string code, int userId) : base(userId)
+        {
+            Code = code;
+            OriginalUrl = originalUrl;
         }
         private Url() { }   
         public static Url CreateShortenedUrl(string originalUrl, string code, IEnumerable<UmtParameter>? umtParameters, int userId)
-            => new(originalUrl, code, umtParameters, userId);
+        {
+            if(umtParameters is not null)
+            {
+                return new Url(originalUrl, code, umtParameters, userId);
+            }
+            return new Url(originalUrl, code, userId);
+        }
         public void IncrementVisitsCounter()
             => VisitCount++;
         public void ChangeOrginalUrl(string newOriginalUrl)
@@ -45,5 +56,7 @@ namespace Linksy.Domain.Entities
             => Barcode = barcode;
         public void AddEngagement(Engagement engagement)
             => _engagements!.Add(engagement);   
+        public void AddUmtParameter(UmtParameter umtParameter)
+            => _umtParameters!.Add(umtParameter);
     }
 }
