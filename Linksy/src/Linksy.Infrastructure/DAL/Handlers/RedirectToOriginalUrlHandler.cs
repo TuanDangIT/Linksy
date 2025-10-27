@@ -1,4 +1,5 @@
 ﻿using Linksy.Application.Abstractions;
+using Linksy.Application.Urls.Exceptions;
 using Linksy.Application.Urls.Features.RedirectToOriginalUrl;
 using Linksy.Domain.Entities;
 using Linksy.Infrastructure.Exceptions;
@@ -27,6 +28,10 @@ namespace Linksy.Infrastructure.DAL.Handlers
             var url = await _dbContext.Urls
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(u => u.Code == request.Code, cancellationToken) ?? throw new UrlNotFoundException(request.Code);
+            if(url.IsActive is false)
+            {
+                throw new UrlIsNotActiveException(url.Id);
+            }
             url.IncrementVisitsCounter();
             url.AddEngagement(Engagement.CreateEngagement(url));
 
