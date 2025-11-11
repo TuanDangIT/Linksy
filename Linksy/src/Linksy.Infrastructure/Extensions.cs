@@ -4,6 +4,7 @@ using Linksy.Infrastructure.BlobStorage;
 using Linksy.Infrastructure.Configuration;
 using Linksy.Infrastructure.Contexts;
 using Linksy.Infrastructure.DAL;
+using Linksy.Infrastructure.Pagination;
 using Linksy.Infrastructure.ScanCodes;
 using Linksy.Infrastructure.Services;
 using Linksy.Infrastructure.Swagger;
@@ -25,6 +26,7 @@ namespace Linksy.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddPagination();
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());

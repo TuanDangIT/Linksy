@@ -2,7 +2,7 @@
 using Linksy.Application.Shared.Configuration;
 using Linksy.Application.Shared.ScanCodes;
 using Linksy.Application.Urls.Exceptions;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -41,7 +41,8 @@ namespace Linksy.Application.Urls.Features.AddQrCode
             var qrCode = QrCode.CreateQrCode(url, string.Empty, request.Tags, userId);
             url.AddQrCode(qrCode);
             await _urlRepository.UpdateAsync(cancellationToken);
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code;
+            var qrCodeQueryParameter = _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
+            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + qrCodeQueryParameter;
             var (qrCodeUrlPath, fileName) = await _scanCodeServices.GenerateQrCodeAsync(qrCode, linksyUrl, cancellationToken);
             qrCode.SetImageUrlPath(qrCodeUrlPath);
             await _urlRepository.UpdateAsync(cancellationToken);

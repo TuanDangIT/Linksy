@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.Url;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,12 +13,10 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<UmtParameter> builder)
         {
+            builder.ToTable("UmtParameters");
             builder.HasOne(u => u.Url)
                 .WithMany(u => u.UmtParameters)
                 .HasForeignKey(u => u.UrlId);
-            builder.HasOne(u => u.QrCode)
-                .WithMany()
-                .HasForeignKey(u => u.QrCodeId);
             builder.Property(u => u.VisitCount)
                 .IsRequired();
             builder.Property(u => u.UmtSource)
@@ -31,6 +29,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
             {
                 u.HasCheckConstraint("CK_UmtParameter_VisitCount", "\"VisitCount\" >= 0");
             });
+            builder.Property(u => u.CreatedAt)
+                .IsRequired();
         }
     }
 }

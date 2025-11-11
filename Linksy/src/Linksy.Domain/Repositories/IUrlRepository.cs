@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.Url;
 using System;
 using System.Collections.Generic;
 using System.Linq;

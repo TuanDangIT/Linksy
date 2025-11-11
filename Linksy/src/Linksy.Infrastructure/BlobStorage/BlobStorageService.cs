@@ -83,5 +83,16 @@ namespace Linksy.Infrastructure.BlobStorage
             _logger.LogDebug("File: {fileName} uploaded to blob storage container: {containerName}.", fileName, containerName); 
             return blobClient.Uri.AbsolutePath;
         }
+
+        public async Task DeleteAsync(string fileName, string containerName, CancellationToken cancellationToken = default)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            BlobClient blobClient = containerClient.GetBlobClient(fileName);
+            using var response = await blobClient.DeleteAsync(cancellationToken: cancellationToken);
+            if (response.IsError)
+            {
+                throw new RequestFailedException($"Request failed. File: {fileName} was not deleted from blob storage.");
+            }
+        }
     }
 }

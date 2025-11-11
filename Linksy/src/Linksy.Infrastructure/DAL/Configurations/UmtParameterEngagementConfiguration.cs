@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.Tracking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,8 +13,9 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<UmtParameterEngagement> builder)
         {
+            builder.ToTable("UmtParameterEngagements"); 
             builder.HasOne(u => u.UmtParameter)
-                .WithMany(u => u.UmtParameterEngagements)
+                .WithMany(u => u.Engagements)
                 .HasForeignKey(u => u.UmtParameterId);
             builder.Property(u => u.EngagedAt)
                 .IsRequired();

@@ -13,25 +13,25 @@ namespace Linksy.Application.Urls.Features.GetUrl
         public string Code { get; init; } = string.Empty;
         public int VisitCount { get; init; }
         public bool IsActive { get; init; }
+        public IEnumerable<string>? Tags { get; init; }
         public GetUrlQrCodeDto? QrCode { get; init; }
         public GetUrlBarcodeDto? Barcode { get; init; }
-        public GetUrlLandingPageDto? LandingPage { get; init; }
-        public GetUrlLandingPageItemDto? LandingPageItem { get; init; }
-        public GetUrlUmtParameterDto[]? UmtParameters { get; init; }
+        public IEnumerable<GetUrlLandingPageItemDto>? LandingPageItems { get; init; }
+        public IEnumerable<GetUrlUmtParameterDto>? UmtParameters { get; init; }
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
-        public GetUrlResponse(int id, string originalUrl, string code, int visitCount, bool isActive, GetUrlQrCodeDto? qrCode, GetUrlBarcodeDto? barcode, GetUrlLandingPageDto? landingPage,
-            GetUrlLandingPageItemDto? landingPageItem, IEnumerable<GetUrlUmtParameterDto>? umtParameters)
+        public GetUrlResponse(int id, string originalUrl, string code, int visitCount, bool isActive, IEnumerable<string>? tags, GetUrlQrCodeDto? qrCode, GetUrlBarcodeDto? barcode,
+            IEnumerable<GetUrlLandingPageItemDto>? landingPageItems, IEnumerable<GetUrlUmtParameterDto>? umtParameters)
         {
             Id = id;
             OriginalUrl = originalUrl;
             Code = code;
             VisitCount = visitCount;
             IsActive = isActive;
+            Tags = tags;
             QrCode = qrCode;
             Barcode = barcode;
-            LandingPage = landingPage;
-            LandingPageItem = landingPageItem;
+            LandingPageItems = landingPageItems;
             UmtParameters = umtParameters?.ToArray();
         }
     }

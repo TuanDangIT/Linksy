@@ -1,6 +1,6 @@
 ﻿using Linksy.Application.Abstractions;
 using Linksy.Application.Urls.Exceptions;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,6 +26,7 @@ namespace Linksy.Application.Urls.Features.AddUmtParameterToUrl
         public async Task Handle(AddUmtParameterToUrl request, CancellationToken cancellationToken)
         {
             var url = await _urlRepository.GetUrlAsync(request.UrlId, cancellationToken, u => u.QrCode) ?? throw new UrlNotFoundException(request.UrlId);
+            //Finish QrCode logic
             var umtParameter = UmtParameter.CreateUmtParameter(request.UmtParameter.UmtSource, request.UmtParameter.UmtMedium, request.UmtParameter.UmtCampaign);
             url.AddUmtParameter(umtParameter);
             await _urlRepository.UpdateAsync(cancellationToken);

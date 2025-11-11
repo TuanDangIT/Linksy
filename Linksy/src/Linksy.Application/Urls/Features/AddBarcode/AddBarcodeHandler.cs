@@ -2,7 +2,7 @@
 using Linksy.Application.Shared.Configuration;
 using Linksy.Application.Shared.ScanCodes;
 using Linksy.Application.Urls.Exceptions;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -41,7 +41,8 @@ namespace Linksy.Application.Urls.Features.AddBarcode
             var barcode = Barcode.CreateBarcode(url, string.Empty, request.Tags, userId);
             url.AddBarcode(barcode);
             await _urlRepository.UpdateAsync(cancellationToken);
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code;
+            var barcodeQueryParameter = _linksyConfig.ScanCode.BarcodeQueryParameter + "=true";
+            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + barcodeQueryParameter;
             var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(barcode, linksyUrl, cancellationToken);
             barcode.SetImageUrlPath(barcodeUrlPath);
             await _urlRepository.UpdateAsync(cancellationToken);

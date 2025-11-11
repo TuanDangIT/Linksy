@@ -1,7 +1,9 @@
-﻿using Linksy.Application.Abstractions;
+﻿using Azure.Core;
+using Linksy.Application.Abstractions;
+using Linksy.Application.Shared.DTO;
 using Linksy.Application.Urls.Exceptions;
 using Linksy.Application.Urls.Features.RedirectToOriginalUrl;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.Tracking;
 using Linksy.Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.DAL.Handlers
@@ -27,33 +30,60 @@ namespace Linksy.Infrastructure.DAL.Handlers
         {
             var url = await _dbContext.Urls
                 .IgnoreQueryFilters()
-                .FirstOrDefaultAsync(u => u.Code == request.Code, cancellationToken) ?? throw new UrlNotFoundException(request.Code);
+                .FirstOrDefaultAsync(u => u.Code == request.Code && u.IsActive == true, cancellationToken) ?? throw new UrlNotFoundException(request.Code);
             if(url.IsActive is false)
             {
                 throw new UrlIsNotActiveException(url.Id);
             }
             url.IncrementVisitsCounter();
-            url.AddEngagement(Engagement.CreateEngagement(url));
+            url.AddEngagement(UrlEngagement.CreateEngagement(url, request.IpAddress));
 
+            await AddEngagementAndIncreaseVisitCountForUmtParameterIfExists(request, url.Id, cancellationToken);
+            await AddEngagementAndIncreaseScanCountForScanCodeIfExists(request, url.Id, cancellationToken);
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Redirecting to original URL: {OriginalUrl} for code: {Code}.", url.OriginalUrl, request.Code);
+            return new RedirectToOriginalUrlResponse(url.OriginalUrl);
+        }
+
+        private async Task AddEngagementAndIncreaseVisitCountForUmtParameterIfExists(RedirectToOriginalUrl request, int urlId, CancellationToken cancellationToken = default)
+        {
             if (request.UmtParameter is not null)
             {
                 var umtParameter = await _dbContext.UmtParameters
                     .Include(u => u.Url)
-                    .Where(u => u.UrlId == url.Id)
-                    .Where(u => u.UmtSource == request.UmtParameter.UmtSource && 
-                        u.UmtMedium == request.UmtParameter.UmtMedium && 
+                    .Where(u => u.UrlId == urlId)
+                    .Where(u => u.UmtSource == request.UmtParameter.UmtSource &&
+                        u.UmtMedium == request.UmtParameter.UmtMedium &&
                         u.UmtCampaign == request.UmtParameter.UmtCampaign)
                     .FirstOrDefaultAsync(cancellationToken);
-                if(umtParameter is not null)
+                if (umtParameter is not null)
                 {
-                    umtParameter.AddEngagement(UmtParameterEngagement.CreateUmtEngagementParameter(umtParameter));
+                    umtParameter.AddEngagement(UmtParameterEngagement.CreateUmtEngagementParameter(umtParameter, request.IpAddress));
                     umtParameter.IncrementVisits();
                 }
             }
-            
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Redirecting to original URL: {OriginalUrl} for code: {Code}.", url.OriginalUrl, request.Code);
-            return new RedirectToOriginalUrlResponse(url.OriginalUrl);
+        }
+
+        private async Task AddEngagementAndIncreaseScanCountForScanCodeIfExists(RedirectToOriginalUrl request, int urlId, CancellationToken cancellationToken = default)
+        {
+            if (request.IsBarcode is true)
+            {
+                var barcode = await _dbContext.Barcodes
+                    .Include(s => s.Url)
+                    .Where(s => s.UrlId == urlId)
+                    .FirstOrDefaultAsync(cancellationToken);
+                barcode?.IncrementScanCounter();
+            }
+
+            if (request.IsQrCode is true)
+            {
+                var qrCode = await _dbContext.QrCodes
+                    .Include(s => s.Url)
+                    .Where(s => s.UrlId == urlId)
+                    .FirstOrDefaultAsync(cancellationToken);
+                qrCode?.IncrementScanCounter();
+            }
         }
     }
 }

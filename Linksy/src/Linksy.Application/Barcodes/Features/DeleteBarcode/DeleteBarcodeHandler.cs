@@ -1,4 +1,8 @@
 ﻿using Linksy.Application.Abstractions;
+using Linksy.Application.Shared.BlobStorage;
+using Linksy.Application.Shared.Configuration;
+using Linksy.Application.Shared.ScanCodes;
+using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,17 +17,24 @@ namespace Linksy.Application.Barcodes.Features.DeleteBarcode
     {
         private readonly IBarcodeRepository _barcodeRepository;
         private readonly IContextService _contextService;
+        private readonly IScanCodeService _scanCodeService;
+        private readonly LinksyConfig _linksyConfig;
         private readonly ILogger<DeleteBarcodeHandler> _logger;
 
-        public DeleteBarcodeHandler(IBarcodeRepository barcodeRepository, IContextService contextService, ILogger<DeleteBarcodeHandler> logger)
+        public DeleteBarcodeHandler(IBarcodeRepository barcodeRepository, IContextService contextService, IScanCodeService scanCodeService, 
+            LinksyConfig linksyConfig, ILogger<DeleteBarcodeHandler> logger)
         {
             _barcodeRepository = barcodeRepository;
             _contextService = contextService;
+            _scanCodeService = scanCodeService;
+            _linksyConfig = linksyConfig;
             _logger = logger;
         }
         public async Task Handle(DeleteBarcode request, CancellationToken cancellationToken)
         {
             await _barcodeRepository.DeleteAsync(request.BarcodeId, request.IncludeUrlInDeletion, cancellationToken);
+            var fileName = _scanCodeService.GetScanCodeFileName(request.BarcodeId, nameof(Barcode));
+            await _scanCodeService.DeleteAsync(fileName, _linksyConfig.BlobStorage.BarcodesContainerName);
             _logger.LogInformation("Barcode with ID: {BarcodeId} was deletedwith include URL in deletion: {IncludeUrlInDeletion} by user with ID {UserId}.", 
                 request.BarcodeId, request.IncludeUrlInDeletion, _contextService.Identity!.Id);
         }

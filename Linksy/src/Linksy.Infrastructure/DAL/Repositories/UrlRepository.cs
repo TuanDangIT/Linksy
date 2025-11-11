@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,10 +18,10 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] inclues)
+        public async Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] includes)
         {
             var query = _dbContext.Urls.AsQueryable();
-            foreach(var include in inclues)
+            foreach(var include in includes)
             {
                 query = query.Include(include);
             }

@@ -1,5 +1,5 @@
 ﻿using Linksy.Application.Shared.Configuration;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.User;
 using Linksy.Domain.Enums;
 using Linksy.Infrastructure.DAL;
 using Microsoft.AspNetCore.Identity;

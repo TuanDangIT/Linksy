@@ -12,6 +12,8 @@ namespace Linksy.Application.Shared.Configuration
         public string LandingPagePrefixPath { get; set; } = string.Empty;
         public string FrontEndDomain { get; set; } = string.Empty;
         public TestUserConfig TestUser { get; set; } = default!;
+        public ScanCodeConfig ScanCode { get; set; } = default!;
+        public BlobStorageConfig BlobStorage { get; set; } = default!;
     }
 
     public class TestUserConfig
@@ -22,4 +24,16 @@ namespace Linksy.Application.Shared.Configuration
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
     }
+
+    public class ScanCodeConfig
+    {
+        public string QrCodeQueryParameter { get; set; } = string.Empty;
+        public string BarcodeQueryParameter { get; set; } = string.Empty;   
+    }
+
+    public class BlobStorageConfig
+    {
+        public string QrCodesContainerName { get; set; } = string.Empty;
+        public string BarcodesContainerName { get; set; } = string.Empty;
+    }   
 }

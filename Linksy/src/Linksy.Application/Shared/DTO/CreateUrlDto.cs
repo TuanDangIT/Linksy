@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Shared.DTO
 {
-    public record class CreateUrlDto(string OriginalUrl, string? CustomCode, List<UmtParameterDto>? UmtParameters);
+    public record class CreateUrlDto(string OriginalUrl, string? CustomCode, IEnumerable<string> Tags, List<UmtParameterDto>? UmtParameters);
 }

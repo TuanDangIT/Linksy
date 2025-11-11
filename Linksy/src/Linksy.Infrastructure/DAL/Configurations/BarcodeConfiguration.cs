@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.ScanCode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,7 +13,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Barcode> builder)
         {
-            builder.ToTable(s =>
+            builder.ToTable("Barcodes", s =>
             {
                 s.HasCheckConstraint("CK_Barcode_ScanCount", "\"ScanCount\" >= 0");
             });

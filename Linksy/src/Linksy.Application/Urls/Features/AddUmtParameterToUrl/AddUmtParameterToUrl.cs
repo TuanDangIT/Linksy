@@ -14,5 +14,6 @@ namespace Linksy.Application.Urls.Features.AddUmtParameterToUrl
         [SwaggerIgnore]
         public int UrlId { get; init; }
         public UmtParameterDto UmtParameter { get; init; } = default!;
+        //public 
     }
 }

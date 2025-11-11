@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.ScanCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,7 @@ namespace Linksy.Domain.Repositories
 {
     public interface IBarcodeRepository
     {
+        Task<Barcode?> GetByIdAsync(int barcodeId, CancellationToken cancellationToken = default);
         Task CreateAsync(Barcode barcode, CancellationToken cancellationToken = default);
         Task DeleteAsync(int barcodeId, bool includeUrlInDeletion, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);

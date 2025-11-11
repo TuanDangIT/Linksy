@@ -4,7 +4,8 @@ using Linksy.Application.Shared.BlobStorage;
 using Linksy.Application.Shared.Configuration;
 using Linksy.Application.Shared.ScanCodes;
 using Linksy.Domain.DomainServices;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.ScanCode;
+using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -22,28 +23,27 @@ namespace Linksy.Application.Barcodes.Features.CreateBarcode
         private readonly IContextService _contextService;
         private readonly LinksyConfig _linksyConfig;
         private readonly IScanCodeService _scanCodeService;
-        private readonly IBlobStorageService _blobStorageService;
         private readonly ILogger<CreateQrCodeHandler> _logger;
 
         public CreateBarcodeHandler(IBarcodeRepository barcodeRepository, IGenerateShotenedUrlService generateShotenedUrlService, IContextService contextService, 
-            LinksyConfig linksyConfig, IScanCodeService scanCodeService, IBlobStorageService blobStorageService, ILogger<CreateQrCodeHandler> logger)
+            LinksyConfig linksyConfig, IScanCodeService scanCodeService, ILogger<CreateQrCodeHandler> logger)
         {
             _barcodeRepository = barcodeRepository;
             _generateShotenedUrlService = generateShotenedUrlService;
             _contextService = contextService;
             _linksyConfig = linksyConfig;
             _scanCodeService = scanCodeService;
-            _blobStorageService = blobStorageService;
             _logger = logger;
         }
         public async Task<CreateBarcodeResponse> Handle(CreateBarcode request, CancellationToken cancellationToken)
         {
             var umtParameters = request.Url.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign));
             var userId = _contextService.Identity!.Id;
-            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.Url.OriginalUrl, request.Url.CustomCode, umtParameters, userId, cancellationToken);
+            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.Url.OriginalUrl, request.Url.CustomCode, request.Url.Tags, umtParameters, userId, cancellationToken);
             var barcode = Barcode.CreateBarcode(url, string.Empty, request.Tags, userId);
             await _barcodeRepository.CreateAsync(barcode, cancellationToken);
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code;
+            var barcodeQueryParameter = _linksyConfig.ScanCode.BarcodeQueryParameter + "=true";
+            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + barcodeQueryParameter;
             var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(barcode, linksyUrl, cancellationToken);
             barcode.SetImageUrlPath(barcodeUrlPath);
             await _barcodeRepository.UpdateAsync(cancellationToken);

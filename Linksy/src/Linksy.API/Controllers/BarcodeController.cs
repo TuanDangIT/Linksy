@@ -1,7 +1,10 @@
 ﻿using Linksy.API.API;
+using Linksy.Application.Barcodes.Features.BrowseBarcodes;
 using Linksy.Application.Barcodes.Features.CreateBarcode;
 using Linksy.Application.Barcodes.Features.DeleteBarcode;
 using Linksy.Application.Barcodes.Features.DownloadBarcode;
+using Linksy.Application.Barcodes.Features.ModifyTags;
+using Linksy.Application.QrCodes.Features.BrowseQrCodes;
 using Linksy.Application.QrCodes.Features.CreateQrCode;
 using Linksy.Application.QrCodes.Features.DownloadQrCode;
 using MediatR;
@@ -17,6 +20,10 @@ namespace Linksy.API.Controllers
         {
         }
 
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse<BrowseBarcodesResponse>>> BrowseBarcodes([FromQuery] BrowseBarcodes command, CancellationToken cancellationToken)
+            => Ok(await _mediator.Send(command, cancellationToken));
+
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CreateBarcodeResponse>>> CreateBarcode([FromBody] CreateBarcode command, CancellationToken cancellationToken)
             => Ok(await _mediator.Send(command, cancellationToken));
@@ -29,6 +36,13 @@ namespace Linksy.API.Controllers
         public async Task<ActionResult> DeleteBarcode([FromRoute] int barcodeId, [FromQuery] bool includeUrlInDeletion, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteBarcode(barcodeId, includeUrlInDeletion), cancellationToken);
+            return NoContent();
+        }
+
+        [HttpPut("{barcodeId:int}/tags")]
+        public async Task<ActionResult> UpdateBarcodeTags([FromRoute] int barcodeId, [FromBody] IEnumerable<string> tags, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new ModifyTags(barcodeId, tags), cancellationToken);
             return NoContent();
         }
     }

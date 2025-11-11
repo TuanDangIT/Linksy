@@ -1,5 +1,5 @@
 ﻿using Linksy.Application.Shared.Auth;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.User;
 using Linksy.Infrastructure.DAL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;

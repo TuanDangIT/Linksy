@@ -1,5 +1,8 @@
 ﻿using Linksy.Domain.Abstractions;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.LandingPage;
+using Linksy.Domain.Entities.ScanCode;
+using Linksy.Domain.Entities.Url;
+using Linksy.Domain.Entities.User;
 using Linksy.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

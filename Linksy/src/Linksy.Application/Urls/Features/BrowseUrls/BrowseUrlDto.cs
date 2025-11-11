@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.BrowseUrls
 {
-    public record class BrowseUrlDto(int Id, string? OriginalUrl, string Code, int VisitsCount, bool IsActive, bool HasQrCode, bool HasBarcode, bool HasLandingPageItem, DateTime CreatedAt, DateTime? UpdatedAt);
+    public record class BrowseUrlDto(int Id, string? OriginalUrl, string Code, int VisitsCount, bool IsActive, bool HasQrCode, bool HasBarcode, bool HasLandingPageItem, bool HasUmtParameter, IEnumerable<string>? Tags, DateTime CreatedAt, DateTime? UpdatedAt);
 }

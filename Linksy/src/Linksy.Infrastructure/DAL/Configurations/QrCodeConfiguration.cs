@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.ScanCode;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,10 +13,13 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<QrCode> builder)
         {
-            builder.ToTable(s =>
+            builder.ToTable("QrCodes", s =>
             {
                 s.HasCheckConstraint("CK_QrCode_ScanCount", "\"ScanCount\" >= 0");
             });
+            builder.HasOne(q => q.UmtParameter)
+                .WithOne(u => u.QrCode)
+                .HasForeignKey<QrCode>(u => u.UmtParameterId);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,6 +17,9 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public async Task<QrCode?> GetByIdAsync(int qrCodeId, CancellationToken cancellationToken = default)
+            => await _dbContext.QrCodes.FirstOrDefaultAsync(b => b.Id == qrCodeId, cancellationToken);
         public async Task CreateAsync(QrCode qrCode, CancellationToken cancellationToken = default)
         {
             await _dbContext.QrCodes.AddAsync(qrCode, cancellationToken);

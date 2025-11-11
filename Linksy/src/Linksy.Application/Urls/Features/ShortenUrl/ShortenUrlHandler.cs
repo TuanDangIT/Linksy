@@ -2,7 +2,7 @@
 using Linksy.Application.Shared.Configuration;
 using Linksy.Application.Urls.Exceptions;
 using Linksy.Domain.DomainServices;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.ShortenUrl
 {
-    internal class ShortenUrlHandler : ICommandHandler<ShortenUrl, ShortenedUrlResponse>
+    internal class ShortenUrlHandler : ICommandHandler<ShortenUrl, ShortenUrlResponse>
     {
         private readonly IGenerateShotenedUrlService _generateShotenedUrlService;
         private readonly IUrlRepository _urlRepository;
@@ -30,15 +30,15 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
             _contextService = contextService;
             _logger = logger;
         }
-        public async Task<ShortenedUrlResponse> Handle(ShortenUrl request, CancellationToken cancellationToken)
+        public async Task<ShortenUrlResponse> Handle(ShortenUrl request, CancellationToken cancellationToken)
         {
             var umtParameters = request.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign));
             var userId = _contextService.Identity!.Id;
-            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.OriginalUrl, request.CustomCode, umtParameters, userId, cancellationToken);
+            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.OriginalUrl, request.CustomCode, request.Tags, umtParameters, userId, cancellationToken);
             await _urlRepository.CreateAsync(url, cancellationToken);
             var shortenedUrl = _linksyConfig.BaseUrl + "/" + url.Code;
             _logger.LogInformation("URL shortened: {OriginalUrl} -> {ShortenedCode} by user with ID: {userId}.", request.OriginalUrl, shortenedUrl, userId);
-            return new ShortenedUrlResponse(url.Id, shortenedUrl);
+            return new ShortenUrlResponse(url.Id, shortenedUrl);
         }
     }
 }

@@ -5,7 +5,7 @@ using Linksy.Application.QrCodes.Exceptions;
 using Linksy.Application.QrCodes.Features.DownloadQrCode;
 using Linksy.Application.Shared.BlobStorage;
 using Linksy.Application.Shared.Configuration;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.ScanCode;
 using Linksy.Infrastructure.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

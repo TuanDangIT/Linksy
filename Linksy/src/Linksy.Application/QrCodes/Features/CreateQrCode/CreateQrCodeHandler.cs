@@ -3,7 +3,8 @@ using Linksy.Application.Abstractions;
 using Linksy.Application.Shared.Configuration;
 using Linksy.Application.Shared.ScanCodes;
 using Linksy.Domain.DomainServices;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.ScanCode;
+using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
@@ -37,10 +38,11 @@ namespace Linksy.Application.QrCodes.Features.CreateQrCode
         {
             var umtParameters = request.Url.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign));
             var userId = _contextService.Identity!.Id;
-            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.Url.OriginalUrl, request.Url.CustomCode, umtParameters, userId, cancellationToken);
+            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.Url.OriginalUrl, request.Url.CustomCode, request.Url.Tags, umtParameters, userId, cancellationToken);
             var qrCode = QrCode.CreateQrCode(url, string.Empty, request.Tags, userId);
             await _qrCodeRepository.CreateAsync(qrCode, cancellationToken);
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code;
+            var qrCodeQueryParameter = _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
+            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + qrCodeQueryParameter;
             var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(qrCode, linksyUrl, cancellationToken);
             qrCode.SetImageUrlPath(qrCodeUrlPath);
             await _qrCodeRepository.UpdateAsync(cancellationToken);

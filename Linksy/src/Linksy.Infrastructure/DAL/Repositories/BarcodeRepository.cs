@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,6 +17,10 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public async Task<Barcode?> GetByIdAsync(int barcodeId, CancellationToken cancellationToken = default)
+            => await _dbContext.Barcodes.FirstOrDefaultAsync(b => b.Id == barcodeId, cancellationToken);
+
         public async Task CreateAsync(Barcode barcode, CancellationToken cancellationToken = default)
         {
             await _dbContext.Barcodes.AddAsync(barcode, cancellationToken);

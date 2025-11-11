@@ -10,67 +10,60 @@ using System.Threading.Tasks;
 using Linksy.Infrastructure.Exceptions;
 
 namespace Linksy.Infrastructure.DAL.Handlers
-{
-    internal class GetUrlHandler : IQueryHandler<GetUrl, GetUrlResponse?>
     {
-        private readonly LinksyDbContext _dbContext;
-        private readonly IContextService _contextService;
-        private readonly ILogger<GetUrlHandler> _logger;
+        internal class GetUrlHandler : IQueryHandler<GetUrl, GetUrlResponse?>
+        {
+            private readonly LinksyDbContext _dbContext;
+            private readonly IContextService _contextService;
+            private readonly ILogger<GetUrlHandler> _logger;
 
-        public GetUrlHandler(LinksyDbContext dbContext, IContextService contextService, ILogger<GetUrlHandler> logger)
-        {
-            _dbContext = dbContext;
-            _contextService = contextService;
-            _logger = logger;
-        }
-        public async Task<GetUrlResponse?> Handle(GetUrl request, CancellationToken cancellationToken)
-        {
-            var url = await _dbContext.Urls
-                .Where(u => u.Id == request.Id)
-                .Include(u => u.QrCode)
-                .Include(u => u.Barcode)
-                .Include(u => u.LandingPage)
-                .Include(u => u.LandingPageItem)
-                    .ThenInclude(lpi => lpi!.LandingPage)
-                .Include(u => u.UmtParameters!)
-                    .ThenInclude(up => up.QrCode)
-                .AsNoTracking()
-                .Select(u => new GetUrlResponse(
-                    u.Id,
-                    u.OriginalUrl,
-                    u.Code,
-                    u.VisitCount,
-                    u.IsActive,
-                    u.QrCode == null ? null : new GetUrlQrCodeDto(
-                        u.QrCode.Id,
-                        u.QrCode.ImageUrlPath,
-                        u.QrCode.ScanCount,
-                        u.QrCode.CreatedAt,
-                        u.QrCode.UpdatedAt),
-                    u.Barcode == null ? null : new GetUrlBarcodeDto(
-                        u.Barcode.Id,
-                        u.Barcode.ImageUrlPath,
-                        u.Barcode.ScanCount,
-                        u.Barcode.CreatedAt,
-                        u.Barcode.UpdatedAt),
-                    u.LandingPage == null ? null : new GetUrlLandingPageDto(
-                        u.LandingPage.Id,
-                        u.LandingPage.Title,
-                        u.LandingPage.CreatedAt,
-                        u.LandingPage.UpdatedAt),
-                    u.LandingPageItem == null ? null : new GetUrlLandingPageItemDto(
-                        u.LandingPageItem.Id,
-                        u.LandingPageItem.LandingPage!.Id,
-                        u.LandingPageItem.LandingPage!.Title,
-                        u.LandingPageItem.CreatedAt,
-                        u.LandingPageItem.UpdatedAt),
-                    u.UmtParameters!.Select(up => new GetUrlUmtParameterDto(
+            public GetUrlHandler(LinksyDbContext dbContext, IContextService contextService, ILogger<GetUrlHandler> logger)
+            {
+                _dbContext = dbContext;
+                _contextService = contextService;
+                _logger = logger;
+            }
+
+            public async Task<GetUrlResponse?> Handle(GetUrl request, CancellationToken cancellationToken)
+            {
+                var url = await _dbContext.Urls
+                    .Where(u => u.Id == request.Id)
+                    .AsNoTracking()
+                    .Select(u => new GetUrlResponse(
+                        u.Id,
+                        u.OriginalUrl,
+                        u.Code,
+                        u.VisitCount,
+                        u.IsActive,
+                        u.TagsList,
+                        u.QrCode == null ? null : new GetUrlQrCodeDto(
+                            u.QrCode.Id,
+                            u.QrCode.ImageUrlPath,
+                            u.QrCode.ScanCount,
+                            u.QrCode.CreatedAt,
+                            u.QrCode.UpdatedAt),
+                        u.Barcode == null ? null : new GetUrlBarcodeDto(
+                            u.Barcode.Id,
+                            u.Barcode.ImageUrlPath,
+                            u.Barcode.ScanCount,
+                            u.Barcode.CreatedAt,
+                            u.Barcode.UpdatedAt),
+                        u.ImageLandingPageItems
+                            .Select(i => new GetUrlLandingPageItemDto(
+                                i.Id,
+                                i.Type.ToString(),
+                                i.ClickCount,
+                                i.LandingPageId,
+                                i.LandingPage.Title,
+                                i.CreatedAt,
+                                i.UpdatedAt)),
+                        u.UmtParameters!.Select(up => new GetUrlUmtParameterDto(
                         up.Id,
                         up.UmtSource,
                         up.UmtMedium,
                         up.UmtCampaign,
                         up.QrCode != null ? up.QrCode.Id : null,
-                        up.QrCode != null ? up.QrCode.ScanCount : null,  // Changed from duplicate Id
+                        up.QrCode != null ? up.QrCode.ScanCount : null,  
                         up.CreatedAt,
                         up.UpdatedAt))))
                 .FirstOrDefaultAsync(cancellationToken);

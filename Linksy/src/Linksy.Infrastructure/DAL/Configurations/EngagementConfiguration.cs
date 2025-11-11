@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.Tracking;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -13,10 +13,9 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<Engagement> builder)
         {
-            builder.HasOne(e => e.Url)
-                .WithMany(u => u.Engagements)
-                .HasForeignKey(e => e.UrlId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.UseTpcMappingStrategy();
+            builder.Property(e => e.IpAddress)
+                .HasMaxLength(64);
             builder.Property(e => e.EngagedAt)
                 .IsRequired();
         }

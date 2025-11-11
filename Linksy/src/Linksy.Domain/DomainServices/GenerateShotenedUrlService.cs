@@ -1,4 +1,4 @@
-﻿using Linksy.Domain.Entities;
+﻿using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Exceptions;
 using Linksy.Domain.Repositories;
 using System;
@@ -23,7 +23,7 @@ namespace Linksy.Domain.DomainServices
             _timeProvider = timeProvider;
             _urlRepository = urlRepository;
         }
-        public async Task<Url> GenerateShortenedUrl(string originalUrl, string? customCode, IEnumerable<UmtParameter>? umtParameters, int userId, CancellationToken cancellationToken = default)
+        public async Task<Url> GenerateShortenedUrl(string originalUrl, string? customCode, IEnumerable<string> tags, IEnumerable<UmtParameter>? umtParameters, int userId, CancellationToken cancellationToken = default)
         {
             Url url;
             if (customCode is not null)
@@ -33,18 +33,18 @@ namespace Linksy.Domain.DomainServices
                 {
                     throw new CustomCodeInUseException(customCode);
                 }
-                url = GenerateShortenedUrlWithCustomCode(originalUrl, customCode, umtParameters, userId);
+                url = GenerateShortenedUrlWithCustomCode(originalUrl, customCode, tags, umtParameters, userId);
             }
             else
             {
-                url = GenerateShortenedUrl(originalUrl, umtParameters, userId);
+                url = GenerateShortenedUrl(originalUrl, tags, umtParameters, userId);
             }
             return url;
         }
-        private Url GenerateShortenedUrl(string originalUrl, IEnumerable<UmtParameter>? umtParameters, int userId)
-            => Url.CreateShortenedUrl(originalUrl, GenerateCode(originalUrl), umtParameters, userId);
-        private Url GenerateShortenedUrlWithCustomCode(string originalUrl, string customCode, IEnumerable<UmtParameter>? umtParameters, int userId)
-            => Url.CreateShortenedUrl(originalUrl, customCode, umtParameters, userId);
+        private Url GenerateShortenedUrl(string originalUrl, IEnumerable<string> tags, IEnumerable<UmtParameter>? umtParameters, int userId)
+            => Url.CreateShortenedUrl(originalUrl, GenerateCode(originalUrl), tags, umtParameters, userId);
+        private Url GenerateShortenedUrlWithCustomCode(string originalUrl, string customCode, IEnumerable<string> tags, IEnumerable<UmtParameter>? umtParameters, int userId)
+            => Url.CreateShortenedUrl(originalUrl, customCode, tags, umtParameters, userId);
         private string GenerateCode(string url)
         {
             using (var sha256 = SHA256.Create())

@@ -1,7 +1,7 @@
 ﻿using Linksy.Application.Abstractions;
 using Linksy.Application.Shared.Auth;
 using Linksy.Application.Users.DTO;
-using Linksy.Domain.Entities;
+using Linksy.Domain.Entities.User;
 using Linksy.Domain.Enums;
 using Linksy.Infrastructure.DAL;
 using Linksy.Infrastructure.Exceptions;

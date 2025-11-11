@@ -11,5 +11,6 @@ namespace Linksy.Application.Shared.BlobStorage
     {
         Task<string> UploadAsync(IFormFile blob, string fileName, string containerName, CancellationToken cancellationToken = default);
         Task<BlobStorageDto> DownloadAsync(string fileName, string containerName, CancellationToken cancellationToken = default);
+        Task DeleteAsync(string fileName, string containerName, CancellationToken cancellationToken = default);
     }
 }
