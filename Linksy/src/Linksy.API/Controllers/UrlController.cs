@@ -1,5 +1,6 @@
 ﻿using Linksy.API.API;
 using Linksy.Application.Shared.DTO;
+using Linksy.Application.UmtParameters.Features.AddQrCodeToUmtParameter;
 using Linksy.Application.Urls.Features.AddBarcode;
 using Linksy.Application.Urls.Features.AddQrCode;
 using Linksy.Application.Urls.Features.AddUmtParameterToUrl;
@@ -36,7 +37,7 @@ namespace Linksy.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("/{code}")]
-        public async Task<ActionResult<ApiResponse<object>>> RedirectToOriginalUrl([FromRoute] string code, [FromQuery] string? umtSource, 
+        public async Task<ActionResult<ApiResponse<object>>> RedirectToOriginalUrl([FromRoute] string code, [FromQuery] string? umtSource,
             [FromQuery] string? umtMedium, [FromQuery] string? umtCampaign, [FromQuery] bool? isQrCode, [FromQuery] bool? isBarcode, CancellationToken cancellationToken)
         {
             var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -100,6 +101,15 @@ namespace Linksy.API.Controllers
         {
             await _mediator.Send(command with { UrlId = urlId }, cancellationToken);
             return Ok();
+        }
+
+        [HttpPost("{urlId:int}/umt-parameters/{umtParameterId:int}/qrcode")]
+        public async Task<ActionResult<ApiResponse<AddQrCodeToUmtParameterResponse>>> GenerateQrCodeForUmtParameter([FromRoute] int urlId, [FromRoute] int umtParameterId,
+            [FromBody] AddQrCodeToUmtParameter command, CancellationToken cancellationToken)
+        {
+            command = command with { UrlId = urlId, UmtParameterId = umtParameterId };
+            var result = await _mediator.Send(command, cancellationToken);
+            return Ok(result);
         }
     }
 }

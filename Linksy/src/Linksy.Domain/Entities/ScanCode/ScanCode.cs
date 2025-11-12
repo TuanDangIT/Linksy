@@ -9,8 +9,6 @@ namespace Linksy.Domain.Entities.ScanCode
 {
     public abstract class ScanCode : BaseEntityWithMultitenancy, IAuditable
     {
-        public Url.Url Url { get; private set; } = default!;
-        public int UrlId { get; private set; }
         public bool IsActive { get; private set; } = true;
         public string ImageUrlPath { get; private set; } = string.Empty;
         public int ScanCount { get; private set; } = 0;
@@ -22,9 +20,8 @@ namespace Linksy.Domain.Entities.ScanCode
         } 
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        protected ScanCode(Url.Url url, string imageUrlPath, IEnumerable<string>? tags, int userId) : base(userId)
+        protected ScanCode(string imageUrlPath, IEnumerable<string>? tags, int userId) : base(userId)
         {
-            Url = url;
             ImageUrlPath = imageUrlPath;
             TagsList = tags?.ToList();
         }

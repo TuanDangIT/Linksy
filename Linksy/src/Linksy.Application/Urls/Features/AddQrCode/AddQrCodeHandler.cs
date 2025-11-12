@@ -16,16 +16,16 @@ namespace Linksy.Application.Urls.Features.AddQrCode
     internal class AddQrCodeHandler : ICommandHandler<AddQrCode, AddQrCodeResponse>
     {
         private readonly IUrlRepository _urlRepository;
-        private readonly IScanCodeService _scanCodeServices;
+        private readonly IScanCodeService _scanCodeService;
         private readonly IContextService _contextService;
         private readonly LinksyConfig _linksyConfig;
         private readonly ILogger<AddQrCodeHandler> _logger;
 
-        public AddQrCodeHandler(IUrlRepository urlRepository, IScanCodeService scanCodeServices, IContextService contextService, LinksyConfig linksyConfig,
+        public AddQrCodeHandler(IUrlRepository urlRepository, IScanCodeService scanCodeService, IContextService contextService, LinksyConfig linksyConfig,
             ILogger<AddQrCodeHandler> logger)
         {
             _urlRepository = urlRepository;
-            _scanCodeServices = scanCodeServices;
+            _scanCodeService = scanCodeService;
             _contextService = contextService;
             _linksyConfig = linksyConfig;
             _logger = logger;
@@ -43,7 +43,7 @@ namespace Linksy.Application.Urls.Features.AddQrCode
             await _urlRepository.UpdateAsync(cancellationToken);
             var qrCodeQueryParameter = _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
             var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + qrCodeQueryParameter;
-            var (qrCodeUrlPath, fileName) = await _scanCodeServices.GenerateQrCodeAsync(qrCode, linksyUrl, cancellationToken);
+            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(qrCode, linksyUrl, cancellationToken);
             qrCode.SetImageUrlPath(qrCodeUrlPath);
             await _urlRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("QR code added to URL with ID: {UrlId} by user with ID: {UserId}.", request.UrlId, userId);

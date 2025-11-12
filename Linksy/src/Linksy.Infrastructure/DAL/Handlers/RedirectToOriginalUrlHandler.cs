@@ -51,12 +51,14 @@ namespace Linksy.Infrastructure.DAL.Handlers
             if (request.UmtParameter is not null)
             {
                 var umtParameter = await _dbContext.UmtParameters
+                    .IgnoreQueryFilters()
                     .Include(u => u.Url)
-                    .Where(u => u.UrlId == urlId)
-                    .Where(u => u.UmtSource == request.UmtParameter.UmtSource &&
+                    .Where(u => u.UrlId == urlId &&
+                        u.UmtSource == request.UmtParameter.UmtSource &&
                         u.UmtMedium == request.UmtParameter.UmtMedium &&
                         u.UmtCampaign == request.UmtParameter.UmtCampaign)
                     .FirstOrDefaultAsync(cancellationToken);
+
                 if (umtParameter is not null)
                 {
                     umtParameter.AddEngagement(UmtParameterEngagement.CreateUmtEngagementParameter(umtParameter, request.IpAddress));
@@ -70,6 +72,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             if (request.IsBarcode is true)
             {
                 var barcode = await _dbContext.Barcodes
+                    .IgnoreQueryFilters()
                     .Include(s => s.Url)
                     .Where(s => s.UrlId == urlId)
                     .FirstOrDefaultAsync(cancellationToken);
@@ -78,10 +81,25 @@ namespace Linksy.Infrastructure.DAL.Handlers
 
             if (request.IsQrCode is true)
             {
-                var qrCode = await _dbContext.QrCodes
-                    .Include(s => s.Url)
-                    .Where(s => s.UrlId == urlId)
-                    .FirstOrDefaultAsync(cancellationToken);
+                var query = _dbContext.QrCodes
+                    .IgnoreQueryFilters()
+                    .AsQueryable();
+                if (request.UmtParameter is not null)
+                {
+                    query = query
+                        .Include(q => q.UmtParameter)
+                        .Where(q => q.UmtParameter != null &&
+                            q.UmtParameter.UmtSource == request.UmtParameter.UmtSource &&
+                            q.UmtParameter.UmtMedium == request.UmtParameter.UmtMedium &&
+                            q.UmtParameter.UmtCampaign == request.UmtParameter.UmtCampaign);
+                }
+                else
+                {
+                    query = query
+                        .Include(q => q.Url)
+                        .Where(q => q.UrlId == urlId);
+                }
+                var qrCode = await query.FirstOrDefaultAsync(cancellationToken);
                 qrCode?.IncrementScanCounter();
             }
         }

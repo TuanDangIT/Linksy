@@ -11,8 +11,11 @@ namespace Linksy.Domain.Entities.ScanCode
     {
         private readonly List<BarcodeEngagement> _engagements = [];
         public IEnumerable<BarcodeEngagement> Engagements => _engagements;
-        private Barcode(Url.Url url, string imageUrl, IEnumerable<string>? tags, int userId) : base(url, imageUrl, tags, userId)
+        public Url.Url Url { get; private set; } = default!;
+        public int UrlId { get; private set; }
+        private Barcode(Url.Url url, string imageUrl, IEnumerable<string>? tags, int userId) : base(imageUrl, tags, userId)
         {
+            Url = url;
         }
         private Barcode() { }
         public static Barcode CreateBarcode(Url.Url url, string imageUrl, IEnumerable<string>? tags, int userId)
