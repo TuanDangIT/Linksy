@@ -15,7 +15,7 @@ namespace Linksy.Domain.Entities.LandingPage
         public string FontColor { get; private set; } = string.Empty;
         public Url.Url Url { get; private set; } = default!;
         public int UrlId { get; private set; }
-        private UrlLandingPageItem(LandingPageItemType type, LandingPage landingPage, int order, string content, string fontColor, string backgroundColor, Url.Url url) : base(type, landingPage, order)
+        private UrlLandingPageItem(LandingPageItemType type, string content, string fontColor, string backgroundColor, Url.Url url, int userId) : base(type, userId)
         {
             Content = content;
             FontColor = fontColor;
@@ -25,7 +25,7 @@ namespace Linksy.Domain.Entities.LandingPage
         private UrlLandingPageItem() : base()
         {
         }
-        public static UrlLandingPageItem CreateUrlLandingPageItem(LandingPageItemType type, LandingPage landingPage, int order, string content, string fontColor, string backgroundColor, Url.Url url)
-            => new(type, landingPage, order, content, fontColor, backgroundColor, url);
+        public static UrlLandingPageItem CreateUrlLandingPageItem(LandingPageItemType type, string content, string fontColor, string backgroundColor, Url.Url url, int userId)
+            => new(type, content, fontColor, backgroundColor, url, userId);
     }
 }

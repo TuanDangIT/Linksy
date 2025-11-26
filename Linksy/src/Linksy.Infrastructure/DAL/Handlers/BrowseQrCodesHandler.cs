@@ -38,8 +38,31 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .AsNoTracking()
                 .AsQueryable();
 
-            var result = await _paginationService.PaginateAsync(query, request.PageNumber, request.PageSize, request.Filters, request.Orders, 
-                q => new BrowseQrCodeDto(q.Id, new BrowseScanCodeUrlDto(q.Url.OriginalUrl, q.Url.Code), q.UmtParameter != null, q.Url.IsActive, q.Url.TagsList, q.ScanCount, q.CreatedAt, q.UpdatedAt), cancellationToken);
+            var result = await _paginationService.PaginateAsync(
+                query,
+                request.PageNumber,
+                request.PageSize,
+                request.Filters,
+                request.Orders,
+                q => q.Url != null
+                    ? new BrowseQrCodeDto(
+                        q.Id,
+                        new BrowseScanCodesUrlDto(q.Url.Id, q.Url.OriginalUrl, q.Url.Code),
+                        q.Url.IsActive,
+                        q.Url.TagsList,
+                        q.ScanCount,
+                        q.CreatedAt,
+                        q.UpdatedAt)
+                    : new BrowseQrCodeDto(
+                        q.Id,
+                        new BrowseQrCodesUmtParameterDto(q.UmtParameter!.Id, q.UmtParameter.UmtSource, q.UmtParameter.UmtMedium, q.UmtParameter.UmtCampaign),
+                        q.UmtParameter.IsActive, 
+                        q.TagsList, 
+                        q.ScanCount,
+                        q.CreatedAt,
+                        q.UpdatedAt),
+                cancellationToken);
+
             _logger.LogInformation("Browsed QR Codes by user with ID {UserId}.", _contextService.Identity!.Id);
             return new BrowseQrCodeResponse(result);
         }

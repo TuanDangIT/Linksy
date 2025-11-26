@@ -17,6 +17,13 @@ namespace Linksy.Infrastructure.DAL.Configurations
             {
                 s.HasCheckConstraint("CK_Barcode_ScanCount", "\"ScanCount\" >= 0");
             });
+            builder.OwnsOne(b => b.ScanCodeImage, s =>
+            {
+                s.Property(s => s.FileName)
+                    .HasMaxLength(256);
+                s.Property(s => s.UrlPath)
+                    .HasMaxLength(512);
+            });
         }
     }
 }

@@ -10,14 +10,14 @@ namespace Linksy.Domain.Entities.LandingPage
     public class YouTubeLandingPageItem : LandingPageItem
     {
         public string VideoUrl { get; set; } = string.Empty;
-        private YouTubeLandingPageItem(LandingPageItemType type, LandingPage landingPage, int order, string videoUrl) : base(type, landingPage, order)
+        private YouTubeLandingPageItem(LandingPageItemType type, string videoUrl, int userId) : base(type, userId)
         {
             VideoUrl = videoUrl;
         }
         private YouTubeLandingPageItem() : base()
         {
         }
-        public static YouTubeLandingPageItem CreateYouTubeLandingPageItem(LandingPageItemType type, LandingPage landingPage, int order, string videoUrl)
-            => new(type, landingPage, order, videoUrl);
+        public static YouTubeLandingPageItem CreateYouTubeLandingPageItem(LandingPageItemType type, string videoUrl, int userId)
+            => new(type, videoUrl, userId);
     }
 }

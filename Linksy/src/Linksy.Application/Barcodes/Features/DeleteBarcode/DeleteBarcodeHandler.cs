@@ -32,11 +32,17 @@ namespace Linksy.Application.Barcodes.Features.DeleteBarcode
         }
         public async Task Handle(DeleteBarcode request, CancellationToken cancellationToken)
         {
-            await _barcodeRepository.DeleteAsync(request.BarcodeId, request.IncludeUrlInDeletion, cancellationToken);
-            var fileName = _scanCodeService.GetScanCodeFileName(request.BarcodeId, nameof(Barcode));
-            await _scanCodeService.DeleteAsync(fileName, _linksyConfig.BlobStorage.BarcodesContainerName);
+            var barcode = await _barcodeRepository.GetByIdAsync(request.BarcodeId, cancellationToken);
+            if(barcode is null)
+            {
+                return;
+            }   
+            var fileName = barcode.ScanCodeImage.FileName;
+            var userId = _contextService.Identity!.Id;
+            await _scanCodeService.DeleteAsync(fileName, userId, cancellationToken);
+            await _barcodeRepository.DeleteAsync(request.BarcodeId, request.IncludeUrlInDeletion);
             _logger.LogInformation("Barcode with ID: {BarcodeId} was deletedwith include URL in deletion: {IncludeUrlInDeletion} by user with ID {UserId}.", 
-                request.BarcodeId, request.IncludeUrlInDeletion, _contextService.Identity!.Id);
+                request.BarcodeId, request.IncludeUrlInDeletion, userId);
         }
     }
 }

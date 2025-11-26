@@ -21,8 +21,9 @@ namespace Linksy.Infrastructure.DAL.Handlers
         private readonly IBlobStorageService _blobStorageService;
         private readonly IContextService _contextService;
         private readonly ILogger<DownloadBarcodeHandler> _logger;
-        private const string _containerName = "barcodes";
-        private const string _pngExtension = ".png";
+        //private const string _containerName = "barcodes";
+        //private const string _pngExtension = ".png";
+        private string _containerName;
 
         public DownloadBarcodeHandler(LinksyDbContext dbContext, IBlobStorageService blobStorageService, IContextService contextService, ILogger<DownloadBarcodeHandler> logger)
         {
@@ -30,6 +31,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             _blobStorageService = blobStorageService;
             _contextService = contextService;
             _logger = logger;
+            _containerName = $"user-{_contextService.Identity!.Id}";
         }
         public async Task<FileStreamResult> Handle(DownloadBarcode request, CancellationToken cancellationToken)
         {
@@ -37,11 +39,10 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(b => b.Id == request.BarcodeId, cancellationToken) ?? 
                 throw new BarcodeNotFoundException(request.BarcodeId);
-            var imageUrlPath = barcode.ImageUrlPath;
-            var dto = await _blobStorageService.DownloadAsync($"{nameof(Barcode)}-{barcode.Id}{_pngExtension}", _containerName, cancellationToken);
+            var dto = await _blobStorageService.DownloadAsync(barcode.ScanCodeImage.FileName, _containerName, cancellationToken);
             var fileResult = new FileStreamResult(dto.FileStream, dto.ContentType)
             {
-                FileDownloadName = $"{nameof(Barcode)}-{barcode.Id}{_pngExtension}"
+                FileDownloadName = barcode.ScanCodeImage.FileName
             };  
             _logger.LogInformation("Barcode with ID: {BarcodeId} downloaded successfully by user with ID: {UserId}.", request.BarcodeId, _contextService.Identity!.Id);
             return fileResult;

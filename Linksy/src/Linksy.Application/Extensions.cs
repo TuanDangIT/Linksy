@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Linksy.Application.Shared.Behaviors;
 using Linksy.Application.Shared.ScanCodes;
+using Linksy.Application.Urls.Features.ShortenUrl;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,11 @@ namespace Linksy.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
+            ValidatorOptions.Global.LanguageManager.Enabled = false;
+            services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
+                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)), publicOnly: false)
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
             services.AddMediatR(cfg =>
             {
                 cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
@@ -22,10 +28,6 @@ namespace Linksy.Application
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddSingleton(TimeProvider.System);
-            services.Scan(i => i.FromAssemblies(Assembly.GetExecutingAssembly())
-                .AddClasses(c => c.AssignableTo(typeof(IValidator<>)))
-                .AsImplementedInterfaces()
-                .WithScopedLifetime());
             return services;
         }
     }

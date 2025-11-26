@@ -23,7 +23,7 @@ namespace Linksy.Domain.DomainServices
             _timeProvider = timeProvider;
             _urlRepository = urlRepository;
         }
-        public async Task<Url> GenerateShortenedUrl(string originalUrl, string? customCode, IEnumerable<string> tags, IEnumerable<UmtParameter>? umtParameters, int userId, CancellationToken cancellationToken = default)
+        public async Task<Url> GenerateShortenedUrlAsync(string originalUrl, string? customCode, IEnumerable<string>? tags, IEnumerable<UmtParameter>? umtParameters, int userId, CancellationToken cancellationToken = default)
         {
             Url url;
             if (customCode is not null)
@@ -41,9 +41,9 @@ namespace Linksy.Domain.DomainServices
             }
             return url;
         }
-        private Url GenerateShortenedUrl(string originalUrl, IEnumerable<string> tags, IEnumerable<UmtParameter>? umtParameters, int userId)
+        private Url GenerateShortenedUrl(string originalUrl, IEnumerable<string>? tags, IEnumerable<UmtParameter>? umtParameters, int userId)
             => Url.CreateShortenedUrl(originalUrl, GenerateCode(originalUrl), tags, umtParameters, userId);
-        private Url GenerateShortenedUrlWithCustomCode(string originalUrl, string customCode, IEnumerable<string> tags, IEnumerable<UmtParameter>? umtParameters, int userId)
+        private Url GenerateShortenedUrlWithCustomCode(string originalUrl, string customCode, IEnumerable<string>? tags, IEnumerable<UmtParameter>? umtParameters, int userId)
             => Url.CreateShortenedUrl(originalUrl, customCode, tags, umtParameters, userId);
         private string GenerateCode(string url)
         {

@@ -12,18 +12,27 @@ namespace Linksy.Application.QrCodes.Features.BrowseQrCodes
         public int Id { get; init; }
         public bool IsActive { get; init; }
         public IEnumerable<string>? Tags { get; init; }
-        public BrowseScanCodeUrlDto Url { get; init; } = default!;
-        public bool HasUmtParameters { get; init; }
+        public BrowseScanCodesUrlDto? Url { get; init; } 
+        public BrowseQrCodesUmtParameterDto? UmtParameter { get; init; }
         public int ScanCount { get; init; } 
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
-        public BrowseQrCodeDto(int id, BrowseScanCodeUrlDto url, bool hasUmtParameters, bool isActive, IEnumerable<string>? tags, int scanCount, DateTime createdAt, DateTime? updatedAt)
+        public BrowseQrCodeDto(int id, BrowseScanCodesUrlDto url,  bool isActive, IEnumerable<string>? tags, int scanCount, DateTime createdAt, DateTime? updatedAt)
         {
             Id = id;
             IsActive = isActive;
             Url = url;
             Tags = tags;
-            HasUmtParameters = hasUmtParameters;
+            ScanCount = scanCount;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
+        }
+        public BrowseQrCodeDto(int id, BrowseQrCodesUmtParameterDto umtParameter, bool isActive, IEnumerable<string>? tags, int scanCount, DateTime createdAt, DateTime? updatedAt)
+        {
+            Id = id;
+            IsActive = isActive;
+            UmtParameter = umtParameter;
+            Tags = tags;
             ScanCount = scanCount;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;

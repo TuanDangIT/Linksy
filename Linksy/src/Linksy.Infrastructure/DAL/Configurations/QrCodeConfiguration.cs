@@ -19,7 +19,15 @@ namespace Linksy.Infrastructure.DAL.Configurations
             });
             builder.HasOne(q => q.UmtParameter)
                 .WithOne(u => u.QrCode)
-                .HasForeignKey<QrCode>(u => u.UmtParameterId);
+                .HasForeignKey<QrCode>(u => u.UmtParameterId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.OwnsOne(q => q.ScanCodeImage, s =>
+            {
+                s.Property(s => s.FileName)
+                    .HasMaxLength(256);
+                s.Property(s => s.UrlPath)
+                    .HasMaxLength(512);
+            });
         }
     }
 }

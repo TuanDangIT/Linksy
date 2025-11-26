@@ -38,10 +38,6 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
-                    b.Property<string>("BackgroundImageUrl")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -61,11 +57,7 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<int>("EngagementCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ImageUrlPath")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("IsPublished")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Tags")
@@ -130,6 +122,9 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LandingPageId");
@@ -157,14 +152,6 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ImageUrlPath")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("ScanCount")
                         .HasColumnType("integer");
@@ -244,6 +231,9 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("UmtCampaign")
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
@@ -260,6 +250,9 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UrlId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.Property<int>("VisitCount")
@@ -570,12 +563,8 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<string>("AltText")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("ImageUrlPath")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("ImageLandingPageItem_AltText");
 
                     b.Property<int?>("UrlId")
                         .HasColumnType("integer");
@@ -598,17 +587,21 @@ namespace Linksy.Infrastructure.DAL.Migrations
 
                     b.Property<string>("BackgroundColor")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("TextLandingPageItem_BackgroundColor");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                        .HasColumnType("character varying(1024)")
+                        .HasColumnName("TextLandingPageItem_Content");
 
                     b.Property<string>("FontColor")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("TextLandingPageItem_FontColor");
 
                     b.ToTable(t =>
                         {
@@ -627,17 +620,20 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<string>("BackgroundColor")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("UrlLandingPageItem_BackgroundColor");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("UrlLandingPageItem_Content");
 
                     b.Property<string>("FontColor")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("UrlLandingPageItem_FontColor");
 
                     b.Property<int>("UrlId")
                         .HasColumnType("integer");
@@ -649,15 +645,6 @@ namespace Linksy.Infrastructure.DAL.Migrations
                             t.HasCheckConstraint("CK_LandingPageItem_ClickCount", "\"ClickCount\" >= 0");
 
                             t.HasCheckConstraint("CK_LandingPageItem_Order", "\"Order\" >= 0");
-
-                            t.Property("BackgroundColor")
-                                .HasColumnName("UrlLandingPageItem_BackgroundColor");
-
-                            t.Property("Content")
-                                .HasColumnName("UrlLandingPageItem_Content");
-
-                            t.Property("FontColor")
-                                .HasColumnName("UrlLandingPageItem_FontColor");
 
                             t.Property("UrlId")
                                 .HasColumnName("UrlLandingPageItem_UrlId");
@@ -673,7 +660,8 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.Property<string>("VideoUrl")
                         .IsRequired()
                         .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("YoutubeLandingPageItem_VideoUrl");
 
                     b.ToTable(t =>
                         {
@@ -783,6 +771,59 @@ namespace Linksy.Infrastructure.DAL.Migrations
                     b.ToTable("UrlEngagements", (string)null);
                 });
 
+            modelBuilder.Entity("Linksy.Domain.Entities.LandingPage.LandingPage", b =>
+                {
+                    b.OwnsOne("Linksy.Domain.ValueObjects.Image", "BackgroundImage", b1 =>
+                        {
+                            b1.Property<int>("LandingPageId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("FileName")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)");
+
+                            b1.Property<string>("UrlPath")
+                                .IsRequired()
+                                .HasMaxLength(512)
+                                .HasColumnType("character varying(512)");
+
+                            b1.HasKey("LandingPageId");
+
+                            b1.ToTable("LaningPages");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LandingPageId");
+                        });
+
+                    b.OwnsOne("Linksy.Domain.ValueObjects.Image", "LogoImage", b1 =>
+                        {
+                            b1.Property<int>("LandingPageId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("FileName")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)");
+
+                            b1.Property<string>("UrlPath")
+                                .IsRequired()
+                                .HasMaxLength(512)
+                                .HasColumnType("character varying(512)");
+
+                            b1.HasKey("LandingPageId");
+
+                            b1.ToTable("LaningPages");
+
+                            b1.WithOwner()
+                                .HasForeignKey("LandingPageId");
+                        });
+
+                    b.Navigation("BackgroundImage");
+
+                    b.Navigation("LogoImage");
+                });
+
             modelBuilder.Entity("Linksy.Domain.Entities.LandingPage.LandingPageItem", b =>
                 {
                     b.HasOne("Linksy.Domain.Entities.LandingPage.LandingPage", "LandingPage")
@@ -873,6 +914,34 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .WithMany("ImageLandingPageItems")
                         .HasForeignKey("UrlId");
 
+                    b.OwnsOne("Linksy.Domain.ValueObjects.Image", "Image", b1 =>
+                        {
+                            b1.Property<int>("ImageLandingPageItemId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("FileName")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)")
+                                .HasColumnName("ImageLandingPageItem_Image_FileName");
+
+                            b1.Property<string>("UrlPath")
+                                .IsRequired()
+                                .HasMaxLength(512)
+                                .HasColumnType("character varying(512)")
+                                .HasColumnName("ImageLandingPageItem_Image_UrlPath");
+
+                            b1.HasKey("ImageLandingPageItemId");
+
+                            b1.ToTable("LandingPageItems");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ImageLandingPageItemId");
+                        });
+
+                    b.Navigation("Image")
+                        .IsRequired();
+
                     b.Navigation("Url");
                 });
 
@@ -895,6 +964,32 @@ namespace Linksy.Infrastructure.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("Linksy.Domain.ValueObjects.Image", "ScanCodeImage", b1 =>
+                        {
+                            b1.Property<int>("BarcodeId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("FileName")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)");
+
+                            b1.Property<string>("UrlPath")
+                                .IsRequired()
+                                .HasMaxLength(512)
+                                .HasColumnType("character varying(512)");
+
+                            b1.HasKey("BarcodeId");
+
+                            b1.ToTable("Barcodes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BarcodeId");
+                        });
+
+                    b.Navigation("ScanCodeImage")
+                        .IsRequired();
+
                     b.Navigation("Url");
                 });
 
@@ -902,12 +997,39 @@ namespace Linksy.Infrastructure.DAL.Migrations
                 {
                     b.HasOne("Linksy.Domain.Entities.Url.UmtParameter", "UmtParameter")
                         .WithOne("QrCode")
-                        .HasForeignKey("Linksy.Domain.Entities.ScanCode.QrCode", "UmtParameterId");
+                        .HasForeignKey("Linksy.Domain.Entities.ScanCode.QrCode", "UmtParameterId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Linksy.Domain.Entities.Url.Url", "Url")
                         .WithOne("QrCode")
                         .HasForeignKey("Linksy.Domain.Entities.ScanCode.QrCode", "UrlId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.OwnsOne("Linksy.Domain.ValueObjects.Image", "ScanCodeImage", b1 =>
+                        {
+                            b1.Property<int>("QrCodeId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("FileName")
+                                .IsRequired()
+                                .HasMaxLength(256)
+                                .HasColumnType("character varying(256)");
+
+                            b1.Property<string>("UrlPath")
+                                .IsRequired()
+                                .HasMaxLength(512)
+                                .HasColumnType("character varying(512)");
+
+                            b1.HasKey("QrCodeId");
+
+                            b1.ToTable("QrCodes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QrCodeId");
+                        });
+
+                    b.Navigation("ScanCodeImage")
+                        .IsRequired();
 
                     b.Navigation("UmtParameter");
 

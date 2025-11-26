@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.Swagger
@@ -50,6 +51,11 @@ namespace Linksy.Infrastructure.Swagger
                         Array.Empty<string>()
                     }
                 });
+
+                //options.TagActionsBy(api =>
+                //[
+                //    ToKebabCase(api.ActionDescriptor.RouteValues["controller"] ?? string.Empty)
+                //]);
             });
             return services;
         }
@@ -66,5 +72,18 @@ namespace Linksy.Infrastructure.Swagger
             });
             return app;
         }
+        //private static string ToKebabCase(string value)
+        //{
+        //    if (string.IsNullOrEmpty(value))
+        //        return value;
+
+        //    return Regex.Replace(
+        //        value,
+        //        "(?<!^)([A-Z][a-z]|(?<=[a-z])[A-Z])",
+        //        "-$1",
+        //        RegexOptions.Compiled)
+        //        .Trim()
+        //        .ToLower();
+        //}
     }
 }

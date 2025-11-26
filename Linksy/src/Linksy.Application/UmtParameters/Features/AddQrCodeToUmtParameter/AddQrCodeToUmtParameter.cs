@@ -13,9 +13,6 @@ namespace Linksy.Application.UmtParameters.Features.AddQrCodeToUmtParameter
     {
         [NotMapped]
         [SwaggerIgnore]
-        public int UrlId { get; init; }
-        [NotMapped]
-        [SwaggerIgnore]
         public int UmtParameterId { get; init; }
         public IEnumerable<string>? Tags { get; init; } = [];
     }

@@ -12,7 +12,7 @@ namespace Linksy.Application.Barcodes.Features.DownloadBarcode
         public DownloadBarcodeValidator()
         {
             RuleFor(d => d.BarcodeId)
-                 .NotNull()
+                .NotNull()
                 .NotEmpty()
                 .GreaterThan(0);
         }

@@ -4,6 +4,7 @@ using Linksy.Application.Shared.ScanCodes;
 using Linksy.Application.Urls.Exceptions;
 using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
+using Linksy.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,13 +39,11 @@ namespace Linksy.Application.Urls.Features.AddBarcode
                 throw new UrlBarcodeAlreadyExistsException(request.UrlId);
             }
             var userId = _contextService.Identity!.Id;
-            var barcode = Barcode.CreateBarcode(url, string.Empty, request.Tags, userId);
-            url.AddBarcode(barcode);
-            await _urlRepository.UpdateAsync(cancellationToken);
             var barcodeQueryParameter = _linksyConfig.ScanCode.BarcodeQueryParameter + "=true";
             var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + barcodeQueryParameter;
-            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(barcode, linksyUrl, cancellationToken);
-            barcode.SetImageUrlPath(barcodeUrlPath);
+            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(linksyUrl, userId, cancellationToken);
+            var barcode = Barcode.CreateBarcode(url, new Image(barcodeUrlPath, fileName), request.Tags, userId);
+            url.AddBarcode(barcode);
             await _urlRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("Barcode added to URL with ID: {UrlId} by user with ID: {UserId}.", request.UrlId, userId);
             return new AddBarcodeResponse(barcode.Id, barcodeUrlPath, fileName);

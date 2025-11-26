@@ -37,6 +37,8 @@ namespace Linksy.Infrastructure.DAL
             builder.Entity<Url>().HasQueryFilter(u => u.UserId == _multiTenancyService.CurrentTenantId);
             builder.Entity<ScanCode>().HasQueryFilter(q => q.UserId == _multiTenancyService.CurrentTenantId);
             builder.Entity<LandingPage>().HasQueryFilter(l => l.UserId == _multiTenancyService.CurrentTenantId);
+            builder.Entity<UmtParameter>().HasQueryFilter(u => u.UserId == _multiTenancyService.CurrentTenantId);
+            builder.Entity<LandingPageItem>().HasQueryFilter(l => l.UserId == _multiTenancyService.CurrentTenantId);
             base.OnModelCreating(builder);
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

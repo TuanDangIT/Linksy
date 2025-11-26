@@ -18,14 +18,14 @@ namespace Linksy.Infrastructure.DAL.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] includes)
+        public async Task<Url?> GetUrlAsync(int urlId, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] includes)
         {
             var query = _dbContext.Urls.AsQueryable();
             foreach(var include in includes)
             {
                 query = query.Include(include);
             }
-            var url = await query.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            var url = await query.FirstOrDefaultAsync(u => u.Id == urlId, cancellationToken);
             return url;
         }
         public async Task CreateAsync(Url url, CancellationToken cancellationToken = default)
@@ -34,8 +34,8 @@ namespace Linksy.Infrastructure.DAL.Repositories
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public Task DeleteAsync(int id, CancellationToken cancellationToken = default)
-            => _dbContext.Urls.Where(u => u.Id == id).ExecuteDeleteAsync(cancellationToken);
+        public Task DeleteAsync(int urlId, CancellationToken cancellationToken = default)
+            => _dbContext.Urls.Where(u => u.Id == urlId).ExecuteDeleteAsync(cancellationToken);
 
         public async Task<bool> IsUrlCodeInUseAsync(string code, CancellationToken cancellationToken = default)
             => await _dbContext.Urls.AnyAsync(u => u.Code == code, cancellationToken);

@@ -11,10 +11,6 @@ namespace Linksy.Application.UmtParameters.Features.AddQrCodeToUmtParameter
     {
         public AddQrCodeToUmtParameterValidator()
         {
-            RuleFor(a => a.UrlId)
-                .NotNull()
-                .NotEmpty()
-                .GreaterThan(0);
             RuleFor(a => a.UmtParameterId)
                 .NotNull()
                 .NotEmpty()

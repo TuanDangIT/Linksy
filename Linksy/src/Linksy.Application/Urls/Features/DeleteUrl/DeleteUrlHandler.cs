@@ -32,24 +32,25 @@ namespace Linksy.Application.Urls.Features.DeleteUrl
         public async Task Handle(DeleteUrl request, CancellationToken cancellationToken)
         {
             var url = await _urlRepository.GetUrlAsync(request.Id, cancellationToken, u => u.Barcode, u => u.QrCode);
-            if(url is null)
+            var userId = _contextService.Identity!.Id;
+            if (url is null)
             {
                 return;
             }
             if(url.QrCode is not null)
             {
-                var fileName = _scanCodeService.GetScanCodeFileName(url.QrCode.Id, nameof(QrCode));
-                await _scanCodeService.DeleteAsync(fileName, _linksyConfig.BlobStorage.QrCodesContainerName);
-                _logger.LogInformation("QR Code image file {FileName} and ID {QrCodeId} deleted from blob storage.", fileName, url.QrCode.Id);
+                var fileName = url.QrCode.ScanCodeImage.FileName;
+                await _scanCodeService.DeleteAsync(fileName, userId);
+                _logger.LogInformation("QR Code image file {FileName} and ID {QrCodeId} deleted from blob storage by user with ID: {userId}.", fileName, url.QrCode.Id, userId);
             }
             if(url.Barcode is not null)
             {
-                var fileName = _scanCodeService.GetScanCodeFileName(url.Barcode.Id, nameof(Barcode));
-                await _scanCodeService.DeleteAsync(fileName, _linksyConfig.BlobStorage.BarcodesContainerName);
-                _logger.LogInformation("Barcode image file {FileName} and ID {BarcodeId} deleted from blob storage.", fileName, url.Barcode.Id);
+                var fileName = url.Barcode.ScanCodeImage.FileName;
+                await _scanCodeService.DeleteAsync(fileName, userId);
+                _logger.LogInformation("Barcode image file {FileName} and ID {BarcodeId} deleted from blob storage by user with ID: {userId}.", fileName, url.Barcode.Id, userId);
             }
             await _urlRepository.DeleteAsync(url.Id, cancellationToken);
-            _logger.LogInformation("Url with id {Id} was deleted by user with ID: {userId}.", request.Id, _contextService.Identity!.Id);
+            _logger.LogInformation("Url with id {Id} was deleted by user with ID: {userId}.", request.Id, userId);
         }
     }
 }

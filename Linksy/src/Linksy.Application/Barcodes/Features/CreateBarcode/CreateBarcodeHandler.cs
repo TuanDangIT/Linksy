@@ -7,6 +7,7 @@ using Linksy.Domain.DomainServices;
 using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Repositories;
+using Linksy.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -37,16 +38,14 @@ namespace Linksy.Application.Barcodes.Features.CreateBarcode
         }
         public async Task<CreateBarcodeResponse> Handle(CreateBarcode request, CancellationToken cancellationToken)
         {
-            var umtParameters = request.Url.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign));
             var userId = _contextService.Identity!.Id;
-            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.Url.OriginalUrl, request.Url.CustomCode, request.Url.Tags, umtParameters, userId, cancellationToken);
-            var barcode = Barcode.CreateBarcode(url, string.Empty, request.Tags, userId);
-            await _barcodeRepository.CreateAsync(barcode, cancellationToken);
+            var umtParameters = request.Url.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign, userId));
+            var url = await _generateShotenedUrlService.GenerateShortenedUrlAsync(request.Url.OriginalUrl, request.Url.CustomCode, request.Url.Tags, umtParameters, userId, cancellationToken);
             var barcodeQueryParameter = _linksyConfig.ScanCode.BarcodeQueryParameter + "=true";
             var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + barcodeQueryParameter;
-            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(barcode, linksyUrl, cancellationToken);
-            barcode.SetImageUrlPath(barcodeUrlPath);
-            await _barcodeRepository.UpdateAsync(cancellationToken);
+            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(linksyUrl, userId, cancellationToken);
+            var barcode = Barcode.CreateBarcode(url, new Image(barcodeUrlPath, fileName), request.Tags, userId);
+            await _barcodeRepository.CreateAsync(barcode, cancellationToken);
             _logger.LogInformation("Barcode was created with ID: {BarcodeId} for URL ID: {UrlId} by user with ID: {UserId}.", barcode.Id, url.Id, userId);
             return new CreateBarcodeResponse(barcode.Id, url.Id, barcodeUrlPath, fileName);
         }

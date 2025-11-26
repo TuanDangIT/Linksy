@@ -1,15 +1,17 @@
 ﻿using Linksy.API.API;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
 namespace Linksy.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v{v:apiVersion}" + "/[controller]")]
     public abstract class BaseController : ControllerBase
     {
-        private const string _notFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
+        protected const string _notFoundTypeUrl = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.5.5";
         protected readonly IMediator _mediator;
 
         protected BaseController(IMediator mediator)
@@ -33,7 +35,7 @@ namespace Linksy.API.Controllers
                 Status = (int)HttpStatusCode.NotFound
             });
         }
-        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntityId>(TResponse? model, string entityName, TEntityId id)
+        protected virtual ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntityId>(TResponse? model, string entityName, TEntityId id)
         {
             if (model is not null)
             {

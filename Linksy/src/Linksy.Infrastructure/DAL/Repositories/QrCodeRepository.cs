@@ -28,15 +28,23 @@ namespace Linksy.Infrastructure.DAL.Repositories
 
         public async Task DeleteAsync(int qrCodeId, bool includeUrlInDeletion, CancellationToken cancellationToken = default)
         {
-            if (!includeUrlInDeletion)
+            var query = _dbContext.QrCodes.AsQueryable();
+
+            if (includeUrlInDeletion)
             {
-                await _dbContext.QrCodes.Where(b => b.Id == qrCodeId).ExecuteDeleteAsync(cancellationToken);
-                return;
+                query = query.Include(b => b.Url);
             }
-            var qrCode = await _dbContext.QrCodes.Include(b => b.Url).FirstOrDefaultAsync(b => b.Id == qrCodeId, cancellationToken);
+
+            var qrCode = await query.FirstOrDefaultAsync(b => b.Id == qrCodeId, cancellationToken);
+
             if (qrCode is not null)
             {
-                _dbContext.Urls.Remove(qrCode.Url);
+                if (includeUrlInDeletion && qrCode.Url is not null)
+                {
+                    _dbContext.Urls.Remove(qrCode.Url);
+                }
+
+                _dbContext.QrCodes.Remove(qrCode);
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }

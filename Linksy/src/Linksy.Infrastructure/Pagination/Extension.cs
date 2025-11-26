@@ -1,4 +1,5 @@
-﻿using Linksy.Domain.Entities.ScanCode;
+﻿using Linksy.Domain.Entities.LandingPage;
+using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Entities.Url;
 using Linksy.Infrastructure.Pagination.Configuration;
 using Linksy.Infrastructure.Pagination.Services;
@@ -18,6 +19,7 @@ namespace Linksy.Infrastructure.Pagination
             services.AddSingleton<IPaginationConfiguration<QrCode>, QrCodePaginationConfiguration>();
             services.AddSingleton<IPaginationConfiguration<Barcode>, BarcodePaginationConfiguration>();
             services.AddSingleton<IPaginationConfiguration<Url>, UrlPaginationConfiguration>();
+            services.AddSingleton<IPaginationConfiguration<LandingPage>, LandingPagePaginationConfiguration>();
             services.AddSingleton<IFilterService, FilterService>();
             services.AddScoped(typeof(IPaginationService<>), typeof(PaginationService<>));
             return services;

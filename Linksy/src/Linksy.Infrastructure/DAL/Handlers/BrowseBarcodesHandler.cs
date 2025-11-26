@@ -37,7 +37,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .AsQueryable();
 
             var result = await _paginationService.PaginateAsync(query, request.PageNumber, request.PageSize, request.Filters, request.Orders,
-                q => new BrowseBarcodeDto(q.Id, new BrowseScanCodeUrlDto(q.Url.OriginalUrl, q.Url.Code), q.Url.IsActive, q.Url.TagsList, q.ScanCount, q.CreatedAt, q.UpdatedAt), cancellationToken);
+                q => new BrowseBarcodeDto(q.Id, new BrowseScanCodesUrlDto(q.Url.Id, q.Url.OriginalUrl, q.Url.Code), q.Url.IsActive, q.Url.TagsList, q.ScanCount, q.CreatedAt, q.UpdatedAt), cancellationToken);
             _logger.LogInformation("Browsed barcodes by user with ID {UserId}.", _contextService.Identity!.Id);
             return new BrowseBarcodesResponse(result);
         }

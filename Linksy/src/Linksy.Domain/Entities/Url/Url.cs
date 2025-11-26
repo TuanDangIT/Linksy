@@ -66,7 +66,15 @@ namespace Linksy.Domain.Entities.Url
         public void AddEngagement(UrlEngagement engagement)
             => _engagements!.Add(engagement);   
         public void AddUmtParameter(UmtParameter umtParameter)
-            => _umtParameters!.Add(umtParameter);
+        {
+            if(_umtParameters.Any(u => u.UmtSource == umtParameter.UmtSource &&
+                u.UmtMedium == umtParameter.UmtMedium &&
+                u.UmtCampaign == umtParameter.UmtCampaign))
+            {
+                throw new CannotHaveDuplicatedUmtParameterException();
+            }
+            _umtParameters.Add(umtParameter);
+        }
         public void UpdateTags(IEnumerable<string> tags)
             => TagsList = [.. tags];
         public void AddImageLandingPageItem(ImageLandingPageItem item)

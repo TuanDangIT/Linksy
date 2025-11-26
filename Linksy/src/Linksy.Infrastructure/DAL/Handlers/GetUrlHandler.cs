@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Linksy.Infrastructure.Exceptions;
+using Linksy.Application.Shared.DTO;
 
 namespace Linksy.Infrastructure.DAL.Handlers
     {
@@ -38,13 +39,13 @@ namespace Linksy.Infrastructure.DAL.Handlers
                         u.TagsList,
                         u.QrCode == null ? null : new GetUrlQrCodeDto(
                             u.QrCode.Id,
-                            u.QrCode.ImageUrlPath,
+                            new ImageDto(u.QrCode.ScanCodeImage.UrlPath, u.QrCode.ScanCodeImage.FileName),
                             u.QrCode.ScanCount,
                             u.QrCode.CreatedAt,
                             u.QrCode.UpdatedAt),
                         u.Barcode == null ? null : new GetUrlBarcodeDto(
                             u.Barcode.Id,
-                            u.Barcode.ImageUrlPath,
+                            new ImageDto(u.Barcode.ScanCodeImage.UrlPath, u.Barcode.ScanCodeImage.FileName),
                             u.Barcode.ScanCount,
                             u.Barcode.CreatedAt,
                             u.Barcode.UpdatedAt),

@@ -33,7 +33,8 @@ namespace Linksy.Application.Shared.Configuration
 
     public class BlobStorageConfig
     {
-        public string QrCodesContainerName { get; set; } = string.Empty;
-        public string BarcodesContainerName { get; set; } = string.Empty;
+        public string QrCodesPrefixPathFromContainer{ get; set; } = string.Empty;
+        public string BarcodesPrefixPathFromContainer { get; set; } = string.Empty;
+        public string ImageLandingPageItemPathFromContainer { get; set; } = string.Empty;
     }   
 }

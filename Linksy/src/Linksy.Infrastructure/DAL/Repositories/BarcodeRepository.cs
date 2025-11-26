@@ -29,15 +29,23 @@ namespace Linksy.Infrastructure.DAL.Repositories
 
         public async Task DeleteAsync(int barcodeId, bool includeUrlInDeletion, CancellationToken cancellationToken = default)
         {
-            if(!includeUrlInDeletion)
+            var query = _dbContext.Barcodes.AsQueryable();
+
+            if (includeUrlInDeletion)
             {
-                await _dbContext.Barcodes.Where(b => b.Id == barcodeId).ExecuteDeleteAsync(cancellationToken);
-                return;
+                query = query.Include(b => b.Url);
             }
-            var barcode = await _dbContext.Barcodes.Include(b => b.Url).FirstOrDefaultAsync(b => b.Id == barcodeId, cancellationToken);
-            if(barcode is not null)
+
+            var barcode = await query.FirstOrDefaultAsync(b => b.Id == barcodeId, cancellationToken);
+
+            if (barcode is not null)
             {
-                _dbContext.Urls.Remove(barcode.Url);
+                if (includeUrlInDeletion && barcode.Url is not null)
+                {
+                    _dbContext.Urls.Remove(barcode.Url);
+                }
+
+                _dbContext.Barcodes.Remove(barcode);
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
         }

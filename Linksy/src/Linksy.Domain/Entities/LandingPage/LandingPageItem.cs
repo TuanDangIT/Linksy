@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities.LandingPage
 {
-    public abstract class LandingPageItem : BaseEntity, IAuditable
+    public abstract class LandingPageItem : BaseEntityWithMultitenancy, IAuditable
     {
         public LandingPageItemType Type { get; protected set; }
         public int Order { get; private set; }
@@ -18,14 +18,18 @@ namespace Linksy.Domain.Entities.LandingPage
         public int LandingPageId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        protected LandingPageItem(LandingPageItemType type, LandingPage landingPage, int order)
+        protected LandingPageItem(LandingPageItemType type, LandingPage landingPage, int userId) : this(type, userId)
+        {
+            LandingPage = landingPage;
+        }
+        protected LandingPageItem(LandingPageItemType type, int userId) : base(userId)
         {
             Type = type;
-            LandingPage = landingPage;
-            Order = order;
         }
         protected LandingPageItem() { }
         public void IncrementClickCount()
             => ClickCount++;
+        public void SetOrder(int order)
+            => Order = order;
     }
 }

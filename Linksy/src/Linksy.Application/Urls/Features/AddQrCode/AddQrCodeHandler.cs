@@ -4,6 +4,7 @@ using Linksy.Application.Shared.ScanCodes;
 using Linksy.Application.Urls.Exceptions;
 using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Repositories;
+using Linksy.Domain.ValueObjects;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -38,13 +39,11 @@ namespace Linksy.Application.Urls.Features.AddQrCode
                 throw new UrlQrCodeAlreadyExistsException(request.UrlId);
             }
             var userId = _contextService.Identity!.Id;
-            var qrCode = QrCode.CreateQrCode(url, string.Empty, request.Tags, userId);
-            url.AddQrCode(qrCode);
-            await _urlRepository.UpdateAsync(cancellationToken);
             var qrCodeQueryParameter = _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
             var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + qrCodeQueryParameter;
-            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(qrCode, linksyUrl, cancellationToken);
-            qrCode.SetImageUrlPath(qrCodeUrlPath);
+            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(linksyUrl, userId, cancellationToken);
+            var qrCode = QrCode.CreateQrCode(url, new Image(qrCodeUrlPath, fileName), request.Tags, userId);
+            url.AddQrCode(qrCode);
             await _urlRepository.UpdateAsync(cancellationToken);
             _logger.LogInformation("QR code added to URL with ID: {UrlId} by user with ID: {UserId}.", request.UrlId, userId);
             return new AddQrCodeResponse(qrCode.Id, qrCodeUrlPath, fileName);

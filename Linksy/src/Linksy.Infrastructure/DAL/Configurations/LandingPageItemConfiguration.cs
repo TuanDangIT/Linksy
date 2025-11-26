@@ -37,6 +37,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .HasValue<TextLandingPageItem>(LandingPageItemType.Text)
                 .HasValue<UrlLandingPageItem>(LandingPageItemType.Url)
                 .HasValue<YouTubeLandingPageItem>(LandingPageItemType.YouTube);
+            builder.Property(l => l.UserId)
+                .IsRequired();
         }
     }
 
@@ -47,7 +49,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
             //builder.ToTable("YoutubeLandingPageItems");
             builder.Property(y => y.VideoUrl)
                 .HasMaxLength(512)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("YoutubeLandingPageItem_VideoUrl");
         }
     }
 
@@ -58,13 +61,16 @@ namespace Linksy.Infrastructure.DAL.Configurations
             //builder.ToTable("UrlLandingPageItems");
             builder.Property(u => u.Content)
                 .HasMaxLength(128)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("UrlLandingPageItem_Content");
             builder.Property(u => u.BackgroundColor)
                 .HasMaxLength(16)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("UrlLandingPageItem_BackgroundColor");
             builder.Property(u => u.FontColor)
                 .HasMaxLength(16)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("UrlLandingPageItem_FontColor");
             builder.HasOne(u => u.Url)
                 .WithMany(u => u.UrlLandingPageItems)
                 .HasForeignKey(u => u.UrlId);
@@ -78,10 +84,16 @@ namespace Linksy.Infrastructure.DAL.Configurations
             //builder.ToTable("TextLandingPageItems");
             builder.Property(t => t.Content)
                 .HasMaxLength(1024)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("TextLandingPageItem_Content");
             builder.Property(t => t.FontColor)
                 .HasMaxLength(16)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("TextLandingPageItem_FontColor");
+            builder.Property(t => t.BackgroundColor)
+                .HasMaxLength(16)
+                .IsRequired()
+                .HasColumnName("TextLandingPageItem_BackgroundColor");
         }
     }
 
@@ -90,14 +102,22 @@ namespace Linksy.Infrastructure.DAL.Configurations
         public void Configure(EntityTypeBuilder<ImageLandingPageItem> builder)
         {
             //builder.ToTable("ImageLandingPageItems");
-            builder.Property(i => i.ImageUrlPath)
-                .HasMaxLength(512)
-                .IsRequired();
             builder.Property(i => i.AltText)
-                .HasMaxLength(256);
+                .IsRequired()
+                .HasMaxLength(256)
+                .HasColumnName("ImageLandingPageItem_AltText");
             builder.HasOne(i => i.Url)
                 .WithMany(u => u.ImageLandingPageItems)
                 .HasForeignKey(i => i.UrlId);
+            builder.OwnsOne(i => i.Image, s =>
+            {
+                s.Property(s => s.FileName)
+                    .HasMaxLength(256)
+                    .HasColumnName("ImageLandingPageItem_Image_FileName");
+                s.Property(s => s.UrlPath)
+                    .HasMaxLength(512)
+                    .HasColumnName("ImageLandingPageItem_Image_UrlPath");
+            });
         }
     }
 }

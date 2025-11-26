@@ -22,6 +22,9 @@ namespace Linksy.Infrastructure.DAL
             services.AddScoped<IUrlRepository, UrlRepository>();
             services.AddScoped<IQrCodeRepository, QrCodeRepository>();
             services.AddScoped<IBarcodeRepository, BarcodeRepository>();
+            services.AddScoped<ILandingPageRepository, LandingPageRepository>();
+            services.AddScoped<ILandingPageItemRepository, LandingPageItemRepository>();
+            services.AddScoped<IUmtParameterRepository, UmtParameterRepository>();
             return services;
         }
     }

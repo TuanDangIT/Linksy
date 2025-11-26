@@ -2,6 +2,7 @@
 using Linksy.Domain.Entities.LandingPage;
 using Linksy.Domain.Entities.Tracking;
 using Linksy.Domain.Entities.Url;
+using Linksy.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,18 +19,18 @@ namespace Linksy.Domain.Entities.ScanCode
         public int? UmtParameterId { get; private set; }
         public Url.Url? Url { get; private set; } = default!;
         public int? UrlId { get; private set; }
-        private QrCode(string imageUrl, IEnumerable<string>? tags, int userId) : base(imageUrl, tags, userId) 
+        private QrCode(Image qrCodeImage, IEnumerable<string>? tags, int userId) : base(qrCodeImage, tags, userId) 
         {
         }
-        private QrCode(Url.Url url, string imageUrl, IEnumerable<string>? tags, int userId) : this(imageUrl, tags, userId)
+        private QrCode(Url.Url url, Image qrCodeImage, IEnumerable<string>? tags, int userId) : this(qrCodeImage, tags, userId)
         {
             Url = url;
         }
         private QrCode() { }
-        public static QrCode CreateQrCode(Url.Url url, string imageUrl, IEnumerable<string>? tags, int userId)
-            => new(url, imageUrl, tags, userId);
-        public static QrCode CreateQrCode(string imageUrl, IEnumerable<string>? tags, int userId)
-            => new(imageUrl, tags, userId);
+        public static QrCode CreateQrCode(Url.Url url, Image qrCodeImage, IEnumerable<string>? tags, int userId)
+            => new(url, qrCodeImage, tags, userId);
+        public static QrCode CreateQrCode(Image qrCodeImage, IEnumerable<string>? tags, int userId)
+            => new(qrCodeImage, tags, userId);
         public void AddEngagement(QrCodeEngagement engagement)
             => _engagements.Add(engagement);
     }

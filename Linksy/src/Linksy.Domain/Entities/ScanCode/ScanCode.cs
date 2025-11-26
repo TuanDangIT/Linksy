@@ -1,4 +1,5 @@
 ﻿using Linksy.Domain.Abstractions;
+using Linksy.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,7 @@ namespace Linksy.Domain.Entities.ScanCode
 {
     public abstract class ScanCode : BaseEntityWithMultitenancy, IAuditable
     {
-        public bool IsActive { get; private set; } = true;
-        public string ImageUrlPath { get; private set; } = string.Empty;
+        public Image ScanCodeImage { get; private set; } = default!;
         public int ScanCount { get; private set; } = 0;
         public string? Tags { get; private set; } = string.Empty;
         public IEnumerable<string>? TagsList
@@ -20,19 +20,15 @@ namespace Linksy.Domain.Entities.ScanCode
         } 
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        protected ScanCode(string imageUrlPath, IEnumerable<string>? tags, int userId) : base(userId)
+        protected ScanCode(Image scanCodeImage, IEnumerable<string>? tags, int userId) : base(userId)
         {
-            ImageUrlPath = imageUrlPath;
+            ScanCodeImage = scanCodeImage;
             TagsList = tags?.ToList();
         }
         protected ScanCode() { }
         public void IncrementScanCounter()
             => ScanCount++;
-        public void SetImageUrlPath(string imageUrlPath)
-            => ImageUrlPath = imageUrlPath;
         public void UpdateTags(IEnumerable<string> tags)
             => TagsList = [.. tags];
-        public void SetActive(bool isActive)
-            => IsActive = isActive;
     }
 }

@@ -23,23 +23,17 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .IsRequired();
             builder.Property(l => l.Description)
                 .HasMaxLength(512);
-            builder.Property(l => l.BackgroundColor)
-                .HasMaxLength(64);
             builder.Property(l => l.Code)
                 .HasMaxLength(128)
                 .IsRequired();
             builder.HasIndex(l => l.Code)
                 .IsUnique();
-            builder.Property(l => l.IsActive)
+            builder.Property(l => l.IsPublished)
                 .IsRequired();
             builder.Property(l => l.EngagementCount)
                 .IsRequired();
             builder.Property(l => l.ViewCount)
                 .IsRequired();
-            builder.Property(l => l.BackgroundImageUrl)
-                .HasMaxLength(512);
-            builder.Property(l => l.ImageUrlPath)
-                .HasMaxLength(512);
             builder.Property(l => l.Description)
                 .HasMaxLength(1024);
             builder.Property(l => l.BackgroundColor)
@@ -52,6 +46,22 @@ namespace Linksy.Infrastructure.DAL.Configurations
             builder.Property(l => l.DescriptionFontColor)
                 .HasMaxLength(16);
             builder.Ignore(l => l.TagsList);
+            builder.OwnsOne(l => l.BackgroundImage, b =>
+            {
+                b.Property(bi => bi.FileName)
+                    .HasMaxLength(256);
+                b.Property(bi => bi.UrlPath)
+                    .HasMaxLength(512);
+            });
+            builder.OwnsOne(l => l.LogoImage, b =>
+            {
+                b.Property(li => li.FileName)
+                    .HasMaxLength(256);
+                b.Property(li => li.UrlPath)
+                    .HasMaxLength(512);
+            });
+            builder.Property(l => l.UserId)
+                .IsRequired();
         }
     }
 }

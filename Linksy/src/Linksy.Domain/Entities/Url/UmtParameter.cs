@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities.Url
 {
-    public class UmtParameter : BaseEntity, IAuditable
+    public class UmtParameter : BaseEntityWithMultitenancy, IAuditable
     {
+        public bool IsActive { get; private set; } = true;
         public string? UmtSource { get; private set; } 
         public string? UmtMedium { get; private set; }
         public string? UmtCampaign { get; private set; }
@@ -24,15 +25,15 @@ namespace Linksy.Domain.Entities.Url
         public IReadOnlyCollection<UmtParameterEngagement> Engagements => _engagements.AsReadOnly();
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
-        private UmtParameter(string? umtSource, string? umtMedium, string? umtCampaign)
+        private UmtParameter(string? umtSource, string? umtMedium, string? umtCampaign, int userId) : base(userId)
         {
             UmtSource = umtSource;
             UmtMedium = umtMedium;
             UmtCampaign = umtCampaign;
         }
         private UmtParameter() { }
-        public static UmtParameter CreateUmtParameter(string? umtSource, string? umtMedium, string? umtCampaign)
-            => new(umtSource, umtMedium, umtCampaign);
+        public static UmtParameter CreateUmtParameter(string? umtSource, string? umtMedium, string? umtCampaign, int userId)
+            => new(umtSource, umtMedium, umtCampaign, userId);
         public void AddQrCode(QrCode qrCode)
         {
             if (QrCode is not null)
@@ -49,5 +50,7 @@ namespace Linksy.Domain.Entities.Url
             => UmtCampaign = campaign;
         public void AddEngagement(UmtParameterEngagement engagement)
             => _engagements.Add(engagement);
+        public void SetActive(bool isActive)
+            => IsActive = isActive; 
     }
 }

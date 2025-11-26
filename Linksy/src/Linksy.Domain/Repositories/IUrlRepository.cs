@@ -10,10 +10,10 @@ namespace Linksy.Domain.Repositories
 {
     public interface IUrlRepository
     {
-        Task<Url?> GetUrlAsync(int id, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] inclues);
+        Task<Url?> GetUrlAsync(int urlId, CancellationToken cancellationToken = default, params Expression<Func<Url, object?>>[] inclues);
         Task CreateAsync(Url url, CancellationToken cancellationToken = default);
         Task<bool> IsUrlCodeInUseAsync(string code, CancellationToken cancellationToken = default);
-        Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+        Task DeleteAsync(int urlId, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
     }
 }

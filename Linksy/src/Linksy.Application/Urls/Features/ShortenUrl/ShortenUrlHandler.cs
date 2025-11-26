@@ -32,9 +32,9 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
         }
         public async Task<ShortenUrlResponse> Handle(ShortenUrl request, CancellationToken cancellationToken)
         {
-            var umtParameters = request.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign));
             var userId = _contextService.Identity!.Id;
-            var url = await _generateShotenedUrlService.GenerateShortenedUrl(request.OriginalUrl, request.CustomCode, request.Tags, umtParameters, userId, cancellationToken);
+            var umtParameters = request.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign, userId));
+            var url = await _generateShotenedUrlService.GenerateShortenedUrlAsync(request.OriginalUrl, request.CustomCode, request.Tags, umtParameters, userId, cancellationToken);
             await _urlRepository.CreateAsync(url, cancellationToken);
             var shortenedUrl = _linksyConfig.BaseUrl + "/" + url.Code;
             _logger.LogInformation("URL shortened: {OriginalUrl} -> {ShortenedCode} by user with ID: {userId}.", request.OriginalUrl, shortenedUrl, userId);

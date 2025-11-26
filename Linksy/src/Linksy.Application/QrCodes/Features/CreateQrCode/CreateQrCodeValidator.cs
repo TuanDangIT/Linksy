@@ -17,7 +17,8 @@ namespace Linksy.Application.QrCodes.Features.CreateQrCode
                 .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
                 .WithMessage("The OriginalUrl must be a valid absolute URL.");
             RuleFor(c => c.Url.CustomCode)
-                .NotEmpty();
+                .MinimumLength(1)
+                .MaximumLength(128);
         }
     }
 }

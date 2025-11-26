@@ -12,7 +12,7 @@ namespace Linksy.Application.QrCodes.Features.DownloadQrCode
         public DownloadQrCodeValidator()
         {
             RuleFor(d => d.QrCodeId)
-                 .NotNull()
+                .NotNull()
                 .NotEmpty()
                 .GreaterThan(0);
         }

@@ -24,8 +24,9 @@ namespace Linksy.Infrastructure.DAL.Handlers
         private readonly IBlobStorageService _blobStorageService;
         private readonly IContextService _contextService;
         private readonly ILogger<DownloadQrCodeHandler> _logger;
-        private const string _containerName = "qrcodes";
-        private const string _pngExtension = ".png";
+        //private const string _containerName = "qrcodes";
+        //private const string _pngExtension = ".png";
+        private string _containerName;
 
         public DownloadQrCodeHandler(LinksyDbContext dbContext, IBlobStorageService blobStorageService, IContextService contextService, ILogger<DownloadQrCodeHandler> logger)
         {
@@ -33,6 +34,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             _blobStorageService = blobStorageService;
             _contextService = contextService;
             _logger = logger;
+            _containerName = $"user-{_contextService.Identity!.Id}";
         }
         public async Task<FileStreamResult> Handle(DownloadQrCode request, CancellationToken cancellationToken)
         {
@@ -40,11 +42,10 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(b => b.Id == request.QrCodeId, cancellationToken) ??
                 throw new QrCodeNotFoundException(request.QrCodeId);
-            var imageUrlPath = qrCode.ImageUrlPath;
-            var dto = await _blobStorageService.DownloadAsync($"{nameof(QrCode)}-{qrCode.Id}{_pngExtension}", _containerName, cancellationToken);
+            var dto = await _blobStorageService.DownloadAsync(qrCode.ScanCodeImage.FileName, _containerName, cancellationToken);
             var fileResult = new FileStreamResult(dto.FileStream, dto.ContentType)
             {
-                FileDownloadName = $"{nameof(QrCode)}-{qrCode.Id}{_pngExtension}"
+                FileDownloadName = qrCode.ScanCodeImage.FileName
             };
             _logger.LogInformation("QR Code with ID: {QrCodeId} downloaded successfully by user with ID: {UserId}.", request.QrCodeId, _contextService.Identity!.Id);
             return fileResult;

@@ -32,11 +32,17 @@ namespace Linksy.Application.QrCodes.Features.DeleteQrCode
         }
         public async Task Handle(DeleteQrCode request, CancellationToken cancellationToken)
         {
+            var qrCode = await _qrCodeRepository.GetByIdAsync(request.QrCodeId, cancellationToken);
+            if(qrCode is null)
+            {
+                return;
+            }
+            var fileName = qrCode.ScanCodeImage.FileName;
+            var userId = _contextService.Identity!.Id;
+            await _scanCodeService.DeleteAsync(fileName, userId);
             await _qrCodeRepository.DeleteAsync(request.QrCodeId, request.IncludeUrlInDeletion, cancellationToken);
-            var fileName = _scanCodeService.GetScanCodeFileName(request.QrCodeId, nameof(QrCode));
-            await _scanCodeService.DeleteAsync(fileName, _linksyConfig.BlobStorage.QrCodesContainerName);
             _logger.LogInformation("QR Code with ID: {QrCodeId} was deleted with include URL in deletion: {IncludeUrlInDeletion} by user with ID {UserId}.", 
-                request.QrCodeId, request.IncludeUrlInDeletion, _contextService.Identity!.Id);
+                request.QrCodeId, request.IncludeUrlInDeletion, userId);
         }
     }
 }

@@ -13,11 +13,11 @@ namespace Linksy.Application.Barcodes.Features.BrowseBarcodes
         public int Id { get; init; }
         public bool IsActive { get; init; }
         public IEnumerable<string>? Tags { get; init; } 
-        public BrowseScanCodeUrlDto Url { get; init; } = default!;
+        public BrowseScanCodesUrlDto Url { get; init; } = default!;
         public int ScanCount { get; init; }
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
-        public BrowseBarcodeDto(int id, BrowseScanCodeUrlDto url, bool isActive, IEnumerable<string>? tags, int scanCount, DateTime createdAt, DateTime? updatedAt)
+        public BrowseBarcodeDto(int id, BrowseScanCodesUrlDto url, bool isActive, IEnumerable<string>? tags, int scanCount, DateTime createdAt, DateTime? updatedAt)
         {
             Id = id;
             IsActive = isActive;

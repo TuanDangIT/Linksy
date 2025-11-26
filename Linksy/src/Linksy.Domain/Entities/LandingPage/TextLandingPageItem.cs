@@ -12,7 +12,7 @@ namespace Linksy.Domain.Entities.LandingPage
         public string Content { get; private set; } = string.Empty;
         public string BackgroundColor { get; private set; } = string.Empty;
         public string FontColor { get; private set; } = string.Empty;
-        private TextLandingPageItem(LandingPageItemType type, LandingPage landingPage, int order, string content, string backgroundColor, string fontColor) : base(type, landingPage, order)
+        private TextLandingPageItem(LandingPageItemType type, string content, string backgroundColor, string fontColor, int userId) : base(type, userId)
         {
             Content = content;
             BackgroundColor = backgroundColor;
@@ -22,7 +22,7 @@ namespace Linksy.Domain.Entities.LandingPage
         {
             
         }
-        public static TextLandingPageItem CreateTextLandingPageItem(LandingPageItemType type, LandingPage landingPage, int order, string content, string backgroundColor, string fontColor)
-            => new(type, landingPage, order, content, backgroundColor, fontColor);
+        public static TextLandingPageItem CreateTextLandingPageItem(LandingPageItemType type, string content, string backgroundColor, string fontColor, int userId)
+            => new(type, content, backgroundColor, fontColor, userId);
     }
 }

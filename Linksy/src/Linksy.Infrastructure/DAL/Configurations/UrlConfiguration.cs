@@ -45,14 +45,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .HasForeignKey<Barcode>(b => b.UrlId)
                 .OnDelete(DeleteBehavior.Cascade);
             builder.Ignore(u => u.TagsList);
-            //builder.Property(u => u.Tags)
-            //    .HasConversion(
-            //        v => v != null ? string.Join(',', v) : string.Empty,
-            //        v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
-            //        new ValueComparer<IEnumerable<string>>(
-            //            (c1, c2) => c1!.SequenceEqual(c2!),
-            //            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-            //            c => c.ToList()));
+            builder.Property(u => u.UserId)
+                .IsRequired();
         }
     }
 }
