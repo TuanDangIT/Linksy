@@ -1,4 +1,5 @@
-﻿using Linksy.Infrastructure.Auth;
+﻿using Linksy.Infrastructure.Analytics;
+using Linksy.Infrastructure.Auth;
 using Linksy.Infrastructure.BackgroundServices;
 using Linksy.Infrastructure.BlobStorage;
 using Linksy.Infrastructure.Configuration;
@@ -32,6 +33,7 @@ namespace Linksy.Infrastructure
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
             services.AddPostgres(configuration);
+            services.AddStatistics();
             services.AddContext();
             services.AddLinksyConfig();
             services.AddAuth();

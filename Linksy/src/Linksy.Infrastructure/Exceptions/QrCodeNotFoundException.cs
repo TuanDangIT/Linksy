@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linksy.Application.QrCodes.Exceptions
+namespace Linksy.Infrastructure.Exceptions
 {
     internal class QrCodeNotFoundException : LinksyException
     {

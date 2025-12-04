@@ -76,7 +76,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                     .Include(s => s.Url)
                     .Where(s => s.UrlId == urlId)
                     .FirstOrDefaultAsync(cancellationToken);
-                barcode?.IncrementScanCounter();
+                barcode?.AddEngagement(BarcodeEngagement.CreateBarcodeEngagement(barcode, request.IpAddress));
             }
 
             if (request.IsQrCode is true)
@@ -100,7 +100,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                         .Where(q => q.UrlId == urlId);
                 }
                 var qrCode = await query.FirstOrDefaultAsync(cancellationToken);
-                qrCode?.IncrementScanCounter();
+                qrCode?.AddEngagement(QrCodeEngagement.CreateQrCodeEngagement(qrCode, request.IpAddress));
             }
         }
     }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linksy.Application.Barcodes.Exceptions
+namespace Linksy.Infrastructure.Exceptions
 {
-    internal class BarcodeNotFoundException : LinksyException
+    public class BarcodeNotFoundException : LinksyException
     {
         public BarcodeNotFoundException(int barcodeId) : base($"Barocode with ID: {barcodeId} was not found.")
         {

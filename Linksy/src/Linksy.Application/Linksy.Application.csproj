@@ -27,7 +27,6 @@
     <Folder Include="QrCodes\DTO\" />
     <Folder Include="Statistics\DTO\" />
     <Folder Include="Statistics\Exceptions\" />
-    <Folder Include="Statistics\Features\" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,12 @@
 ﻿using Linksy.Application.Abstractions;
 using Linksy.Application.Barcodes.Exceptions;
 using Linksy.Application.Barcodes.Features.DownloadBarcode;
-using Linksy.Application.QrCodes.Exceptions;
 using Linksy.Application.QrCodes.Features.DownloadQrCode;
 using Linksy.Application.Shared.BlobStorage;
 using Linksy.Application.Shared.Configuration;
 using Linksy.Domain.Entities.ScanCode;
 using Linksy.Infrastructure.Contexts;
+using Linksy.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

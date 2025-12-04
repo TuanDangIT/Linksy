@@ -32,6 +32,9 @@ namespace Linksy.Domain.Entities.ScanCode
         public static QrCode CreateQrCode(Image qrCodeImage, IEnumerable<string>? tags, int userId)
             => new(qrCodeImage, tags, userId);
         public void AddEngagement(QrCodeEngagement engagement)
-            => _engagements.Add(engagement);
+        {
+            IncrementScanCounter();
+            _engagements.Add(engagement);
+        }
     }
 }

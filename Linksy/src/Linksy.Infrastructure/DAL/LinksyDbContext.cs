@@ -1,6 +1,7 @@
 ﻿using Linksy.Domain.Abstractions;
 using Linksy.Domain.Entities.LandingPage;
 using Linksy.Domain.Entities.ScanCode;
+using Linksy.Domain.Entities.Tracking;
 using Linksy.Domain.Entities.Url;
 using Linksy.Domain.Entities.User;
 using Linksy.Infrastructure.Services;
@@ -23,6 +24,11 @@ namespace Linksy.Infrastructure.DAL
         public DbSet<Barcode> Barcodes { get; set; }
         public DbSet<LandingPage> LandingPages { get; set; }
         public DbSet<LandingPageItem> LandingPageItems { get; set; }
+        public DbSet<BarcodeEngagement> BarcodeEngagements { get; set; }
+        public DbSet<QrCodeEngagement> QrCodeEngagements { get; set; }
+        public DbSet<LandingPageEngagement> LandingPageEngagements { get; set; }
+        public DbSet<UmtParameterEngagement> UmtParameterEngagements { get; set; }
+        public DbSet<UrlEngagement> UrlEngagements { get; set; }
         private readonly TimeProvider _timeProvider;
         private readonly IMultiTenancyService _multiTenancyService;
 

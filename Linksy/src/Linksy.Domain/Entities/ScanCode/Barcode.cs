@@ -22,6 +22,9 @@ namespace Linksy.Domain.Entities.ScanCode
         public static Barcode CreateBarcode(Url.Url url, Image barcodeImage, IEnumerable<string>? tags, int userId)
             => new(url, barcodeImage, tags, userId);
         public void AddEngagement(BarcodeEngagement engagement)
-            => _engagements.Add(engagement);
+        {
+            IncrementScanCounter();
+            _engagements.Add(engagement);
+        }
     }
 }

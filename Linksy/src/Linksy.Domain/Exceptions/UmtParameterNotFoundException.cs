@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Exceptions
 {
-    internal class UmtParameterNotFoundException : LinksyException
+    internal class UmtParameterNotFoundException(int umtParameterId) : LinksyException($"Umt parameter: {umtParameterId} was not found.")
     {
-        public UmtParameterNotFoundException(int umtParameterId) : base($"Umt parameter: {umtParameterId} was not found.")
-        {
-        }
     }
 }
