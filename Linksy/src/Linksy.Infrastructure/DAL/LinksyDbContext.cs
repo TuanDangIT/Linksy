@@ -27,6 +27,7 @@ namespace Linksy.Infrastructure.DAL
         public DbSet<BarcodeEngagement> BarcodeEngagements { get; set; }
         public DbSet<QrCodeEngagement> QrCodeEngagements { get; set; }
         public DbSet<LandingPageEngagement> LandingPageEngagements { get; set; }
+        public DbSet<LandingPageView> LandingPageViews { get; set; }
         public DbSet<UmtParameterEngagement> UmtParameterEngagements { get; set; }
         public DbSet<UrlEngagement> UrlEngagements { get; set; }
         private readonly TimeProvider _timeProvider;

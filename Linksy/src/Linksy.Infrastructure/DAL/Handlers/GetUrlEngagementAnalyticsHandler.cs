@@ -38,7 +38,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Where(u => u.UrlId == request.UrlId)
                 .AsNoTracking()
                 .AsQueryable();
-            var analytics = await _analyticsService.GetAnalyticsAsync(query, request, cancellationToken);
+            var analytics = await _analyticsService.GetEngagementAnalyticsAsync(query, request, cancellationToken);
             _logger.LogInformation("Retrieved URL engagement analytics for UrlId: {UrlId} by UserId: {UserId}.", request.UrlId, _contextService.Identity!.Id);
             return analytics;
         }

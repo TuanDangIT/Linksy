@@ -39,7 +39,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Where(qr => qr.QrCodeId == request.QrCodeId)
                 .AsNoTracking()
                 .AsQueryable();
-            var analytics = _analyticsService.GetAnalyticsAsync(query, request, cancellationToken);
+            var analytics = _analyticsService.GetEngagementAnalyticsAsync(query, request, cancellationToken);
             _logger.LogInformation("Retrieved qr code engagement analytics for QrCodeId: {QrCodeId} by UserId: {UserId}.", request.QrCodeId, _contextService.Identity!.Id);
             return analytics;
         }

@@ -39,7 +39,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Where(u => u.UmtParameterId == request.UmtParameterId)
                 .AsNoTracking()
                 .AsQueryable();
-            var analytics = await _analyticsService.GetAnalyticsAsync(query, request, cancellationToken);
+            var analytics = await _analyticsService.GetEngagementAnalyticsAsync(query, request, cancellationToken);
             _logger.LogInformation("Retrieved UTM parameter engagement analytics for UmtParameterId: {UmtParameterId} by UserId: {UserId}.", request.UmtParameterId, _contextService.Identity!.Id);
             return analytics;
         }

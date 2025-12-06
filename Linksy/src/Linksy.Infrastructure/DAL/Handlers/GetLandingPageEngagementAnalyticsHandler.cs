@@ -39,7 +39,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Where(lp => lp.LandingPageId == request.LandingPageId)
                 .AsNoTracking()
                 .AsQueryable();
-            var analytics = await _analyticsService.GetAnalyticsAsync(query, request, cancellationToken);
+            var analytics = await _analyticsService.GetEngagementAnalyticsAsync(query, request, cancellationToken);
             _logger.LogInformation("Retrieved landing page engagement analytics for LandingPageId: {LandingPageId} by UserId: {UserId}.", request.LandingPageId, _contextService.Identity!.Id);
             return analytics;
         }

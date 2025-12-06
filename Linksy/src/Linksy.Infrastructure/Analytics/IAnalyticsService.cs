@@ -10,6 +10,7 @@ namespace Linksy.Infrastructure.Statistics
 {
     internal interface IAnalyticsService
     {
-        Task<AnalyticsResponse> GetAnalyticsAsync<T>(IQueryable<T> query, AnalyticsRequest request, CancellationToken cancellationToken = default) where T : Engagement;
+        Task<AnalyticsResponse> GetEngagementAnalyticsAsync<T>(IQueryable<T> query, AnalyticsRequest request, CancellationToken cancellationToken = default) where T : Engagement;
+        Task<AnalyticsResponse> GetViewAnalyticsAsync<T>(IQueryable<T> query, AnalyticsRequest request, CancellationToken cancellationToken = default) where T : LandingPageView;
     }
 }

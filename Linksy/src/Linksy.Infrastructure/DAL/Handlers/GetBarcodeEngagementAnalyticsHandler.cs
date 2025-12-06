@@ -39,7 +39,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Where(b => b.BarcodeId == request.BarcodeId)
                 .AsNoTracking()
                 .AsQueryable();
-            var analytics = await _analyticsService.GetAnalyticsAsync(query, request, cancellationToken);
+            var analytics = await _analyticsService.GetEngagementAnalyticsAsync(query, request, cancellationToken);
             _logger.LogInformation("Retrieved barcode engagement analytics for BarcodeId: {BarcodeId} by UserId: {UserId}.", request.BarcodeId, _contextService.Identity!.Id);
             return analytics;
 

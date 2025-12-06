@@ -33,7 +33,7 @@ namespace Linksy.Infrastructure.Statistics
             _linksyConfig = linksyConfig;
             _logger = logger;
         }
-        public async Task<AnalyticsResponse> GetAnalyticsAsync<T>(IQueryable<T> query, AnalyticsRequest request, CancellationToken cancellationToken = default) 
+        public async Task<AnalyticsResponse> GetEngagementAnalyticsAsync<T>(IQueryable<T> query, AnalyticsRequest request, CancellationToken cancellationToken = default) 
             where T : Engagement
         {
             ValidateRequest(request);
@@ -168,6 +168,142 @@ namespace Linksy.Infrastructure.Statistics
             _logger.LogDebug("Generated analytics from {StartDate} to {EndDate} with interval {Interval}.", startDate, endDate, interval);
             return new AnalyticsResponse(request.TimeRange.ToString(), request.Interval.ToString(), startDate, endDate, dataPoints, summary);
         }
+
+        public async Task<AnalyticsResponse> GetViewAnalyticsAsync<T>(IQueryable<T> query, AnalyticsRequest request, CancellationToken cancellationToken = default) where T : LandingPageView
+        {
+            ValidateRequest(request);
+            if (!Enum.TryParse<TimeInterval>(request.Interval, true, out var interval))
+            {
+                throw new InvalidTimeIntervalException(request.Interval);
+            }
+            var (startDate, endDate) = GetDateRange(request);
+            query = query.Where(e => e.ViewedAt >= startDate && e.ViewedAt <= endDate);
+            var generatedBuckets = GenerateTimeBuckets(startDate, endDate, interval);
+            var grouped = interval switch
+            {
+                TimeInterval.Minutes30 => await query
+                    .GroupBy(e => new
+                    {
+                        e.ViewedAt.Year,
+                        e.ViewedAt.Month,
+                        e.ViewedAt.Day,
+                        e.ViewedAt.Hour,
+                        HalfHour = e.ViewedAt.Minute / 30
+                    })
+                    .Select(g => new
+                    {
+                        PeriodStart = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, g.Key.HalfHour * 30, 0),
+                        Count = g.Count(),
+                        UniqueIpCount = g.Select(x => x.IpAddress).Distinct().Count()
+                    })
+                    .OrderBy(g => g.PeriodStart)
+                    .Select(g => new DataPoint(g.PeriodStart, g.Count, g.UniqueIpCount))
+                    .ToListAsync(cancellationToken),
+
+                TimeInterval.Hourly => await query
+                    .GroupBy(e => new
+                    {
+                        e.ViewedAt.Year,
+                        e.ViewedAt.Month,
+                        e.ViewedAt.Day,
+                        e.ViewedAt.Hour
+                    })
+                    .Select(g => new
+                    {
+                        PeriodStart = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day, g.Key.Hour, 0, 0),
+                        Count = g.Count(),
+                        UniqueIpCount = g.Select(x => x.IpAddress).Distinct().Count()
+                    })
+                    .OrderBy(g => g.PeriodStart)
+                    .Select(g => new DataPoint(g.PeriodStart, g.Count, g.UniqueIpCount))
+                    .ToListAsync(cancellationToken),
+
+                TimeInterval.Daily => await query
+                    .GroupBy(e => e.ViewedAt.Date)
+                    .Select(g => new
+                    {
+                        PeriodStart = g.Key,
+                        Count = g.Count(),
+                        UniqueIpCount = g.Select(x => x.IpAddress).Distinct().Count()
+                    })
+                    .OrderBy(g => g.PeriodStart)
+                    .Select(g => new DataPoint(g.PeriodStart, g.Count, g.UniqueIpCount))
+                    .ToListAsync(cancellationToken),
+
+                TimeInterval.Weekly => await query
+                    .GroupBy(e => new
+                    {
+                        e.ViewedAt.Year,
+                        e.ViewedAt.Month,
+                        e.ViewedAt.Day
+                    })
+                    .Select(g => new
+                    {
+                        Date = new DateTime(g.Key.Year, g.Key.Month, g.Key.Day),
+                        Count = g.Count(),
+                        UniqueIpCount = g.Select(x => x.IpAddress).Distinct().Count()
+                    })
+                    .ToListAsync(cancellationToken)
+                    .ContinueWith(task =>
+                    {
+                        return task.Result
+                            .GroupBy(x => x.Date.AddDays(-(int)x.Date.DayOfWeek))
+                            .Select(g => new DataPoint(g.Key, g.Sum(x => x.Count), g.Sum(x => x.UniqueIpCount)))
+                            .OrderBy(g => g.PeriodStart)
+                            .ToList();
+                    }, cancellationToken),
+
+                TimeInterval.Monthly => await query
+                    .GroupBy(e => new
+                    {
+                        e.ViewedAt.Year,
+                        e.ViewedAt.Month
+                    })
+                    .Select(g => new
+                    {
+                        PeriodStart = new DateTime(g.Key.Year, g.Key.Month, 1),
+                        Count = g.Count(),
+                        UniqueIpCount = g.Select(x => x.IpAddress).Distinct().Count()
+                    })
+                    .OrderBy(g => g.PeriodStart)
+                    .Select(g => new DataPoint(g.PeriodStart, g.Count, g.UniqueIpCount))
+                    .ToListAsync(cancellationToken),
+
+                //TimeInterval.Quarterly => await query
+                //    .GroupBy(e => new
+                //    {
+                //        e.EngagedAt.Year,
+                //        Quarter = (e.EngagedAt.Month - 1) / 3
+                //    })
+                //    .Select(g => new
+                //    {
+                //        PeriodStart = new DateTime(g.Key.Year, g.Key.Quarter * 3 + 1, 1),
+                //        Count = g.Count(),
+                //        UniqueIpCount = g.Select(x => x.IpAddress).Distinct().Count()
+                //    })
+                //    .OrderBy(g => g.PeriodStart)
+                //    .Select(g => new DataPoint(g.PeriodStart, g.Count, g.UniqueIpCount))
+                //    .ToListAsync(cancellationToken),
+
+                _ => throw new InvalidTimeIntervalException(interval.ToString())
+            };
+
+            var dataPoints = generatedBuckets.Select(b =>
+            {
+                var matchingGroup = grouped.FirstOrDefault(g => g.PeriodStart == b);
+                var a = new DataPoint(b, matchingGroup?.Count ?? 0, matchingGroup?.UniqueIpCount ?? 0);
+                var c = b;
+                return new DataPoint(b, matchingGroup?.Count ?? 0, matchingGroup?.UniqueIpCount ?? 0);
+            });
+            var total = dataPoints.Sum(d => d.Count);
+            var totalUniqueIps = dataPoints.Sum(d => d.UniqueIpCount);
+            var averageCountPerInterval = dataPoints.Average(d => d.Count);
+            var peakCount = dataPoints.Max(d => d.Count);
+            var summary = new AnalyticsSummary(total, totalUniqueIps, averageCountPerInterval, peakCount);
+            _logger.LogDebug("Generated analytics from {StartDate} to {EndDate} with interval {Interval}.", startDate, endDate, interval);
+            return new AnalyticsResponse(request.TimeRange.ToString(), request.Interval.ToString(), startDate, endDate, dataPoints, summary);
+        }
+
         private List<DateTime> GenerateTimeBuckets(
             DateTime start,
             DateTime end,
