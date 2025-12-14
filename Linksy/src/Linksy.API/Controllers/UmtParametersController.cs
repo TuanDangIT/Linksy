@@ -2,6 +2,8 @@
 using Linksy.Application.UmtParameters.Features.AddQrCodeToUmtParameter;
 using Linksy.Application.UmtParameters.Features.AddUmtParameterToUrl;
 using Linksy.Application.UmtParameters.Features.DeleteUmtParameter;
+using Linksy.Application.UmtParameters.Features.GetUmtParameter;
+using Linksy.Domain.Entities.Url;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,10 @@ namespace Linksy.API.Controllers
         [HttpPost("/api/v{v:apiVersion}/urls/{urlId}" + "/[controller]")]
         public async Task<ActionResult<ApiResponse<AddUmtParameterToUrlResponse>>> AddUmtParameterToUrl([FromRoute] int urlId, [FromBody] AddUmtParameterToUrl command, CancellationToken cancellationToken)
             => Ok(await _mediator.Send(command with { UrlId = urlId }, cancellationToken));
+
+        [HttpGet("/api/v{v:apiVersion}/urls/{urlId}" + "/[controller]/{umtParameterId}")]
+        public async Task<ActionResult<ApiResponse<GetUmtParameterResponse>>> GetUmtParameterByIdForUrl([FromRoute] int urlId, [FromRoute] int umtParameterId, CancellationToken cancellationToken)
+            => OkOrNotFound(await _mediator.Send(new GetUmtParameter(urlId, umtParameterId) {}, cancellationToken), nameof(UmtParameter));
 
         [HttpPost("{umtParameterId:int}/qrcode")]
         public async Task<ActionResult<ApiResponse<AddQrCodeToUmtParameterResponse>>> GenerateQrCodeForUmtParameter([FromRoute] int umtParameterId,
