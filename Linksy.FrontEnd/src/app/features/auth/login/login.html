@@ -1,0 +1,45 @@
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <fa-icon [icon]="faLock" class="logo-icon"></fa-icon>
+            <h2 class="title">
+                Sign in
+            </h2>
+        </div>
+        <form #form="ngForm" (ngSubmit)="onLogin(form)">
+            <div class="form-group-stack">
+                <div class="form-group">
+                    <label for="email" class="sr-only">Email</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required email
+                        class="form-control form-control-top" placeholder="Email address">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="sr-only">Password</label>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required
+                        class="form-control form-control-bottom" placeholder="Password">
+                </div>
+            </div>
+
+            <!-- @if (error()) {
+        <div class="error-message" role="alert">
+          {{ error() }}
+        </div>
+      } -->
+
+            <div>
+                <!-- <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner"></span>
+            Signing in...
+          } @else {
+            Sign in
+          }
+        </button> -->
+                <button type="submit" class="btn btn-primary">Sign in</button>
+            </div>
+        </form>
+        <div class="footer-link">
+            Don't have an account? <a routerLink="/register">Sign Up</a>
+        </div>
+    </div>
+</div>

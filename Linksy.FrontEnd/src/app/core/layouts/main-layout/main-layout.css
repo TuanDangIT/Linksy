@@ -1,0 +1,19 @@
+.app-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+.sidebar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 40;
+}
+
+.main-content {
+  display: flex;
+  transition: ease-in-out 300ms;
+  margin-left: 16rem;
+  padding: 3rem;
+} 

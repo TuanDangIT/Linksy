@@ -1,0 +1,33 @@
+<aside class="sidebar" [class.minimized]="isMinimized()">
+    <div class="sidebar-header">
+        <div class="logo-container">
+            <a routerLink="
+            /shortened-urls"><img src="logo.svg" alt="Logo Linksy" class="logo"></a>
+        </div>
+        <button (click)="toggleMinimize()" class="minimize-button">
+            @if (isMinimized()) {
+            <fa-icon [icon]="faAnglesRight" class="minimize-icon"></fa-icon>
+            } @else {
+            <fa-icon [icon]="faAnglesLeft" class="minimize-icon"></fa-icon>
+            }
+        </button>
+    </div>
+    <nav class="sidebar-nav">
+        @for (item of navItems; track item.label) {
+        <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+            <fa-icon [icon]="item.icon" class="nav-item-icon"></fa-icon>
+            <span class="nav-item-label">
+                {{ item.label }}
+            </span>
+        </a>
+        }
+    </nav>
+    <div class="sidebar-footer">
+        <a routerLink="/login" (click)="logout()" class="logout-button">
+            <fa-icon [icon]="faArrowRightFromBracket" class="logout-icon"></fa-icon>
+            <span class="logout-label">
+                Logout
+            </span>
+        </a>
+    </div>
+</aside>

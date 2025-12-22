@@ -46,6 +46,15 @@ namespace Linksy.Infrastructure
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+            services.AddCors(options =>
+            {
+               options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
             return services;
         }
 
@@ -58,6 +67,7 @@ namespace Linksy.Infrastructure
             app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+            app.UseCors();
             return app;
         }
         public static void RegisterOptions<T>(this IServiceCollection services, string sectionName) where T : class, new()
