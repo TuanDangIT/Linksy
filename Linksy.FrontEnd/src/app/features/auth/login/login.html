@@ -11,12 +11,12 @@
                 <div class="form-group">
                     <label for="email" class="sr-only">Email</label>
                     <input id="email" name="email" type="email" autocomplete="email" required email
-                        class="form-control form-control-top" placeholder="Email address">
+                        class="form-control form-control-top" placeholder="Email address" ngModel #email="ngModel">
                 </div>
                 <div class="form-group">
                     <label for="password" class="sr-only">Password</label>
                     <input id="password" name="password" type="password" autocomplete="current-password" required
-                        class="form-control form-control-bottom" placeholder="Password">
+                        class="form-control form-control-bottom" placeholder="Password" ngModel #password="ngModel">
                 </div>
             </div>
 
@@ -25,7 +25,11 @@
           {{ error() }}
         </div>
       } -->
-
+            @if (error()) {
+            <div class="error-message" role="alert">
+                {{ error() }}
+            </div>
+            }
             <div>
                 <!-- <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
           @if (isLoading()) {

@@ -36,5 +36,11 @@ namespace Linksy.Domain.Entities.User
             RefreshToken = refreshToken;
             RefreshTokenExpiryDate = expiryDate;
         }
+
+        public void RemoveRefreshToken()
+        {
+            RefreshToken = null;
+            RefreshTokenExpiryDate = null;
+        }
     }
 }

@@ -17,5 +17,6 @@ namespace Linksy.Infrastructure.Auth
         public bool ValidateIssuerSigningKey { get; set; } = true;
         public int ExpiryInMinutes { get; set; }
         public int RefreshTokenExpiryInDays { get; set; }
+        public int RefreshThresholdMinutes { get; set; }
     }
 }

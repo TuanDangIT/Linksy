@@ -83,11 +83,11 @@ namespace Linksy.Infrastructure.Services
         {
             var user = await _userManager.FindByEmailAsync(dto.Email) ??
                 throw new InvalidCredentialsException("Invalid email or password.");
-            var isConfirmed = await _userManager.IsEmailConfirmedAsync(user);
-            if (!isConfirmed)
-            {
-                throw new UserNotConfirmedException();
-            }
+            //var isConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+            //if (!isConfirmed)
+            //{
+            //    throw new UserNotConfirmedException();
+            //}
             var isLockedOut = await _userManager.IsLockedOutAsync(user);
             if (isLockedOut)
             {
@@ -140,6 +140,19 @@ namespace Linksy.Infrastructure.Services
             return newJwtToken;
         }
 
+        public async Task DeleteRefreshTokenAsync()
+        {
+            var userId = _contextService.Identity!.Id;
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NullReferenceException("User cannot be null when authorized.");
+            user.RemoveRefreshToken();
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                throw new DbUpdateException("User was not updated.");
+            }
+            _logger.LogInformation("User with email {email} has deleted their refresh token.", user.Email);
+        }
+
         public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email) ?? throw new InvalidEmailException(dto.Email);
@@ -184,11 +197,10 @@ namespace Linksy.Infrastructure.Services
             }
         }
 
-        public async Task<UserDto?> GetUserAsync()
+        public async Task<UserDto> GetUserAsync()
         {
             var userId = _contextService.Identity!.Id;
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            if(user is null) return null;
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NullReferenceException("User cannot be null when authorized.");
             return new UserDto(user.Id, user.UserName!, user.Email!, user.FirstName, user.LastName, user.Gender.ToString(), user.CreatedAt, user.UpdatedAt);
         }
     }

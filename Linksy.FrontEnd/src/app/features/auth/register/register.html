@@ -1,7 +1,10 @@
 <div class="register-container">
   <div class="register-card">
     <div class="register-header">
-      <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+      <svg class="logo-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+      </svg>
       <h2 class="title">
         Create your account
       </h2>
@@ -10,40 +13,18 @@
       <div class="form-group-stack">
         <div class="form-group">
           <label for="email" class="sr-only">Email</label>
-          <input 
-            id="email" 
-            name="email" 
-            type="email"
-            autocomplete="email"
-            email
-            required 
-            class="form-control form-control-top" 
-            placeholder="Email address"
-          >
+          <input id="email" name="email" type="email" autocomplete="email" email required
+            class="form-control form-control-top" placeholder="Email address">
         </div>
         <div class="form-group">
           <label for="password" class="sr-only">Password</label>
-          <input 
-            id="password" 
-            name="password" 
-            type="password" 
-            autocomplete="new-password"
-            required 
-            class="form-control" 
-            placeholder="Password"
-          >
+          <input id="password" name="password" type="password" autocomplete="new-password" required class="form-control"
+            placeholder="Password">
         </div>
         <div class="form-group">
           <label for="confirm-password" class="sr-only">Confirm Password</label>
-          <input 
-            id="confirm-password" 
-            name="confirm-password" 
-            type="password" 
-            autocomplete="new-password"
-            required 
-            class="form-control form-control-bottom" 
-            placeholder="Confirm Password"
-          >
+          <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" required
+            class="form-control form-control-bottom" placeholder="Confirm Password">
         </div>
       </div>
 
@@ -52,7 +33,11 @@
           {{ error() }}
         </div>
       } -->
-
+      @if (error()) {
+      <div class="error-message" role="alert">
+        {{ error() }}
+      </div>
+      }
       <div>
         <!-- <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
           @if (isLoading()) {
@@ -66,7 +51,7 @@
       </div>
     </form>
     <div class="footer-link">
-        Already have an account? <a routerLink="/login">Sign In</a>
+      Already have an account? <a routerLink="/login">Sign In</a>
     </div>
   </div>
 </div>

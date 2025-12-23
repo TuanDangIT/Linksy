@@ -41,11 +41,24 @@ namespace Linksy.Infrastructure.Auth
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.SigningKey)),
                     ValidateLifetime = authOptions.ValidateLifetime
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var jwtToken = context.Request.Cookies["jwtToken"];
+                        if (!string.IsNullOrEmpty(jwtToken))
+                        {
+                            context.Token = jwtToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
             services.AddIdentityCore<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;
-                options.SignIn.RequireConfirmedEmail = true;
+                //options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(20);
                 options.User.RequireUniqueEmail = true;

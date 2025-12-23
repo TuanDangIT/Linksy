@@ -51,8 +51,10 @@ namespace Linksy.Infrastructure.Auth
             {
                 JwtToken = token,
                 JwtTokenExpiryDate = expiryDate,
+                JwtTokenExpiryInMinutes = _authOptions.ExpiryInMinutes,
                 RefreshToken = refreshToken.RefreshToken,
-                RefreshTokenExpiryDate = refreshToken.ExpiryDate
+                RefreshTokenExpiryDate = refreshToken.ExpiryDate,
+                RefreshTokenExpiryInDays = _authOptions.RefreshTokenExpiryInDays,
             };
         }
 

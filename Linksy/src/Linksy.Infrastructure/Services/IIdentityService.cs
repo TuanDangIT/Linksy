@@ -9,10 +9,11 @@ namespace Linksy.Infrastructure.Services
 {
     public interface IIdentityService
     {
-        Task<UserDto?> GetUserAsync();
+        Task<UserDto> GetUserAsync();
         Task<string> RegisterAsync(RegisterDto dto);
         Task<JwtDto> LoginAsync(LoginDto dto);
         Task<JwtDto> RefreshTokenAsync(GetRefreshTokenDto dto);
+        Task DeleteRefreshTokenAsync();
         Task ConfirmEmailAsync(ConfirmEmailDto dto);
         Task<string> GetResetPasswordTokenAsync(string email);
         Task ResetPasswordAsync(ResetPasswordDto dto);
