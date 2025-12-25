@@ -1,7 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { Sidebar } from '../../../shared/components/sidebar/sidebar';
 import { RouterOutlet } from '@angular/router';
-import { sign } from 'crypto';
 
 @Component({
   selector: 'app-main-layout',
@@ -11,7 +10,7 @@ import { sign } from 'crypto';
 })
 export class MainLayout {
   isMinimized = signal(false);
-  onMinimized(isMinimized: boolean) {
+  onMinimized() {
     this.isMinimized.update((value) => !value);
   }
 }

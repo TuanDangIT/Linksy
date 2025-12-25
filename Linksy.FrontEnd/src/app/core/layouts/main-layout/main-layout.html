@@ -1,5 +1,5 @@
 <div class="app-container">
-  <app-sidebar class="sidebar-container" (isMinimizedChange)="onMinimized($event)"></app-sidebar>
+  <app-sidebar class="sidebar-container" (isMinimizedChange)="onMinimized()"></app-sidebar>
   <main class="main-content" [style.margin-left]="isMinimized() ? '5rem' : '16rem'">
     <router-outlet></router-outlet>
   </main>

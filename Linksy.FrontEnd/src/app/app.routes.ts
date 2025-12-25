@@ -9,18 +9,27 @@ import { BarcodeList } from './features/barcodes/list/barcode-list';
 import { authGuard, noAuthGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
+  { path: 'login', component: Login, title: 'Login', canActivate: [noAuthGuard] },
+  { path: 'register', component: Register, title: 'Register', canActivate: [noAuthGuard] },
   {
     path: '',
     component: MainLayout,
-    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'shortened-urls', pathMatch: 'full' },
-      { path: 'shortened-urls', component: ShortenedUrlList, title: 'Shortened URLs' },
-      { path: 'landing-pages', component: LandingPageList, title: 'Landing Pages' },
-      { path: 'qrcodes', component: QrcodeList, title: 'QR Codes' },
-      { path: 'barcodes', component: BarcodeList, title: 'Barcodes' },
+      {
+        path: 'shortened-urls',
+        component: ShortenedUrlList,
+        title: 'Shortened URLs',
+        canActivate: [authGuard],
+      },
+      {
+        path: 'landing-pages',
+        component: LandingPageList,
+        title: 'Landing Pages',
+        canActivate: [authGuard],
+      },
+      { path: 'qrcodes', component: QrcodeList, title: 'QR Codes', canActivate: [authGuard] },
+      { path: 'barcodes', component: BarcodeList, title: 'Barcodes', canActivate: [authGuard] },
     ],
   },
   { path: '**', redirectTo: '/login' },

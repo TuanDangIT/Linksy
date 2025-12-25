@@ -1,7 +1,17 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faLink, faQrcode, faBarcode, faPager, faArrowRightFromBracket, IconDefinition, faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faLink,
+  faQrcode,
+  faBarcode,
+  faPager,
+  faArrowRightFromBracket,
+  IconDefinition,
+  faAnglesLeft,
+  faAnglesRight,
+} from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../../../core/services/auth-service';
 
 interface NavItem {
   label: string;
@@ -17,11 +27,13 @@ interface NavItem {
 })
 export class Sidebar {
   isMinimized = signal(false);
+  authService = inject(AuthService);
+  router = inject(Router);  
   isMinimizedChange = output<boolean>();
   activeItem = signal('Shortened Urls');
   faArrowRightFromBracket = faArrowRightFromBracket;
   faAnglesLeft = faAnglesLeft;
-  faAnglesRight = faAnglesRight;  
+  faAnglesRight = faAnglesRight;
 
   navItems: NavItem[] = [
     {
@@ -54,6 +66,12 @@ export class Sidebar {
     this.activeItem.set(itemLabel);
   }
   logout(): void {
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      }
+    }
+    );
     console.log('Logging out...');
   }
 }
