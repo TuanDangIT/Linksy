@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Linksy.Application.Urls.Features.BrowseUrls
-{
+{ 
     public record class BrowseUrls : IQuery<BrowseUrlsResponse>
     {
         public int PageNumber { get; init; }

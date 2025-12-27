@@ -14,10 +14,10 @@ namespace Linksy.Infrastructure.DAL
 {
     internal static class Extensions 
     {
-        private const string _postgresSectionName = "Postgres";
+        private const string _postgresConnectionStringName = "Postgres";
         public static IServiceCollection AddPostgres(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<LinksyDbContext>(o => o.UseNpgsql(configuration.GetConnectionString(_postgresSectionName)));
+            services.AddDbContext<LinksyDbContext>(o => o.UseNpgsql(configuration.GetConnectionString(_postgresConnectionStringName)));
             services.AddUnitOfWork();
             services.AddScoped<IUrlRepository, UrlRepository>();
             services.AddScoped<IQrCodeRepository, QrCodeRepository>();

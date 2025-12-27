@@ -14,9 +14,10 @@ namespace Linksy.Application.Users.DTO
         public string FirstName { get; init; } = string.Empty;
         public string LastName { get; init; } = string.Empty;
         public string Gender { get; init; } = string.Empty;
+        public IEnumerable<string> Roles { get; init; } 
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
-        public UserDto(int id, string username, string email, string firstName, string lastName, string gender, DateTime createdAt, DateTime? updatedAt)
+        public UserDto(int id, string username, string email, string firstName, string lastName, string gender, IEnumerable<string> roles, DateTime createdAt, DateTime? updatedAt)
         {
             Id = id;
             Username = username;
@@ -24,6 +25,7 @@ namespace Linksy.Application.Users.DTO
             FirstName = firstName;
             LastName = lastName;
             Gender = gender;
+            Roles = roles;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
         }

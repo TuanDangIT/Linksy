@@ -14,14 +14,14 @@ namespace Linksy.Infrastructure.BlobStorage
     internal static class Extensions
     {
         private const string _blobStorageSectionName = "BlobAzureStorage";
+        private const string _blobStorageConnectionStringName = "AzureBlobStorage";
         public static IServiceCollection AddBloblStorage(this IServiceCollection services, IConfiguration configuration)
         {
             var blobStorageOptions = services.GetOptions<BlobStorageOptions>(_blobStorageSectionName);
             services.AddSingleton(blobStorageOptions);
-            var options = services.GetOptions<BlobStorageOptions>(_blobStorageSectionName);
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(options.ConnectionString).WithName(blobStorageOptions.ClientName);
+                builder.AddBlobServiceClient(configuration.GetConnectionString(_blobStorageConnectionStringName)).WithName(blobStorageOptions.ClientName);
             });
             services.AddSingleton<IBlobStorageService, BlobStorageService>();
             return services;

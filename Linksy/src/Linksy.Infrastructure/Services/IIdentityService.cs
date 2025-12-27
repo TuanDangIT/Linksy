@@ -11,9 +11,9 @@ namespace Linksy.Infrastructure.Services
     {
         Task<UserDto> GetUserAsync();
         Task<string> RegisterAsync(RegisterDto dto);
-        Task<JwtDto> LoginAsync(LoginDto dto);
+        Task<UserWithJwtDto> LoginAsync(LoginDto dto);
+        Task LogoutAsync();
         Task<JwtDto> RefreshTokenAsync(GetRefreshTokenDto dto);
-        Task DeleteRefreshTokenAsync();
         Task ConfirmEmailAsync(ConfirmEmailDto dto);
         Task<string> GetResetPasswordTokenAsync(string email);
         Task ResetPasswordAsync(ResetPasswordDto dto);

@@ -48,11 +48,12 @@ namespace Linksy.Infrastructure
             services.AddSwaggerGen();
             services.AddCors(options =>
             {
-               options.AddDefaultPolicy(builder =>
+               options.AddPolicy("AllowFrontEnd", builder =>
                 {
-                    builder.AllowAnyOrigin()
+                    builder.WithOrigins("http://localhost:4200")
                            .AllowAnyMethod()
-                           .AllowAnyHeader();
+                           .AllowAnyHeader()
+                           .AllowCredentials();
                 });
             });
             return services;
@@ -65,9 +66,9 @@ namespace Linksy.Infrastructure
                 app.UseDocumentation();
             }
             app.UseHttpsRedirection();
+            app.UseCors("AllowFrontEnd");
             app.UseAuthorization();
             app.MapControllers();
-            app.UseCors();
             return app;
         }
         public static void RegisterOptions<T>(this IServiceCollection services, string sectionName) where T : class, new()

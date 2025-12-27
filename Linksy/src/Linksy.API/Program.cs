@@ -16,8 +16,8 @@ builder.Services.AddScoped<MultiTenancyMiddleware>();
 var app = builder.Build();
 
 app.UseExceptionHandler(_ => { });
-app.UseInfrastructure();
 app.UseMiddleware<AutoTokenRefreshMiddleware>();
+app.UseInfrastructure();
 app.UseMiddleware<MultiTenancyMiddleware>();
 
 app.Run();

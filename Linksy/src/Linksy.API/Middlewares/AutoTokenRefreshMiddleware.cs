@@ -1,4 +1,5 @@
-﻿using Linksy.Application.Users.DTO;
+﻿using Linksy.API.Utils;
+using Linksy.Application.Users.DTO;
 using Linksy.Infrastructure.Auth;
 using Linksy.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
@@ -63,31 +64,31 @@ public class AutoTokenRefreshMiddleware : IMiddleware
                 JwtToken = jwtToken,
                 RefreshToken = refreshToken
             });
-            SetTokenCookies(context, newToken);
+            CookieUtils.SetTokenCookies(context, newToken);
         }
     }
 
-    private void SetTokenCookies(HttpContext context, JwtDto token)
-    {
-        var jwtTokenExpiration = TimeSpan.FromMinutes(token.JwtTokenExpiryInMinutes);
-        var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays);
+    //private void SetTokenCookies(HttpContext context, JwtDto token)
+    //{
+    //    var jwtTokenExpiration = TimeSpan.FromMinutes(token.JwtTokenExpiryInMinutes);
+    //    var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays);
 
-        context.Response.Cookies.Append("accessToken", token.JwtToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            MaxAge = jwtTokenExpiration,
-            Path = "/"
-        });
+    //    context.Response.Cookies.Append("accessToken", token.JwtToken, new CookieOptions
+    //    {
+    //        HttpOnly = true,
+    //        Secure = true,
+    //        SameSite = SameSiteMode.Strict,
+    //        MaxAge = jwtTokenExpiration,
+    //        Path = "/"
+    //    });
 
-        context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-            MaxAge = refreshTokenExpiration,
-            Path = "/"
-        });
-    }
+    //    context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
+    //    {
+    //        HttpOnly = true,
+    //        Secure = true,
+    //        SameSite = SameSiteMode.Strict,
+    //        MaxAge = refreshTokenExpiration,
+    //        Path = "/"
+    //    });
+    //}
 }

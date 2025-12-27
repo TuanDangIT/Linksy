@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Linksy.API.API;
+using Linksy.API.Utils;
 using Linksy.Application.Users.DTO;
 using Linksy.Infrastructure.Services;
 using MediatR;
@@ -22,36 +23,32 @@ namespace Linksy.API.Controllers
         }
         [Authorize]
         [HttpGet]
-        public async Task<ActionResult<UserDto>> GetUser()
+        public async Task<ActionResult<ApiResponse<UserDto>>> GetUser()
         {
             var user = await _identityService.GetUserAsync(); /*?? throw new SecurityException("User's token is invalid.");*/
-            return Ok(user);
+            return Ok(new ApiResponse<UserDto>(HttpStatusCode.OK, user));
         }
         [HttpPost("register")]
-        public async Task<ActionResult<string>> Register([FromBody] RegisterDto dto)
+        public async Task<ActionResult<ApiResponse<string>>> Register([FromBody] RegisterDto dto)
         {
             var emailConfirmationCode = await _identityService.RegisterAsync(dto);
-            return Ok(emailConfirmationCode);
+            return Ok(new ApiResponse<string>(HttpStatusCode.OK, emailConfirmationCode));
         }
         [HttpPost("login")]
-        public async Task<ActionResult<JwtDto>> Login([FromBody] LoginDto dto)
+        public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto dto)
         {
-            var token = await _identityService.LoginAsync(dto);
-            SetTokenCookies(token);
-            return Ok(token);
+            var userWithJwt = await _identityService.LoginAsync(dto);
+            CookieUtils.SetTokenCookies(HttpContext, userWithJwt.Jwt);
+            return Ok(userWithJwt.User);
         }
 
         [HttpPost("logout")]
         [Authorize]
         public async Task<ActionResult<ApiResponse<string>>> Logout()
         {
-            //var refreshToken = Request.Cookies["refreshToken"];
-            //var jwtToken = Request.Cookies["jwtToken"];
+            await _identityService.LogoutAsync();
 
-            await _identityService.DeleteRefreshTokenAsync();
-
-            Response.Cookies.Delete("jwtToken");
-            Response.Cookies.Delete("refreshToken");
+            CookieUtils.DeleteTokenCookies(HttpContext);
 
             return Ok(new ApiResponse<string>(HttpStatusCode.OK, "Logged out successfully"));
         }
@@ -81,26 +78,26 @@ namespace Linksy.API.Controllers
         //    return Ok(token);
         //}
 
-        private void SetTokenCookies(JwtDto token)
-        {
-            var accessTokenExpiration = TimeSpan.FromMinutes(token.JwtTokenExpiryInMinutes);
-            var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays);
+        //private void SetTokenCookies(JwtDto token)
+        //{
+        //    var accessTokenExpiration = TimeSpan.FromMinutes(token.JwtTokenExpiryInMinutes);
+        //    var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays);
 
-            Response.Cookies.Append("jwtToken", token.JwtToken, new CookieOptions
-            {
-                HttpOnly = true, 
-                Secure = true,   
-                SameSite = SameSiteMode.Strict, 
-                MaxAge = accessTokenExpiration
-            });
+        //    Response.Cookies.Append("jwtToken", token.JwtToken, new CookieOptions
+        //    {
+        //        HttpOnly = true, 
+        //        Secure = true,   
+        //        SameSite = SameSiteMode.Strict, 
+        //        MaxAge = accessTokenExpiration
+        //    });
 
-            Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                MaxAge = refreshTokenExpiration
-            });
-        }
+        //    Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
+        //    {
+        //        HttpOnly = true,
+        //        Secure = true,
+        //        SameSite = SameSiteMode.Strict,
+        //        MaxAge = refreshTokenExpiration
+        //    });
+        //}
     }
 }

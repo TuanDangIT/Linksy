@@ -24,6 +24,7 @@ namespace Linksy.API.Controllers
         {
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<ApiResponse<BrowseUrlsResponse>>> BrowseUrls([FromQuery] BrowseUrls query, CancellationToken cancellationToken)
             => Ok(await _mediator.Send(query, cancellationToken));

@@ -79,7 +79,7 @@ namespace Linksy.Infrastructure.Services
             return code;
         }
 
-        public async Task<JwtDto> LoginAsync(LoginDto dto)
+        public async Task<UserWithJwtDto> LoginAsync(LoginDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email) ??
                 throw new InvalidCredentialsException("Invalid email or password.");
@@ -111,8 +111,26 @@ namespace Linksy.Infrastructure.Services
                 throw new DbUpdateException("User was not updated.");
             }
             _logger.LogInformation("Successfully created JWT Token: {@token} for user with email {email}.", token, user.Email);
-            return token;
+            var userDto = new UserDto(user.Id, user.UserName!, user.Email!, user.FirstName, user.LastName, user.Gender.ToString(), roles, user.CreatedAt, user.UpdatedAt);
+            return new UserWithJwtDto()
+            {
+                Jwt = token,
+                User = userDto
+            };
 
+        }
+
+        public async Task LogoutAsync()
+        {
+            var userId = _contextService.Identity!.Id;
+            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NullReferenceException("User cannot be null when authorized.");
+            user.RemoveRefreshToken();
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                throw new DbUpdateException("User was not updated.");
+            }
+            _logger.LogInformation("User with email {email} has deleted their refresh token.", user.Email);
         }
 
         public async Task<JwtDto> RefreshTokenAsync(GetRefreshTokenDto dto)
@@ -138,19 +156,6 @@ namespace Linksy.Infrastructure.Services
             }
             _logger.LogInformation("Successfully refreshed JWT Token: {@newJwtToken} for user with email {email}.", newJwtToken, user.Email);
             return newJwtToken;
-        }
-
-        public async Task DeleteRefreshTokenAsync()
-        {
-            var userId = _contextService.Identity!.Id;
-            var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NullReferenceException("User cannot be null when authorized.");
-            user.RemoveRefreshToken();
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-            {
-                throw new DbUpdateException("User was not updated.");
-            }
-            _logger.LogInformation("User with email {email} has deleted their refresh token.", user.Email);
         }
 
         public async Task ConfirmEmailAsync(ConfirmEmailDto dto)
@@ -201,7 +206,8 @@ namespace Linksy.Infrastructure.Services
         {
             var userId = _contextService.Identity!.Id;
             var user = await _userManager.FindByIdAsync(userId.ToString()) ?? throw new NullReferenceException("User cannot be null when authorized.");
-            return new UserDto(user.Id, user.UserName!, user.Email!, user.FirstName, user.LastName, user.Gender.ToString(), user.CreatedAt, user.UpdatedAt);
+            var roles = await _userManager.GetRolesAsync(user);
+            return new UserDto(user.Id, user.UserName!, user.Email!, user.FirstName, user.LastName, user.Gender.ToString(), roles, user.CreatedAt, user.UpdatedAt);
         }
     }
 }
