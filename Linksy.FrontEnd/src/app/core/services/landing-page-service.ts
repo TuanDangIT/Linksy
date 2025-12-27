@@ -1,18 +1,18 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BrowseUrlsRequest, BrowseUrlsResponse } from '../types/browseUrls';
+import { BrowseLandingPagesRequest, BrowseLandingPagesResponse } from '../types/browseLandingPages';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../types/apiResponse';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ShortenedUrlService {
-  private readonly apiUrl = environment.apiBaseUrl + '/urls';
+export class LandingPageService {
+  private readonly apiUrl = environment.apiBaseUrl + '/landingpages';
   private readonly httpClient = inject(HttpClient);
 
-  getUrls(params?: BrowseUrlsRequest): Observable<ApiResponse<BrowseUrlsResponse>> {
+  getUrls(params?: BrowseLandingPagesRequest): Observable<ApiResponse<BrowseLandingPagesResponse>> {
     let httpParams = new HttpParams();
 
     if (params) {
@@ -37,7 +37,7 @@ export class ShortenedUrlService {
       }
     }
 
-    return this.httpClient.get<ApiResponse<BrowseUrlsResponse>>(this.apiUrl, {
+    return this.httpClient.get<ApiResponse<BrowseLandingPagesResponse>>(this.apiUrl, {
       params: httpParams,
     });
   }

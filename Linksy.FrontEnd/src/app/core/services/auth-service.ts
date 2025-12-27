@@ -3,19 +3,18 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/user';
-import { ApiResponse } from '../types/ApiResponse';
-import { LoginRequest } from '../types/LoginRequest';
-import { RegisterRequest } from '../types/RegisterRequest';
+import { ApiResponse } from '../types/apiResponse';
+import { LoginRequest } from '../types/loginRequest';
+import { RegisterRequest } from '../types/registerRequest';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = environment.apiBaseUrl;
-  private httpClient = inject(HttpClient);
+  private readonly apiUrl = environment.apiBaseUrl + '/users';
+  private readonly httpClient = inject(HttpClient);
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
     this.checkAuthStatus().subscribe({
@@ -31,7 +30,7 @@ export class AuthService {
 
   checkAuthStatus(): Observable<User | null> {
     return this.httpClient
-      .get<ApiResponse<User>>(`${this.API_URL}/users`, {
+      .get<ApiResponse<User>>(`${this.apiUrl}`, {
         withCredentials: true,
       })
       .pipe(
@@ -46,7 +45,7 @@ export class AuthService {
 
   login(loginDto: LoginRequest): Observable<User> {
     return this.httpClient
-      .post<ApiResponse<User>>(`${this.API_URL}/users/login`, loginDto, { withCredentials: true })
+      .post<ApiResponse<User>>(`${this.apiUrl}/login`, loginDto, { withCredentials: true })
       .pipe(
         map((response) => response.data),
         tap((user) => {
@@ -57,7 +56,7 @@ export class AuthService {
   }
 
   register(registerDto: RegisterRequest): Observable<void> {
-    return this.httpClient.post<void>(`${this.API_URL}/users/register`, registerDto, {
+    return this.httpClient.post<void>(`${this.apiUrl}/register`, registerDto, {
       withCredentials: true,
     });
   }
@@ -65,7 +64,7 @@ export class AuthService {
   logout(): Observable<void> {
     return this.httpClient
       .post<void>(
-        `${this.API_URL}/users/logout`,
+        `${this.apiUrl}/logout`,
         {},
         {
           withCredentials: true,

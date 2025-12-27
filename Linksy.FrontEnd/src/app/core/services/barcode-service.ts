@@ -1,18 +1,18 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { BrowseUrlsRequest, BrowseUrlsResponse } from '../types/browseUrls';
-import { Observable } from 'rxjs';
+import { BrowseBarcodesRequest, BrowseBarcodesResponse } from '../types/browseBarcodes';
 import { ApiResponse } from '../types/apiResponse';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ShortenedUrlService {
-  private readonly apiUrl = environment.apiBaseUrl + '/urls';
+export class BarcodeService {
+  private readonly apiUrl = environment.apiBaseUrl + '/barcodes';
   private readonly httpClient = inject(HttpClient);
 
-  getUrls(params?: BrowseUrlsRequest): Observable<ApiResponse<BrowseUrlsResponse>> {
+  getUrls(params?: BrowseBarcodesRequest): Observable<ApiResponse<BrowseBarcodesResponse>> {
     let httpParams = new HttpParams();
 
     if (params) {
@@ -37,7 +37,7 @@ export class ShortenedUrlService {
       }
     }
 
-    return this.httpClient.get<ApiResponse<BrowseUrlsResponse>>(this.apiUrl, {
+    return this.httpClient.get<ApiResponse<BrowseBarcodesResponse>>(this.apiUrl, {
       params: httpParams,
     });
   }

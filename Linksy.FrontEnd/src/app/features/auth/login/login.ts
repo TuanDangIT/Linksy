@@ -4,7 +4,7 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
-import { LoginRequest } from '../../../core/types/LoginRequest';
+import { LoginRequest } from '../../../core/types/loginRequest';
 
 @Component({
   selector: 'app-login',

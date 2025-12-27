@@ -1,1 +1,82 @@
-<p>shortened-url-list works!</p>
+<table class="url-table">
+  <thead>
+    <tr>
+      <th (click)="sortBy('Id')" class="sortable">
+        ID <span class="sort-icon">{{ getSortIcon('Id') }}</span>
+      </th>
+      <th>Code</th>
+      <th>Original URL</th>
+      <th (click)="sortBy('VisitCount')" class="sortable">
+        Visits <span class="sort-icon">{{ getSortIcon('VisitCount') }}</span>
+      </th>
+      <th>Status</th>
+      <th>Features</th>
+      <th>Tags</th>
+      <th (click)="sortBy('CreatedAt')" class="sortable">
+        Created <span class="sort-icon">{{ getSortIcon('CreatedAt') }}</span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let url of urls" [class.inactive]="!url.isActive">
+      <!-- ID -->
+      <td class="id-cell">{{ url.id }}</td>
+      
+      <!-- Code with copy button -->
+      <td class="code-cell">
+        <div class="code-wrapper">
+          <code>{{ url.code }}</code>
+          <button class="btn-copy" (click)="copyToClipboard(url.code)">📋</button>
+        </div>
+      </td>
+      
+      <!-- Original URL -->
+      <td class="url-cell">
+        <a [href]="url.originalUrl" target="_blank" *ngIf="url.originalUrl">
+          {{ url.originalUrl }}
+        </a>
+        <span *ngIf="!url.originalUrl">-</span>
+      </td>
+      
+      <!-- Visits Count -->
+      <td class="visits-cell">
+        <span class="visits-badge">{{ url.visitsCount }}</span>
+      </td>
+      
+      <!-- Is Active Status -->
+      <td class="status-cell">
+        <span class="status-badge" [class.active]="url.isActive" [class.inactive]="!url.isActive">
+          {{ url.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </td>
+      
+      <!-- Features (hasQrCode, hasBarcode, hasLandingPageItem, hasUmtParameter) -->
+      <td class="features-cell">
+        <div class="feature-icons">
+          <span *ngIf="url.hasQrCode" title="Has QR Code">🔲</span>
+          <span *ngIf="url.hasBarcode" title="Has Barcode">📊</span>
+          <span *ngIf="url.hasLandingPageItem" title="Has Landing Page">🏠</span>
+          <span *ngIf="url.hasUmtParameter" title="Has UTM Parameters">🎯</span>
+        </div>
+      </td>
+      
+      <!-- Tags -->
+      <td class="tags-cell">
+        <div class="tags" *ngIf="url.tags && url.tags.length > 0">
+          <span class="tag" *ngFor="let tag of url.tags">{{ tag }}</span>
+        </div>
+        <span *ngIf="!url.tags || url.tags.length === 0">-</span>
+      </td>
+      
+      <!-- Created At & Updated At -->
+      <td class="date-cell">
+        <div class="date-info">
+          <div>{{ formatDate(url.createdAt) }}</div>
+          <div *ngIf="url.updatedAt" class="updated-date">
+            Updated: {{ formatDate(url.updatedAt) }}
+          </div>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
