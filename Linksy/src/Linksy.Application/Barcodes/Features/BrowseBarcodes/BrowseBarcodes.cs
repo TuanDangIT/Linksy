@@ -10,12 +10,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Barcodes.Features.BrowseBarcodes
 {
-    public record class BrowseBarcodes : IQuery<BrowseBarcodesResponse>
+    public record class BrowseBarcodes : Browse<BrowseBarcodesResponse>
     {
-        public int PageNumber { get; init; }
-        public int PageSize { get; init; }
-        public IEnumerable<string>? Orders { get; init; }
-        [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
-        public Dictionary<string, string>? Filters { get; set; }
     }
 }

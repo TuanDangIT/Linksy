@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+using Linksy.Application.Shared.Pagination;
+using Linksy.Domain.Entities.ScanCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,18 +9,10 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.QrCodes.Features.BrowseQrCodes
 {
-    internal class BrowseQrCodesValidator : AbstractValidator<BrowseQrCodes>
+    internal class BrowseQrCodesValidator : PaginationValidator<BrowseQrCodes, QrCode>
     {
-        public BrowseQrCodesValidator()
+        public BrowseQrCodesValidator(IPaginationConfiguration<QrCode> paginationConfig) : base(paginationConfig)
         {
-            RuleFor(b => b.PageNumber)
-                .NotNull()
-                .NotEmpty()
-                .GreaterThan(0).WithMessage("Page number must be greater than 0.");
-            RuleFor(b => b.PageSize)
-                .NotNull()
-                .NotEmpty()
-                .GreaterThan(0).WithMessage("Page size must be greater than 0.");
         }
     }
 }

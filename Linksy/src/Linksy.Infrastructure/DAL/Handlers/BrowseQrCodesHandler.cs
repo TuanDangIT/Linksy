@@ -38,12 +38,14 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .AsNoTracking()
                 .AsQueryable();
 
+            var orders = request.Sort?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
             var result = await _paginationService.PaginateAsync(
                 query,
                 request.PageNumber,
                 request.PageSize,
                 request.Filters,
-                request.Orders,
+                orders,
                 q => q.Url != null
                     ? new BrowseQrCodeDto(
                         q.Id,

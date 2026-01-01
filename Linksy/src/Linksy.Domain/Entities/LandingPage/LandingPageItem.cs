@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities.LandingPage
 {
-    public abstract class LandingPageItem : BaseEntityWithMultitenancy, IAuditable
+    public abstract class LandingPageItem : BaseEntityWithMultitenancy, IAuditable, IStatisticalUpdate
     {
         public LandingPageItemType Type { get; protected set; }
         public int Order { get; private set; }

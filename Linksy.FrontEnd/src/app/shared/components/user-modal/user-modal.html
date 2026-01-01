@@ -1,0 +1,66 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="header">
+            <div class="title">
+                <fa-icon [icon]="faUser"></fa-icon>
+                <h2>User</h2>
+            </div>
+
+            <button type="button" class="close" (click)="cancel.emit()">Close</button>
+        </div>
+
+        @if (user$ | async; as user) {
+        <div class="grid">
+            <div class="item">
+                <div class="label">Username</div>
+                <div class="value">{{ user.username }}</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Email</div>
+                <div class="value">{{ user.email }}</div>
+            </div>
+
+            <div class="item">
+                <div class="label">First Name</div>
+                <div class="value">{{ user.firstName }}</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Last Name</div>
+                <div class="value">{{ user.lastName }}</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Gender</div>
+                <div class="value">{{ user.gender }}</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Roles</div>
+                <div class="value">
+                    @if (user.roles.length > 0) {
+                    {{ user.roles.join(', ') }}
+                    } @else {
+                    -
+                    }
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="label">Created</div>
+                <div class="value">{{ user.createdAt | date: 'medium' }}</div>
+            </div>
+
+            <div class="item">
+                <div class="label">Updated</div>
+                <div class="value">{{ user.updatedAt | date: 'medium' }}</div>
+            </div>
+        </div>
+        } @else {
+        <div class="empty">No user loaded.</div>
+        }
+    </div>
+</div>
+}

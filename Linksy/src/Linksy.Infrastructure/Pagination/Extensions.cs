@@ -1,18 +1,21 @@
-﻿using Linksy.Domain.Entities.LandingPage;
+﻿using Linksy.Application.Shared.Pagination;
+using Linksy.Domain.Entities.LandingPage;
 using Linksy.Domain.Entities.ScanCode;
 using Linksy.Domain.Entities.Url;
 using Linksy.Infrastructure.Pagination.Configuration;
 using Linksy.Infrastructure.Pagination.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Linksy.Infrastructure.Pagination
 {
-    internal static class Extension
+    internal static class Extensions
     {
         public static IServiceCollection AddPagination(this IServiceCollection services)
         {

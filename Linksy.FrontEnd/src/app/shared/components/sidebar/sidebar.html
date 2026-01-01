@@ -23,6 +23,10 @@
         }
     </nav>
     <div class="sidebar-footer">
+        <button type="button" class="user-button" (click)="openUserModal()">
+            <fa-icon [icon]="faUser" class="user-icon"></fa-icon>
+            <span class="user-label">User</span>
+        </button>
         <a routerLink="/login" (click)="logout()" class="logout-button">
             <fa-icon [icon]="faArrowRightFromBracket" class="logout-icon"></fa-icon>
             <span class="logout-label">
@@ -30,4 +34,5 @@
             </span>
         </a>
     </div>
+    <app-user-modal [isOpen]="isUserModalOpen()" (cancel)="closeUserModal()"></app-user-modal>
 </aside>

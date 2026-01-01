@@ -10,12 +10,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.QrCodes.Features.BrowseQrCodes
 {
-    public record class BrowseQrCodes : IQuery<BrowseQrCodeResponse>
+    public record class BrowseQrCodes : Browse<BrowseQrCodeResponse>
     {
-        public int PageNumber { get; init; }    
-        public int PageSize { get; init; }
-        public IEnumerable<string>? Orders { get; init; }
-        [ModelBinder(BinderType = typeof(DictionaryModelBinder))]
-        public Dictionary<string, string>? Filters { get; set; }
     }
 }

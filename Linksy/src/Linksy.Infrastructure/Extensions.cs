@@ -43,7 +43,11 @@ namespace Linksy.Infrastructure
             services.AddScanCodes();
             services.AddServices();
             services.AddBackgroundServices();
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddCors(options =>

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities.Url
 {
-    public class UmtParameter : BaseEntityWithMultitenancy, IAuditable
+    public class UmtParameter : BaseEntityWithMultitenancy, IAuditable, IStatisticalUpdate
     {
         public bool IsActive { get; private set; } = true;
         public string? UmtSource { get; private set; } 

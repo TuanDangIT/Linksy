@@ -1,6 +1,8 @@
 <div class="app-container">
-  <app-sidebar class="sidebar-container" (isMinimizedChange)="onMinimized()"></app-sidebar>
-  <main class="main-content" [style.margin-left]="isMinimized() ? '5rem' : '16rem'">
-    <router-outlet></router-outlet>
+  <app-sidebar></app-sidebar>
+  <main class="main-content">
+    <div class="main-content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 </div>

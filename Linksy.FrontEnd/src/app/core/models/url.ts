@@ -11,6 +11,6 @@ export interface UrlListItem {
   hasLandingPageItem: boolean;
   hasUmtParameter: boolean;
   tags: string[] | null;
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt: string;
+  updatedAt: string | null;
 }

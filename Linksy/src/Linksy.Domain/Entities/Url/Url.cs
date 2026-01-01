@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Linksy.Domain.Entities.Url
 {
     //Shortened URL entity  
-    public class Url : BaseEntityWithMultitenancy, IAuditable
+    public class Url : BaseEntityWithMultitenancy, IAuditable, IStatisticalUpdate
     {
         public bool IsActive { get; private set; } = true;
         public string OriginalUrl { get; private set; } = string.Empty;

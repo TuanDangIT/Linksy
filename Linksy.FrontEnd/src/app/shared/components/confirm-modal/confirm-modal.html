@@ -1,0 +1,17 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <h2 class="title">{{ title }}</h2>
+        <p class="message">{{ message }}</p>
+
+        <div class="actions">
+            <button type="button" class="btn secondary" (click)="cancel.emit()">
+                {{ cancelText }}
+            </button>
+            <button type="button" class="btn primary" (click)="confirm.emit()">
+                {{ confirmText }}
+            </button>
+        </div>
+    </div>
+</div>
+}

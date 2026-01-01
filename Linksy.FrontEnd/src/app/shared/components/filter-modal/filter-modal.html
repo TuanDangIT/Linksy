@@ -1,0 +1,35 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <h2 class="title">Filters</h2>
+
+        <div class="rows">
+            @for (row of rows(); track $index; let i = $index) {
+            <div class="row">
+                <select class="field" [ngModel]="row.field" (ngModelChange)="updateField(i, $event)">
+                    @for (f of availableFiltersForRow(i); track f) {
+                    <option [value]="f">{{ f }}</option>
+                    }
+                </select>
+
+                @if (isDateField(row.field)) {
+                <input class="value" type="date" [ngModel]="row.value" (ngModelChange)="updateValue(i, $event)" />
+                } @else {
+                <input class="value" type="text" placeholder="Value" [ngModel]="row.value"
+                    (ngModelChange)="updateValue(i, $event)" />
+                }
+            </div>
+            }
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn secondary" (click)="addRow()">Add filter</button>
+
+            <div class="spacer"></div>
+
+            <button type="button" class="btn secondary" (click)="cancel.emit()">Cancel</button>
+            <button type="button" class="btn primary" (click)="onApply()">Apply</button>
+        </div>
+    </div>
+</div>
+}

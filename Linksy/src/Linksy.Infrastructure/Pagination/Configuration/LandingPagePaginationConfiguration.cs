@@ -1,4 +1,5 @@
-﻿using Linksy.Domain.Entities.LandingPage;
+﻿using Linksy.Application.Shared.Pagination;
+using Linksy.Domain.Entities.LandingPage;
 using System;
 using System.Collections.Generic;
 using System.Linq;

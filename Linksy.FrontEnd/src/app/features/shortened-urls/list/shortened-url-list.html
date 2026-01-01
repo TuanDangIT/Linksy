@@ -1,82 +1,173 @@
-<table class="url-table">
-  <thead>
-    <tr>
-      <th (click)="sortBy('Id')" class="sortable">
-        ID <span class="sort-icon">{{ getSortIcon('Id') }}</span>
-      </th>
-      <th>Code</th>
-      <th>Original URL</th>
-      <th (click)="sortBy('VisitCount')" class="sortable">
-        Visits <span class="sort-icon">{{ getSortIcon('VisitCount') }}</span>
-      </th>
-      <th>Status</th>
-      <th>Features</th>
-      <th>Tags</th>
-      <th (click)="sortBy('CreatedAt')" class="sortable">
-        Created <span class="sort-icon">{{ getSortIcon('CreatedAt') }}</span>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let url of urls" [class.inactive]="!url.isActive">
-      <!-- ID -->
-      <td class="id-cell">{{ url.id }}</td>
-      
-      <!-- Code with copy button -->
-      <td class="code-cell">
-        <div class="code-wrapper">
-          <code>{{ url.code }}</code>
-          <button class="btn-copy" (click)="copyToClipboard(url.code)">📋</button>
-        </div>
-      </td>
-      
-      <!-- Original URL -->
-      <td class="url-cell">
-        <a [href]="url.originalUrl" target="_blank" *ngIf="url.originalUrl">
-          {{ url.originalUrl }}
-        </a>
-        <span *ngIf="!url.originalUrl">-</span>
-      </td>
-      
-      <!-- Visits Count -->
-      <td class="visits-cell">
-        <span class="visits-badge">{{ url.visitsCount }}</span>
-      </td>
-      
-      <!-- Is Active Status -->
-      <td class="status-cell">
-        <span class="status-badge" [class.active]="url.isActive" [class.inactive]="!url.isActive">
-          {{ url.isActive ? 'Active' : 'Inactive' }}
-        </span>
-      </td>
-      
-      <!-- Features (hasQrCode, hasBarcode, hasLandingPageItem, hasUmtParameter) -->
-      <td class="features-cell">
-        <div class="feature-icons">
-          <span *ngIf="url.hasQrCode" title="Has QR Code">🔲</span>
-          <span *ngIf="url.hasBarcode" title="Has Barcode">📊</span>
-          <span *ngIf="url.hasLandingPageItem" title="Has Landing Page">🏠</span>
-          <span *ngIf="url.hasUmtParameter" title="Has UTM Parameters">🎯</span>
-        </div>
-      </td>
-      
-      <!-- Tags -->
-      <td class="tags-cell">
-        <div class="tags" *ngIf="url.tags && url.tags.length > 0">
-          <span class="tag" *ngFor="let tag of url.tags">{{ tag }}</span>
-        </div>
-        <span *ngIf="!url.tags || url.tags.length === 0">-</span>
-      </td>
-      
-      <!-- Created At & Updated At -->
-      <td class="date-cell">
-        <div class="date-info">
-          <div>{{ formatDate(url.createdAt) }}</div>
-          <div *ngIf="url.updatedAt" class="updated-date">
-            Updated: {{ formatDate(url.updatedAt) }}
+<div class="toolbar">
+  <button class="toolbar-btn primary" type="button" (click)="openCreateModal()">Create</button>
+  <button class="toolbar-btn primary" type="button" (click)="openFilterModal()">Filters</button>
+  <button class="toolbar-btn" type="button" (click)="clearFilters()">Clear</button>
+</div>
+@if (appliedFilters.length > 0) {
+<div class="applied-filters">
+  @for (f of appliedFilters; track f.key) {
+  <span class="filter-chip">
+    <strong>{{ f.key }}</strong>: {{ f.value }}
+  </span>
+  }
+</div>
+}
+@if (urls().length === 0) {
+<div class="empty-state">No URLs found.</div>
+} @else {
+<div class="table-container">
+  <table class="url-table">
+    <thead>
+      <tr>
+        <th (click)="sortBy('Id')" class="sortable">
+          ID<span class="sort-icon">{{ getSortIcon('Id') }}</span>
+        </th>
+        <th>Code</th>
+        <th>Original URL</th>
+        <th (click)="sortBy('VisitCount')" class="sortable">
+          Visits<span class="sort-icon">{{ getSortIcon('VisitCount') }}</span>
+        </th>
+        <th>Status</th>
+        <th>QR Code</th>
+        <th>Barcode</th>
+        <th>Landing Page</th>
+        <th>UMT</th>
+        <th>Tags</th>
+        <th (click)="sortBy('CreatedAt')" class="sortable">
+          Created<span class="sort-icon">{{ getSortIcon('CreatedAt') }}</span>
+        </th>
+        <th>Updated</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (url of urls(); track url.id) {
+      <tr>
+        <td class="id-cell">{{ url.id }}</td>
+
+        <td class="code-cell">
+          <div class="code-wrapper">
+            <code>{{ url.code }}</code>
+            <button class="btn-copy" (click)="copyToClipboard(url.code)">📋</button>
           </div>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        </td>
+
+        <td class="url-cell">
+          @if (url.originalUrl) {
+          <a [href]="url.originalUrl" target="_blank">
+            {{ url.originalUrl }}
+          </a>
+          } @else {
+          <span>-</span>
+          }
+        </td>
+
+        <td class="visits-cell">
+          <span class="visits-badge">{{ url.visitsCount }}</span>
+        </td>
+
+        <td class="status-cell">
+          <span class="status-badge" [class.active]="url.isActive" [class.inactive]="!url.isActive">
+            {{ url.isActive ? 'Active' : 'Inactive' }}
+          </span>
+        </td>
+
+        <td class="flag-cell">
+          <span class="flag-badge" [class.flag-true]="url.hasQrCode" [class.flag-false]="!url.hasQrCode">
+            {{ url.hasQrCode ? 'True' : 'False' }}
+          </span>
+        </td>
+
+        <td class="flag-cell">
+          <span class="flag-badge" [class.flag-true]="url.hasBarcode" [class.flag-false]="!url.hasBarcode">
+            {{ url.hasBarcode ? 'True' : 'False' }}
+          </span>
+        </td>
+
+        <td class="flag-cell">
+          <span class="flag-badge" [class.flag-true]="url.hasLandingPageItem"
+            [class.flag-false]="!url.hasLandingPageItem">
+            {{ url.hasLandingPageItem ? 'True' : 'False' }}
+          </span>
+        </td>
+
+        <td class="flag-cell">
+          <span class="flag-badge" [class.flag-true]="url.hasUmtParameter" [class.flag-false]="!url.hasUmtParameter">
+            {{ url.hasUmtParameter ? 'True' : 'False' }}
+          </span>
+        </td>
+
+        <td class="tags-cell">
+          @if (url.tags && url.tags.length > 0) {
+          <div class="tags">
+            @for (tag of url.tags; track tag) {
+            <span class="tag">{{ tag }}</span>
+            }
+          </div>
+          } @else {
+          <span>-</span>
+          }
+        </td>
+
+        <td class="date-cell">
+          {{ formatDate(url.createdAt) }}
+        </td>
+
+        <td class="date-cell">
+          @if (url.updatedAt) {
+          {{ formatDate(url.updatedAt) }}
+          } @else {
+          <span>-</span>
+          }
+        </td>
+        <td class="actions-cell">
+          <button type="button" class="action-btn" title="Toggle active" (click)="openToggleActiveConfirm(url)">
+            <fa-icon [icon]="faUpload"></fa-icon>
+          </button>
+
+          <button type="button" class="action-btn danger" title="Delete" (click)="openDeleteConfirm(url)">
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+<div class="pagination-container">
+  <div class="pagination-info">
+    Showing {{ rangeStart() }}-{{ rangeEnd() }} of {{ totalCount() }}
+  </div>
+
+  <div class="pagination-controls">
+    <label class="page-size">
+      Rows:
+      <select [value]="pageSize()" (change)="setPageSize(($any($event.target)).value)">
+        @for (size of pageSizeOptions; track size) {
+        <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </label>
+
+    <button class="page-btn" type="button" (click)="prevPage()" [disabled]="!canGoPrev()">
+      Prev
+    </button>
+
+    @for (page of pageNumbers; track page) {
+    <button class="page-btn" type="button" [class.active]="page === currentPage()" (click)="goToPage(page)">
+      {{ page }}
+    </button>
+    }
+
+    <button class="page-btn" type="button" (click)="nextPage()" [disabled]="!canGoNext()">
+      Next
+    </button>
+  </div>
+</div>
+}
+<app-filter-modal [isOpen]="isFilterModalOpen()" [availableFilters]="availableFilters" (cancel)="closeFilterModal()"
+  (apply)="applyFilters($event)"></app-filter-modal>
+<app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
+  [confirmText]="confirmConfirmText()" (cancel)="closeConfirm()" (confirm)="confirmAction()"></app-confirm-modal>
+<app-create-shortened-url-modal [isOpen]="isCreateModalOpen()" (cancel)="closeCreateModal()" (created)="onUrlCreated()">
+</app-create-shortened-url-modal>

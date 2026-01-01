@@ -8,7 +8,6 @@ namespace Linksy.API.Utils
         public static void SetTokenCookies(HttpContext context, JwtDto token)
         {
             var fiveMinutes = TimeSpan.FromMinutes(5);
-            var accessTokenExpiration = TimeSpan.FromMinutes(token.JwtTokenExpiryInMinutes) + fiveMinutes;
             var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays) + fiveMinutes;
             var isProduction = context.RequestServices.GetRequiredService<IWebHostEnvironment>().IsProduction();
 
@@ -17,7 +16,7 @@ namespace Linksy.API.Utils
                 HttpOnly = true,
                 Secure = isProduction,
                 SameSite = SameSiteMode.Lax,
-                MaxAge = accessTokenExpiration
+                MaxAge = refreshTokenExpiration
             });
 
             context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions

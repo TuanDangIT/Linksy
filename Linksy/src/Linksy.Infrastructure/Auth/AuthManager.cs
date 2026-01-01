@@ -74,7 +74,7 @@ namespace Linksy.Infrastructure.Auth
             var tokenHandler = new JwtSecurityTokenHandler();
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
             if (securityToken is not JwtSecurityToken jwtSecurityToken || 
-                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidCredentialsException("Invalid token.");
             return principal;
         }

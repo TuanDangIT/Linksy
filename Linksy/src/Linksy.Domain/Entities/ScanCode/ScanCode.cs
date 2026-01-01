@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities.ScanCode
 {
-    public abstract class ScanCode : BaseEntityWithMultitenancy, IAuditable
+    public abstract class ScanCode : BaseEntityWithMultitenancy, IAuditable, IStatisticalUpdate
     {
         public Image ScanCodeImage { get; private set; } = default!;
         public int ScanCount { get; private set; } = 0;

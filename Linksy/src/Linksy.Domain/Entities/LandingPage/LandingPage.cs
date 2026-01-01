@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Linksy.Domain.Entities.LandingPage
 {
-    public class LandingPage : BaseEntityWithMultitenancy, IAuditable
+    public class LandingPage : BaseEntityWithMultitenancy, IAuditable, IStatisticalUpdate
     {
         public string Code { get; private set; } = string.Empty;
         public bool IsPublished { get; private set; } = false;

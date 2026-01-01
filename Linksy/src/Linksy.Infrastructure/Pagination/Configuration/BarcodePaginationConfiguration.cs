@@ -1,4 +1,5 @@
-﻿using Linksy.Domain.Entities.ScanCode;
+﻿using Linksy.Application.Shared.Pagination;
+using Linksy.Domain.Entities.ScanCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;

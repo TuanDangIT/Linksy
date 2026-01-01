@@ -9,8 +9,4 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './main-layout.css',
 })
 export class MainLayout {
-  isMinimized = signal(false);
-  onMinimized() {
-    this.isMinimized.update((value) => !value);
-  }
 }

@@ -10,6 +10,7 @@ namespace Linksy.Application.Shared.Pagination
     {
         public IEnumerable<T> Items { get; private set; }
         public int CurrentPageNumber { get; private set; }
+        public int PageSize { get; private set; }
         public int TotalPages { get; private set; }
         public int ItemsFrom { get; private set; }
         public int ItemsTo { get; private set; }
@@ -23,6 +24,7 @@ namespace Linksy.Application.Shared.Pagination
             ItemsFrom = pageSize * (pageNumber - 1) + 1;
             ItemsTo = ItemsFrom + pageSize - 1;
             TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            PageSize = pageSize;
         }
     }
 }

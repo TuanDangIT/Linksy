@@ -22,6 +22,7 @@ namespace Linksy.Infrastructure.Pagination.Services
         };
         private readonly Dictionary<string, Expression<Func<TEntity, object>>>? _allowedOrders;
         private readonly HashSet<string>? _allowedFilters;
+        private const char _orderSeparator = ':';
 
         public PaginationService(IFilterService filterService, IPaginationConfiguration<TEntity> paginationConfiguration)
         {
@@ -45,9 +46,9 @@ namespace Linksy.Infrastructure.Pagination.Services
                 throw new InvalidFilterPropertyException(wrongFilters, [.. _allowedFilters]);
             }
 
-            if (orders is not null && _allowedOrders is not null && orders.Any(o => !_allowedOrders.ContainsKey(o.Split('.')[0])))
+            if (orders is not null && _allowedOrders is not null && orders.Any(o => !_allowedOrders.ContainsKey(o.Split(_orderSeparator)[0])))
             {
-                var wrongOrders = orders.Where(o => !_allowedOrders.ContainsKey(o.Split('.')[0])).ToList();
+                var wrongOrders = orders.Where(o => !_allowedOrders.ContainsKey(o.Split(_orderSeparator)[0])).ToList();
                 throw new InvalidOrderByPropertyException(wrongOrders, [.. _allowedOrders.Keys]);
             }
 
@@ -64,7 +65,7 @@ namespace Linksy.Infrastructure.Pagination.Services
                 bool isFirstOrder = true;
                 foreach (var order in orders)
                 {
-                    var orderParts = order.Split('.', StringSplitOptions.RemoveEmptyEntries);
+                    var orderParts = order.Split(_orderSeparator, StringSplitOptions.RemoveEmptyEntries);
 
                     bool sortByDescending = false;
                     if (orderParts.Length > 1)

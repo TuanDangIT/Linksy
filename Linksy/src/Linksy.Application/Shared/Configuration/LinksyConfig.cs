@@ -9,8 +9,6 @@ namespace Linksy.Application.Shared.Configuration
     public class LinksyConfig
     {
         public string BaseUrl { get; set; } = string.Empty;
-        public string LandingPagePrefixPath { get; set; } = string.Empty;
-        public string FrontEndDomain { get; set; } = string.Empty;
         public TestUserConfig TestUser { get; set; } = default!;
         public ScanCodeConfig ScanCode { get; set; } = default!;
         public BlobStorageConfig BlobStorage { get; set; } = default!;

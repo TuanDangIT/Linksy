@@ -15,6 +15,7 @@ export class AuthService {
   private readonly httpClient = inject(HttpClient);
 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  readonly currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
     this.checkAuthStatus().subscribe({

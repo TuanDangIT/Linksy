@@ -22,7 +22,7 @@ namespace Linksy.Application.Shared.ModelBinders
             foreach (var kvp in bindingContext.ActionContext.HttpContext.Request.Query)
             {
                 var modelStateList = bindingContext.ModelState.Select(ms => ms.Key);
-                if (modelStateList.Contains(kvp.Key))
+                if (modelStateList.Contains(kvp.Key, StringComparer.OrdinalIgnoreCase))
                     continue;
 
                 result[kvp.Key] = kvp.Value.ToString();

@@ -34,7 +34,9 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .AsNoTracking()
                 .AsQueryable();
 
-            var result = await _paginationService.PaginateAsync(query, request.PageNumber, request.PageSize, request.Filters, request.Orders,
+            var orders = request.Sort?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            var result = await _paginationService.PaginateAsync(query, request.PageNumber, request.PageSize, request.Filters, orders,
                 u => new BrowseUrlDto(u.Id, u.OriginalUrl, u.Code, u.VisitCount, u.IsActive, u.QrCode != null, u.Barcode != null, 
                 u.ImageLandingPageItems.Any() || u.UrlLandingPageItems.Any(), u.UmtParameters.Any(), u.TagsList, u.CreatedAt, u.UpdatedAt), cancellationToken);
             _logger.LogInformation("User with ID: {userId} browsed URLs.", _contextService.Identity?.Id);

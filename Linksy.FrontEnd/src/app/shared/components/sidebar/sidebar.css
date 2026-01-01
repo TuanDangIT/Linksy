@@ -6,11 +6,11 @@
   flex-direction: column;
   transition: width 300ms ease-in-out;
   border-right: 1px solid var(--border-color);
-  width: 16rem; 
+  width: 16rem;
 }
 
 .sidebar.minimized {
-  width: 5rem; 
+  width: 5rem;
 }
 
 .sidebar.minimized .minimize-button {
@@ -35,7 +35,7 @@
 }
 
 .sidebar.minimized .logo-container {
-    width: 0;
+  width: 0;
 }
 
 .logo {
@@ -51,7 +51,7 @@
 }
 
 .minimize-button {
-  display: block; 
+  display: block;
   padding: 0.5rem;
   border-radius: 0.375rem;
   background: none;
@@ -59,12 +59,7 @@
   cursor: pointer;
   color: var(--text-secondary);
 }
-/* @media (min-width: 768px) {
-    .minimize-button {
-        display: block; 
-    }
-} */
- 
+
 .minimize-button:hover {
   background-color: var(--border-color);
 }
@@ -83,6 +78,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .nav-item {
@@ -111,7 +108,6 @@
 .nav-item.active:hover {
   background-color: var(--primary-hover);
 }
-
 
 .nav-item-icon {
   width: 1.5rem;
@@ -151,7 +147,7 @@
 }
 
 .sidebar.minimized .logout-button {
-    justify-content: center;
+  justify-content: center;
 }
 
 .logout-button:hover {
@@ -162,7 +158,6 @@
   width: 1.5rem;
   height: 1.5rem;
   flex-shrink: 0;
-  color: var(--red);
 }
 
 .logout-label {
@@ -177,7 +172,51 @@
 }
 
 .sidebar.minimized .logout-label {
-    opacity: 0;
-    max-width: 0;
-    margin-left: 0;
+  opacity: 0;
+  max-width: 0;
+  margin-left: 0;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 200ms;
+  width: 100%;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+}
+
+.sidebar.minimized .user-button {
+  justify-content: center;
+}
+
+.user-button:hover {
+  background-color: var(--border-color);
+}
+
+.user-icon {
+  width: 1.5rem;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.user-label {
+  font-weight: 500;
+  color: black;
+  transition: opacity 300ms, max-width 300ms, margin-left 300ms;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 1rem;
+  max-width: 100px;
+  opacity: 1;
+}
+
+.sidebar.minimized .user-label {
+  opacity: 0;
+  max-width: 0;
+  margin-left: 0;
 }

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Linksy.Infrastructure.Pagination.Configuration
+namespace Linksy.Application.Shared.Pagination
 {
     public interface IPaginationConfiguration<T>
     {

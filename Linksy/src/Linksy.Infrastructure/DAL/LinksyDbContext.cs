@@ -60,7 +60,22 @@ namespace Linksy.Infrastructure.DAL
                 }
                 if (entry.State == EntityState.Modified)
                 {
-                    entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = now;
+                    if (entry.Entity is IStatisticalUpdate)
+                    {
+                        var modifiedProperties = entry.Properties
+                            .Where(p => p.IsModified &&
+                                       p.Metadata.Name != nameof(IAuditable.UpdatedAt) &&
+                                       p.Metadata.Name != nameof(IAuditable.CreatedAt))
+                            .Select(p => p.Metadata.Name)
+                            .ToList();
+
+                        string[] statisticalProperties = ["ViewCount", "ClickCount", "ScanCount", "VisitCount"];
+
+                        if (modifiedProperties.Except(statisticalProperties).Any())
+                        {
+                            entry.Property(nameof(IAuditable.UpdatedAt)).CurrentValue = now;
+                        }
+                    }
                 }
             }
 

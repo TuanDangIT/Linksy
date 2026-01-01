@@ -10,30 +10,34 @@ import {
   IconDefinition,
   faAnglesLeft,
   faAnglesRight,
+  faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../../../core/services/auth-service';
+import { UserModal } from '../user-modal/user-modal';
 
 interface NavItem {
   label: string;
-  icon: IconDefinition; // SVG path data
+  icon: IconDefinition;
   route: string;
 }
 
 @Component({
   selector: 'app-sidebar',
-  imports: [FontAwesomeModule, RouterLink, RouterLinkActive],
+  imports: [FontAwesomeModule, RouterLink, RouterLinkActive, UserModal],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
   isMinimized = signal(false);
   authService = inject(AuthService);
-  router = inject(Router);  
+  router = inject(Router);
   isMinimizedChange = output<boolean>();
   activeItem = signal('Shortened Urls');
   faArrowRightFromBracket = faArrowRightFromBracket;
   faAnglesLeft = faAnglesLeft;
   faAnglesRight = faAnglesRight;
+  faUser = faUser;
+  isUserModalOpen = signal(false);
 
   navItems: NavItem[] = [
     {
@@ -69,9 +73,16 @@ export class Sidebar {
     this.authService.logout().subscribe({
       next: () => {
         this.router.navigate(['/login']);
-      }
-    }
-    );
+      },
+    });
     console.log('Logging out...');
+  }
+
+  openUserModal(): void {
+    this.isUserModalOpen.set(true);
+  }
+
+  closeUserModal(): void {
+    this.isUserModalOpen.set(false);
   }
 }
