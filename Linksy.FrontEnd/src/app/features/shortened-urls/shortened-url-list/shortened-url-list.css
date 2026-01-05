@@ -106,7 +106,13 @@
 }
 
 .code-cell {
+  max-width: 170px;
   font-family: 'Courier New', monospace;
+}
+
+.code-cell .code-wrapper code{
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .code-wrapper {
@@ -140,7 +146,7 @@
 }
 
 .url-cell {
-  max-width: 200px;
+  max-width: 180px;
 }
 
 .url-cell a {
@@ -190,8 +196,8 @@
 }
 
 .status-badge.inactive {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--danger-light);
+  color: var(--danger-dark);
 }
 
 .flag-cell {
@@ -214,8 +220,8 @@
 }
 
 .flag-badge.flag-false {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--danger-light);
+  color: var(--danger-dark);
 }
 
 .tags-cell {
@@ -382,4 +388,14 @@
 .action-btn.danger:hover {
   border-color: #ef4444;
   color: #ef4444;
+}
+
+.id-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.id-link:hover {
+  text-decoration: underline;
 }

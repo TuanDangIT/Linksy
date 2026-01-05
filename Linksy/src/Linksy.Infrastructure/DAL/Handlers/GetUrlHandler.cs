@@ -63,10 +63,13 @@ namespace Linksy.Infrastructure.DAL.Handlers
                         up.UmtSource,
                         up.UmtMedium,
                         up.UmtCampaign,
+                        up.VisitCount,
                         up.QrCode != null ? up.QrCode.Id : null,
                         up.QrCode != null ? up.QrCode.ScanCount : null,  
                         up.CreatedAt,
-                        up.UpdatedAt))))
+                        up.UpdatedAt)),
+                        u.CreatedAt,
+                        u.UpdatedAt))
                 .FirstOrDefaultAsync(cancellationToken);
             _logger.LogInformation("Retrieved URL with ID: {urlId} for user with ID: {}.", request.Id, _contextService.Identity!.Id);
             return url;

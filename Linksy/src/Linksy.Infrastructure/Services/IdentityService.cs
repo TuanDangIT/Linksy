@@ -105,6 +105,7 @@ namespace Linksy.Infrastructure.Services
             var token = _authManager.CreateJwt(user.Id, user.UserName!, user.Email!, [.. roles]);
             var hashedRefreshToken = HashToken(token.RefreshToken);
             user.SetRefreshToken(hashedRefreshToken, token.RefreshTokenExpiryDate);
+            Console.WriteLine($"Setting new refresh token for user {user.Email}: {hashedRefreshToken} with code {token.RefreshToken}. >???????????><???????????");
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
@@ -141,14 +142,23 @@ namespace Linksy.Infrastructure.Services
             var user = await _userManager.FindByEmailAsync(email);
             var hashedInputRefreshToken = HashToken(dto.RefreshToken);
             var now = _timeProvider.GetUtcNow();
-            if(user is null || user.RefreshToken != hashedInputRefreshToken || user.RefreshTokenExpiryDate <= now)
+            if(user is null)
             {
-                throw new InvalidCredentialException("Invalid refresh token.");
+                throw new InvalidCredentialException("Invalid JWT token. User was not found.");
+            }
+            if(user.RefreshToken != hashedInputRefreshToken)
+            {
+                throw new InvalidCredentialException($"Invalid refresh token. User saved refresh token: {user.RefreshToken} does not match the input refresh tokenL {dto.RefreshToken} - {hashedInputRefreshToken}.");
+            }
+            if(user.RefreshTokenExpiryDate <= now)
+            {
+                throw new InvalidCredentialException("Refresh token has expired.");
             }
             var roles = await _userManager.GetRolesAsync(user);
             var newJwtToken = _authManager.CreateJwt(user.Id, user.UserName!, user.Email!, [.. roles]);
             var hashedNewRefreshToken = HashToken(newJwtToken.RefreshToken);
             user.SetRefreshToken(hashedNewRefreshToken, newJwtToken.RefreshTokenExpiryDate);
+            Console.WriteLine($"Setting new refresh token for user {user.Email}: {hashedNewRefreshToken} with code {newJwtToken.RefreshToken}. >???????????><???????????");
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
@@ -198,6 +208,7 @@ namespace Linksy.Infrastructure.Services
             using (var sha256 = SHA256.Create())
             {
                 var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(token));
+                _logger.LogInformation($"Hashed token: {Convert.ToBase64String(bytes)} :: token {token}");
                 return Convert.ToBase64String(bytes);
             }
         }

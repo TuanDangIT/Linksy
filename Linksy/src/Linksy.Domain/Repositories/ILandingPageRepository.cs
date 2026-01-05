@@ -17,5 +17,6 @@ namespace Linksy.Domain.Repositories
         Task CreateAsync(LandingPage landingPage, CancellationToken cancellationToken = default);
         Task DeleteAsync(int landingPageId, CancellationToken cancellationToken = default);
         Task UpdateAsync(CancellationToken cancellationToken = default);
+        Task<bool> IsLandingPageCodeInUseAsync(string code, CancellationToken cancellationToken = default);
     }
 }

@@ -1,0 +1,75 @@
+<div class="card" [class.with-top-margin]="withTopMargin">
+    <div class="card-head">
+        <div class="card-title">{{ title }}</div>
+        <div class="card-actions">
+            <button class="icon-btn" type="button" title="Chart settings" (click)="openSettings()">
+                <fa-icon [icon]="faGear"></fa-icon>
+            </button>
+        </div>
+    </div>
+
+    @if (loading()) {
+    <div class="muted">Loading…</div>
+    } @else {
+    @if (isBrowser) {
+    <canvas class="chart" baseChart [type]="'line'" [data]="chartData()" [options]="chartOptions"></canvas>
+    } @else {
+    <div class="muted">Loading…</div>
+    }
+    }
+
+    @if (settingsOpen()) {
+    <div class="overlay" (click)="onBackdropClick()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <div class="header">
+                <h2 class="title">Chart settings</h2>
+            </div>
+
+            <app-error-box [errors]="settingsErrors()"></app-error-box>
+
+            <div class="form">
+                <label class="field">
+                    <span class="label">Time range</span>
+                    <select class="input" [ngModel]="timeRange()" (ngModelChange)="onTimeRangeChange($event)">
+                        @for (tr of timeRanges; track tr.value) {
+                        <option [ngValue]="tr.value">{{ tr.label }}</option>
+                        }
+                    </select>
+                </label>
+
+                <label class="field">
+                    <span class="label">Interval</span>
+                    <select class="input" [ngModel]="interval()" (ngModelChange)="interval.set($event)">
+                        @for (i of allowedIntervals(); track i) {
+                        <option [ngValue]="i">{{ i }}</option>
+                        }
+                    </select>
+                </label>
+
+                @if (timeRange() === 'Custom') {
+                <div class="row2">
+                    <label class="field">
+                        <span class="label">From</span>
+                        <input class="input" type="date" [ngModel]="fromDate()"
+                            (ngModelChange)="fromDate.set($event)" />
+                    </label>
+
+                    <label class="field">
+                        <span class="label">To</span>
+                        <input class="input" type="date" [ngModel]="toDate()" (ngModelChange)="toDate.set($event)" />
+                    </label>
+                </div>
+
+                <div class="hint">Custom uses UTC day boundaries (00:00:00Z to 23:59:59Z).</div>
+                }
+            </div>
+
+            <div class="actions">
+                <div class="spacer"></div>
+                <button type="button" class="btn secondary" (click)="closeSettings()">Cancel</button>
+                <button type="button" class="btn primary" (click)="applySettings()">Apply</button>
+            </div>
+        </div>
+    </div>
+    }
+</div>

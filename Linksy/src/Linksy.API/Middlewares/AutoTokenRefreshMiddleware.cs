@@ -2,6 +2,7 @@
 using Linksy.Application.Users.DTO;
 using Linksy.Infrastructure.Auth;
 using Linksy.Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -20,18 +21,35 @@ public class AutoTokenRefreshMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var jwtToken = context.Request.Cookies["jwtToken"];
-        var refreshToken = context.Request.Cookies["refreshToken"];
+        var isSsr = string.Equals(context.Request.Headers["X-Rendering-Mode"], "SSR",
+        StringComparison.OrdinalIgnoreCase);
 
-        if (!string.IsNullOrEmpty(jwtToken) && !string.IsNullOrEmpty(refreshToken))
+        var endpoint = context.GetEndpoint();
+
+        bool hasAuthorize =
+            endpoint?.Metadata.GetOrderedMetadata<IAuthorizeData>().Any() == true;
+
+        bool hasAllowAnonymous =
+            endpoint?.Metadata.GetMetadata<IAllowAnonymous>() != null;
+
+        bool requiresAuthorization = hasAuthorize && !hasAllowAnonymous;
+
+        if (!isSsr && requiresAuthorization)
         {
-            try
+            var jwtToken = context.Request.Cookies["jwtToken"];
+            var refreshToken = context.Request.Cookies["refreshToken"];
+
+            Console.WriteLine($"Middleware invoked for URL {context.Request.Path}, {refreshToken}.");
+            if (!string.IsNullOrEmpty(jwtToken) && !string.IsNullOrEmpty(refreshToken))
             {
-                await TryRefreshTokenIfNeededAsync(context, jwtToken, refreshToken);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during automatic token refresh");
+                try
+                {
+                    await TryRefreshTokenIfNeededAsync(context, jwtToken, refreshToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error during automatic token refresh");
+                }
             }
         }
 
@@ -67,28 +85,4 @@ public class AutoTokenRefreshMiddleware : IMiddleware
             CookieUtils.SetTokenCookies(context, newToken);
         }
     }
-
-    //private void SetTokenCookies(HttpContext context, JwtDto token)
-    //{
-    //    var jwtTokenExpiration = TimeSpan.FromMinutes(token.JwtTokenExpiryInMinutes);
-    //    var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays);
-
-    //    context.Response.Cookies.Append("accessToken", token.JwtToken, new CookieOptions
-    //    {
-    //        HttpOnly = true,
-    //        Secure = true,
-    //        SameSite = SameSiteMode.Strict,
-    //        MaxAge = jwtTokenExpiration,
-    //        Path = "/"
-    //    });
-
-    //    context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
-    //    {
-    //        HttpOnly = true,
-    //        Secure = true,
-    //        SameSite = SameSiteMode.Strict,
-    //        MaxAge = refreshTokenExpiration,
-    //        Path = "/"
-    //    });
-    //}
 }

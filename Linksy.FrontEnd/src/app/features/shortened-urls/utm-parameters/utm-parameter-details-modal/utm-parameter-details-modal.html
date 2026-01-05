@@ -1,0 +1,103 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="header">
+            <h2 class="title">UTM Parameter Details</h2>
+        </div>
+
+        <app-error-box [errors]="errors()"></app-error-box>
+
+        @if (loading()) {
+        <div class="loading">Loading…</div>
+        } @else {
+        @if (data(); as d) {
+        <div class="info">
+            <div class="row"><span class="k">ID</span><span class="v">{{ d.id }}</span></div>
+            <!-- <div class="row"><span class="k">Active</span><span class="v">{{ d.isActive ? 'Yes' : 'No' }}</span></div> -->
+            <div class="row"><span class="k">Source</span><span class="v">{{ d.umtSource }}</span></div>
+            <div class="row"><span class="k">Medium</span><span class="v">{{ d.umtMedium ?? 'N/A' }}</span></div>
+            <div class="row"><span class="k">Campaign</span><span class="v">{{ d.umtCampaign ?? 'N/A' }}</span></div>
+            <div class="row"><span class="k">Visits</span><span class="v">{{ d.visitsCount }}</span></div>
+
+            <div class="divider"></div>
+
+            <div class="row"><span class="k">URL ID</span><span class="v">{{ d.url.id }}</span></div>
+            <div class="row">
+                <span class="k">Code</span>
+                <span class="v code-copy">
+                    <span>{{ d.url.code }}</span>
+                    <button class="icon-btn" type="button" title="Copy UTM URL" (click)="copyUtmUrlFromDetails()">
+                        <fa-icon [icon]="faCopy"></fa-icon>
+                    </button>
+                </span>
+            </div>
+            <div class="row">
+                <span class="k">Original URL</span>
+                <span class="v">
+                    <a class="link" [href]="d.url.originalUrl" target="_blank" rel="noreferrer">
+                        {{ d.url.originalUrl }}
+                    </a>
+                </span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">QR Code</div>
+
+                @if (d.qrCode) {
+                <div class="card-actions">
+                    <button class="icon-btn" type="button" title="Copy QR URL" (click)="copyQrOnlyUrlFromDetails()">
+                        <fa-icon [icon]="faCopy"></fa-icon>
+                    </button>
+                    <button class="icon-btn" type="button" title="Download QR code"
+                        (click)="downloadQrCode(d.qrCode.id, d.qrCode.image.fileName)">
+                        <fa-icon [icon]="faDownload"></fa-icon>
+                    </button>
+
+                    <button class="icon-btn danger" type="button" title="Delete QR code"
+                        (click)="openDeleteQrConfirm(d.qrCode.id)">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </div>
+                } @else {
+                <button class="small-btn" type="button" (click)="addQrCode()">
+                    <fa-icon [icon]="faPlus"></fa-icon>
+                    Add
+                </button>
+                }
+            </div>
+
+            @if (d.qrCode) {
+            <div class="media-row">
+                <img class="thumb" [src]="blobUrl(d.qrCode.image.urlPath) ?? ''" alt="QR code" />
+                <div class="media-meta">
+                    <div class="row"><span class="k">ID</span><span class="v">{{ d.qrCode.id }}</span></div>
+                    <div class="row"><span class="k">Scans</span><span class="v">{{ d.qrCode.scanCount }}</span></div>
+                    <div class="row"><span class="k">Created at</span><span class="v">{{ formatDate(d.qrCode.createdAt)
+                            }}</span></div>
+                </div>
+            </div>
+            } @else {
+            <div class="muted">No QR code.</div>
+            }
+        </div>
+        <app-analytics-line-chart [entityType]="'utm'" [entityId]="utmParameterId" [withTopMargin]="true"
+            (errors)="onAnalyticsErrors($event)">
+        </app-analytics-line-chart>
+        } @else {
+        <div class="muted">No data.</div>
+        }
+        }
+
+        <div class="actions">
+            <div class="spacer"></div>
+            <button type="button" class="btn secondary" (click)="cancel.emit()">Close</button>
+        </div>
+
+        <app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
+            [confirmText]="confirmConfirmText()" [confirmVariant]="confirmVariant()" (cancel)="closeConfirm()"
+            (confirm)="confirmDeleteQr()"></app-confirm-modal>
+    </div>
+</div>
+}

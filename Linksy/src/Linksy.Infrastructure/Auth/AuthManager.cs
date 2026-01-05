@@ -47,6 +47,7 @@ namespace Linksy.Infrastructure.Auth
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.WriteToken(jwt);
             var refreshToken = CreateRefreshToken();
+            Console.WriteLine($"Created JWT for user {username} with expiry at {expiryDate}, {token}.");
             return new JwtDto()
             {
                 JwtToken = token,
@@ -87,6 +88,7 @@ namespace Linksy.Infrastructure.Auth
                 rng.GetBytes(randomNumber);
                 var refreshToken = Convert.ToBase64String(randomNumber);
                 var expiryDate = _timeProvider.GetUtcNow().UtcDateTime.AddDays(_authOptions.RefreshTokenExpiryInDays);
+                Console.WriteLine($"Created refresh token with expiry at {expiryDate}, {refreshToken}.-----------------------------");
                 return new RefreshTokenDto()
                 {
                     RefreshToken = refreshToken,

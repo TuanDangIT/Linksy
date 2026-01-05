@@ -4,43 +4,42 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
+import { RegisterRequest, Gender } from '../../../core/types/registerRequest';
+import { ErrorBox } from '../../../shared/components/error-box/error-box';
+import { toErrorList } from '../../../shared/utils/http-error-utils';
 
 @Component({
   selector: 'app-register',
-  imports: [FontAwesomeModule, FormsModule, RouterLink],
+  imports: [FontAwesomeModule, FormsModule, RouterLink, ErrorBox],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
 export class Register {
   faUserPlus = faUserPlus;
-  error = signal('');
-  passwordMismatch = signal(false);
+
+  errors = signal<string[]>([]);
+
   authService = inject(AuthService);
   router = inject(Router);
-  onRegister(form: NgForm) {
-    if (form.invalid) {
-      return;
-    }
 
-    const registerData = {
-      email: form.value.email,
-      firstName: form.value.firstName,
-      lastName: form.value.lastName,
-      gender: form.value.gender,
-      username: form.value.username,
+  onRegister(form: NgForm) {
+    this.errors.set([]);
+    if (form.invalid) return;
+
+    const payload: RegisterRequest = {
+      email: (form.value.email ?? '').trim(),
+      firstName: (form.value.firstName ?? '').trim(),
+      lastName: (form.value.lastName ?? '').trim(),
+      gender: ((form.value.gender ?? '').toString().trim() || 'Undefined') as Gender,
+      username: (form.value.username ?? '').trim(),
       password: form.value.password,
-      confirmPassword: form.value.confirmPassword
+      confirmPassword: form.value.confirmPassword,
     };
 
-    this.authService.register(registerData).subscribe({
-      next: () => {
-        // this.isLoading.set(false);
-        this.router.navigate(['/shortened-urls']);
-      },
-      error: (error) => {
-        // this.isLoading.set(false);
-        this.error.set(error.message || 'Registration failed. Please try again.');
-      }
+    console.log("Registering user:", payload);
+    this.authService.register(payload).subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: (err) => this.errors.set(toErrorList(err)),
     });
   }
 }

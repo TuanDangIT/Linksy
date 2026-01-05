@@ -19,26 +19,8 @@
                         class="form-control form-control-bottom" placeholder="Password" ngModel #password="ngModel">
                 </div>
             </div>
-
-            <!-- @if (error()) {
-        <div class="error-message" role="alert">
-          {{ error() }}
-        </div>
-      } -->
-            @if (error()) {
-            <div class="error-message" role="alert">
-                {{ error() }}
-            </div>
-            }
+            <app-error-box [errors]="errors()"></app-error-box>
             <div>
-                <!-- <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
-          @if (isLoading()) {
-            <span class="spinner"></span>
-            Signing in...
-          } @else {
-            Sign in
-          }
-        </button> -->
                 <button type="submit" class="btn btn-primary">Sign in</button>
             </div>
         </form>

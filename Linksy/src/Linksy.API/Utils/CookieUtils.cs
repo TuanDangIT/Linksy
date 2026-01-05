@@ -10,6 +10,7 @@ namespace Linksy.API.Utils
             var fiveMinutes = TimeSpan.FromMinutes(5);
             var refreshTokenExpiration = TimeSpan.FromDays(token.RefreshTokenExpiryInDays) + fiveMinutes;
             var isProduction = context.RequestServices.GetRequiredService<IWebHostEnvironment>().IsProduction();
+            Console.WriteLine($"Setting token cookies. {token.JwtToken} ::::::: {token.RefreshToken} ::::::::::::::::::::::::::");
 
             context.Response.Cookies.Append("jwtToken", token.JwtToken, new CookieOptions
             {
@@ -26,6 +27,7 @@ namespace Linksy.API.Utils
                 SameSite = SameSiteMode.Lax,
                 MaxAge = refreshTokenExpiration
             });
+            Console.WriteLine($"APPENDED COOKIES:::::::::::::::::::::::::::::: {token.RefreshToken}");
         }
 
         public static void DeleteTokenCookies(HttpContext context)

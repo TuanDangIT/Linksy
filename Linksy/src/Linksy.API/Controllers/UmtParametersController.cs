@@ -21,8 +21,8 @@ namespace Linksy.API.Controllers
 
         [HttpGet("/api/v{v:apiVersion}/urls/{urlId}" + "/[controller]/{umtParameterId}")]
         public async Task<ActionResult<ApiResponse<GetUmtParameterResponse>>> GetUmtParameterByIdForUrl([FromRoute] int urlId, [FromRoute] int umtParameterId, CancellationToken cancellationToken)
-            => OkOrNotFound(await _mediator.Send(new GetUmtParameter(urlId, umtParameterId) {}, cancellationToken), nameof(UmtParameter));
-
+            => OkOrNotFound(await _mediator.Send(new GetUmtParameter(urlId, umtParameterId) , cancellationToken), $"Umt parameter with ID: {umtParameterId} in URL with ID: {urlId} was not found.");
+         
         [HttpPost("{umtParameterId:int}/qrcode")]
         public async Task<ActionResult<ApiResponse<AddQrCodeToUmtParameterResponse>>> GenerateQrCodeForUmtParameter([FromRoute] int umtParameterId,
             [FromBody] AddQrCodeToUmtParameter command, CancellationToken cancellationToken)

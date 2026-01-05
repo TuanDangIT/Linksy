@@ -41,9 +41,7 @@ namespace Linksy.Application.Barcodes.Features.CreateBarcode
             var userId = _contextService.Identity!.Id;
             var umtParameters = request.Url.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign, userId));
             var url = await _generateShotenedUrlService.GenerateShortenedUrlAsync(request.Url.OriginalUrl, request.Url.CustomCode, request.Url.Tags, umtParameters, userId, cancellationToken);
-            var barcodeQueryParameter = _linksyConfig.ScanCode.BarcodeQueryParameter + "=true";
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + barcodeQueryParameter;
-            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(linksyUrl, userId, cancellationToken);
+            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(url.Code, userId, cancellationToken);
             var barcode = Barcode.CreateBarcode(url, new Image(barcodeUrlPath, fileName), request.Tags, userId);
             await _barcodeRepository.CreateAsync(barcode, cancellationToken);
             _logger.LogInformation("Barcode was created with ID: {BarcodeId} for URL ID: {UrlId} by user with ID: {UserId}.", barcode.Id, url.Id, userId);

@@ -186,7 +186,7 @@ namespace Linksy.Infrastructure.Pagination.Services
                 : query = query.Where(x => EF.Property<object>(EF.Property<object>(x!, subProperty.Name), property.Name).Equals(enumValue));
         }
 
-        private IQueryable<TEntity> ApplyStringFilter<TEntity>(IQueryable<TEntity> query, PropertyInfo property, PropertyInfo? subProperty, string filterValue)
+        private IQueryable<TEntity>  ApplyStringFilter<TEntity>(IQueryable<TEntity> query, PropertyInfo property, PropertyInfo? subProperty, string filterValue)
             => subProperty is null
                 ? query.Where(x => EF.Property<string>(x!, property.Name).ToLower().Contains(filterValue.ToLower()))
                 : query.Where(x => EF.Property<string>(EF.Property<object>(x!, property.Name), subProperty.Name).ToLower().Contains(filterValue.ToLower()));

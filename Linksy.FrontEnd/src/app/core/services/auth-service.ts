@@ -21,7 +21,6 @@ export class AuthService {
     this.checkAuthStatus().subscribe({
       next: (user) => {
         console.log('User authenticated');
-        console.log(user);
       },
       error: () => {
         console.log('User not authenticated');
@@ -33,6 +32,7 @@ export class AuthService {
     return this.httpClient
       .get<ApiResponse<User>>(`${this.apiUrl}`, {
         withCredentials: true,
+        transferCache: false
       })
       .pipe(
         map((response) => response.data),
@@ -49,10 +49,7 @@ export class AuthService {
       .post<ApiResponse<User>>(`${this.apiUrl}/login`, loginDto, { withCredentials: true })
       .pipe(
         map((response) => response.data),
-        tap((user) => {
-          this.currentUserSubject.next(user);
-        }),
-        catchError(this.handleError)
+        tap((user) => this.currentUserSubject.next(user))
       );
   }
 

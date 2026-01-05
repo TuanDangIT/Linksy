@@ -13,7 +13,13 @@
                 </select>
 
                 @if (isDateField(row.field)) {
-                <input class="value" type="date" [ngModel]="row.value" (ngModelChange)="updateValue(i, $event)" />
+                <div class="date-range">
+                    <input class="value" type="date" [ngModel]="row.from ?? ''"
+                        (ngModelChange)="updateDateFrom(i, $event)" />
+                    <span class="date-sep">to</span>
+                    <input class="value" type="date" [ngModel]="row.to ?? ''"
+                        (ngModelChange)="updateDateTo(i, $event)" />
+                </div>
                 } @else {
                 <input class="value" type="text" placeholder="Value" [ngModel]="row.value"
                     (ngModelChange)="updateValue(i, $event)" />

@@ -1,4 +1,5 @@
 ﻿using Linksy.Application.Abstractions;
+using Linksy.Application.LandingPages.Exceptions;
 using Linksy.Application.Shared.BlobStorage;
 using Linksy.Domain.Entities.LandingPage;
 using Linksy.Domain.Repositories;
@@ -30,24 +31,36 @@ namespace Linksy.Application.LandingPages.Features.CreateLandingPage
         }
         public async Task<CreateLandingPageResponse> Handle(CreateLandingPage request, CancellationToken cancellationToken)
         {
+            if(await _landingPageRepository.IsLandingPageCodeInUseAsync(request.Code, cancellationToken))
+            {
+                throw new LandingPageCodeInUseException(request.Code);
+            }
+
             var userId = _contextService.Identity!.Id;
             Image? logoImage = null;
             Image? backgroundImage = null;
+
             if (request.LogoImage is not null)
             {
                 var fileName = "landing-pages/logos/" + request.LogoImage.FileName;
                 var logoUrlPath = await _blobStorageService.UploadAsync(request.LogoImage, fileName, _containerName, cancellationToken);
                 logoImage = new Image(fileName, logoUrlPath);
             }
+
             if (request.BackgroundImage is not null)
             {
                 var fileName = "landing-pages/background-images/" + request.BackgroundImage.FileName;
                 var backgroundImageUrl = await _blobStorageService.UploadAsync(request.BackgroundImage, fileName, _containerName, cancellationToken);
                 backgroundImage = new Image(fileName, backgroundImageUrl);
             }
+
             var landingPage = LandingPage.CreateLandingPage(request.Code, request.Title, request.TitleFontColor,
                 request.Description, request.DescriptionFontColor, logoImage,  request.BackgroundColor, backgroundImage, request.Tags, userId);
+
             await _landingPageRepository.CreateAsync(landingPage, cancellationToken);
+
+            _logger.LogInformation("Landing page created: {LandingPageCode} by user with ID: {userId}.", request.Code, userId);
+
             return new CreateLandingPageResponse(landingPage.Id);
         }
     }

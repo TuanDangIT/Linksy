@@ -42,7 +42,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                     u.UmtCampaign,
                     u.VisitCount,
                     new GetUmtParameterUrlDto(u.UrlId, u.Url.OriginalUrl, u.Url.Code),
-                    u.QrCode != null ? new GetUmtParameterQrCodeDto(u.QrCode.Id, u.QrCode.ScanCount, new ImageDto(u.QrCode.ScanCodeImage.UrlPath, u.QrCode.ScanCodeImage.FileName)) : null,
+                    u.QrCode != null ? new GetUmtParameterQrCodeDto(u.QrCode.Id, u.QrCode.ScanCount, new ImageDto(u.QrCode.ScanCodeImage.UrlPath, u.QrCode.ScanCodeImage.FileName), u.QrCode.CreatedAt) : null,
                     u.CreatedAt,
                     u.UpdatedAt))
                 .FirstOrDefaultAsync(cancellationToken);

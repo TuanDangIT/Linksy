@@ -46,35 +46,32 @@
             </div>
 
             <div class="section">
-                @if (!showUmt()) {
-                <button type="button" class="btn secondary" (click)="enableUmt()">
-                    Add UMT parameters
+                @if (!showUtm()) {
+                <button type="button" class="btn secondary" (click)="enableUtm()">
+                    Add UTM parameters
                 </button>
                 } @else {
                 <div class="section-header">
-                    <div class="label">UMT parameters</div>
-                    <button type="button" class="btn secondary" (click)="addUmt()">Add row</button>
+                    <div class="label">UTM parameters</div>
+                    <button type="button" class="btn secondary" (click)="addUtm()">Add row</button>
                 </div>
 
                 <div class="list">
-                    @for (p of umtParameters(); track $index; let i = $index) {
-                    <div class="umt-row">
-                        <input class="input" type="text" placeholder="UMT Source" [ngModel]="p.umtSource"
-                            (ngModelChange)="updateUmt(i, 'umtSource', $event)" name="umtSource_{{ i }}" />
-                        <input class="input" type="text" placeholder="UMT Medium" [ngModel]="p.umtMedium"
-                            (ngModelChange)="updateUmt(i, 'umtMedium', $event)" name="umtMedium_{{ i }}" />
-                        <input class="input" type="text" placeholder="UMT Campaign" [ngModel]="p.umtCampaign"
-                            (ngModelChange)="updateUmt(i, 'umtCampaign', $event)" name="umtCampaign_{{ i }}" />
-                        <button type="button" class="btn danger" (click)="removeUmt(i)">Remove</button>
+                    @for (p of utmParameters(); track $index; let i = $index) {
+                    <div class="utm-row">
+                        <input class="input" type="text" placeholder="UTM Source" [ngModel]="p.umtSource"
+                            (ngModelChange)="updateUtm(i, 'umtSource', $event)" name="utmSource_{{ i }}" />
+                        <input class="input" type="text" placeholder="UTM Medium" [ngModel]="p.umtMedium"
+                            (ngModelChange)="updateUtm(i, 'umtMedium', $event)" name="umtMedium_{{ i }}" />
+                        <input class="input" type="text" placeholder="UTM Campaign" [ngModel]="p.umtCampaign"
+                            (ngModelChange)="updateUtm(i, 'umtCampaign', $event)" name="umtCampaign_{{ i }}" />
+                        <button type="button" class="btn danger" (click)="removeUtm(i)">Remove</button>
                     </div>
                     }
                 </div>
                 }
             </div>
-
-            @if (error()) {
-            <div class="error" role="alert">{{ error() }}</div>
-            }
+            <app-error-box [errors]="errors()"></app-error-box>
 
             <div class="actions">
                 <div class="spacer"></div>

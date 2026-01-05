@@ -64,5 +64,8 @@ namespace Linksy.Infrastructure.DAL.Repositories
 
         public Task UpdateAsync(CancellationToken cancellationToken = default)
             => _dbContext.SaveChangesAsync(cancellationToken);
+
+        public async Task<bool> IsLandingPageCodeInUseAsync(string code, CancellationToken cancellationToken = default)
+            => await _dbContext.LandingPages.IgnoreQueryFilters().AnyAsync(u => u.Code == code, cancellationToken);
     }
 }

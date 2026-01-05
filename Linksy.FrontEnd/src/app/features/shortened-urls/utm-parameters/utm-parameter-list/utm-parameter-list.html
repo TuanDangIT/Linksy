@@ -1,0 +1,59 @@
+<div class="section-head">
+    <div class="section-title">UTM Parameters</div>
+    <button class="small-btn" type="button" (click)="addUtm.emit()">Add UTM</button>
+</div>
+
+@if (!utmParameters || utmParameters.length === 0) {
+<div class="muted">No UTM parameters.</div>
+} @else {
+<div class="utm-grid">
+    @for (p of utmParameters; track p.id) {
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">UTM Parameter</div>
+
+            <div class="card-actions">
+                @if (!p.qrCodeId) {
+                <button class="small-btn" type="button" (click)="addQrCode.emit(p.id)">
+                    Add QR Code
+                </button>
+                }
+                <button class="icon-btn" type="button" title="Copy UTM URL" (click)="copyUtmUrl(p)">
+                    <fa-icon [icon]="faCopy"></fa-icon>
+                </button>
+                <button class="icon-btn" type="button" title="Details" (click)="details.emit(p.id)">
+                    <fa-icon [icon]="faEye"></fa-icon>
+                </button>
+
+                <button class="icon-btn danger" type="button" title="Delete UTM parameter"
+                    (click)="deleteUtm.emit(p.id)">
+                    <fa-icon [icon]="faTrash"></fa-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="utm-head">
+            <div class="utm-kv">
+                <div><span class="k">ID: </span> <span class="v">{{ p.id }}</span></div>
+                <div><span class="k">Source: </span> <span class="v">{{ p.umtSource }}</span></div>
+                <div><span class="k">Medium: </span> <span class="v">{{ p.umtMedium ?? 'N/A' }}</span></div>
+                <div><span class="k">Campaign: </span> <span class="v">{{ p.umtCampaign ?? 'N/A' }}</span></div>
+                <div><span class="k">Visit count: </span> <span class="v">{{ p.visitCount }}</span></div>
+
+                @if (p.qrCodeId) {
+                <div class="qr-line">
+                    <span class="k">QR Code:</span>
+                    <span class="v">True</span>
+                    <span class="sep">•</span>
+                    <span class="k">ID:</span>
+                    <span class="v">{{ p.qrCodeId }}</span>
+                </div>
+                } @else {
+                <div><span class="k">QR Code: </span> <span class="v">False</span></div>
+                }
+            </div>
+        </div>
+    </div>
+    }
+</div>
+}

@@ -39,9 +39,7 @@ namespace Linksy.Application.Urls.Features.AddBarcode
                 throw new UrlBarcodeAlreadyExistsException(request.UrlId);
             }
             var userId = _contextService.Identity!.Id;
-            var barcodeQueryParameter = _linksyConfig.ScanCode.BarcodeQueryParameter + "=true";
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + barcodeQueryParameter;
-            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(linksyUrl, userId, cancellationToken);
+            var (barcodeUrlPath, fileName) = await _scanCodeService.GenerateBarcodeAsync(url.Code, userId, cancellationToken);
             var barcode = Barcode.CreateBarcode(url, new Image(barcodeUrlPath, fileName), request.Tags, userId);
             url.AddBarcode(barcode);
             await _urlRepository.UpdateAsync(cancellationToken);

@@ -1,0 +1,180 @@
+<div class="page">
+    <div class="topbar">
+        <a class="back-link" routerLink="/shortened-urls">← Back to Links</a>
+
+        @if (url(); as u) {
+        <div class="topbar-actions">
+            <button class="top-action primary" type="button" (click)="openToggleActiveConfirm()">
+                {{ u.isActive ? 'Deactivate' : 'Activate' }}
+            </button>
+
+            <button class="top-action danger" type="button" (click)="openDeleteConfirm()">
+                Delete
+            </button>
+        </div>
+        }
+    </div>
+
+    <app-error-box [errors]="errors()"></app-error-box>
+
+    @if (loading()) {
+    <div class="loading">Loading…</div>
+    } @else {
+    @if (url(); as u) {
+
+
+    <div class="grid">
+        <div class="header-card">
+            <div class="header-redirect">
+                <span class="redirect-url">{{ redirectUrl() }}</span>
+                <button class="icon-btn" type="button" title="Copy redirect URL" (click)="copyRedirectUrl()">
+                    <fa-icon [icon]="faCopy"></fa-icon>
+                </button>
+            </div>
+
+            <div class="header-main">
+                <div class="original-url">
+                    <a [href]="u.originalUrl" target="_blank" rel="noreferrer">{{ u.originalUrl }}</a>
+                </div>
+
+                <div class="meta">
+                    Created on {{ formatDate(u.createdAt) }}
+                </div>
+
+                @if (u.tags && u.tags.length > 0) {
+                <div class="tags">
+                    @for (t of u.tags; track t) {
+                    <span class="tag">{{ t }}</span>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-title">Total Visits</div>
+            <div class="big-number">{{ u.visitCount }}</div>
+
+            <div class="kv">
+                <div class="kv-row"><span class="k">ID</span><span class="v">{{ u.id }}</span></div>
+                <div class="kv-row"><span class="k">Code</span><span class="v">{{ u.code }}</span></div>
+                <!-- <div class="kv-row">
+                    <span class="k">Code</span>
+                    <span class="v code-copy">
+                        <span class="v-code">{{ u.code }}</span>
+                        <button class="icon-btn" type="button" title="Copy shortened URL" (click)="copyShortenedUrl()">
+                            <fa-icon [icon]="faCopy"></fa-icon>
+                        </button>
+                    </span>
+                </div> -->
+                <div class="kv-row"><span class="k">Active</span><span class="v">{{ u.isActive ? 'Yes' : 'No' }}</span>
+                </div>
+                <div class="kv-row"><span class="k">Created</span><span class="v">{{ formatDate(u.createdAt) }}</span>
+                </div>
+                <div class="kv-row"><span class="k">Updated</span><span class="v">{{ formatDate(u.updatedAt) }}</span>
+                </div>
+                <div class="kv-row"><span class="k">Landing Pages</span><span class="v">{{ u.landingPageItems.length
+                        }}</span></div>
+                <div class="kv-row"><span class="k">UTM Params</span><span class="v">{{ u.umtParameters.length
+                        }}</span></div>
+            </div>
+        </div>
+
+        <app-analytics-line-chart [entityType]="'url'" [entityId]="urlId" (errors)="onAnalyticsErrors($event)">
+        </app-analytics-line-chart>
+
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">QR Code</div>
+
+                @if (u.qrCode) {
+                <div class="card-actions">
+                    <button class="icon-btn" type="button" title="Copy QR URL" (click)="copyQrUrl()">
+                        <fa-icon [icon]="faCopy"></fa-icon>
+                    </button>
+                    <button class="icon-btn" type="button" title="Download QR code"
+                        (click)="downloadQrCode(u.qrCode.id, u.qrCode.qrCodeImage.fileName)">
+                        <fa-icon [icon]="faDownload"></fa-icon>
+                    </button>
+                    <button class="icon-btn danger" type="button" title="Delete QR code"
+                        (click)="openDeleteQrCodeConfirm(u.qrCode.id)">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </div>
+                } @else {
+                <button class="small-btn" type="button" (click)="addQrCodeToUrl()">
+                    Add QR Code
+                </button>
+                }
+            </div>
+            @if (u.qrCode) {
+            <div class="media-row">
+                <img class="thumb" [src]="blobUrl(u.qrCode.qrCodeImage.urlPath) ?? ''" alt="QR code" />
+                <div class="media-meta">
+                    <div class="kv-row"><span class="k">ID</span><span class="v">{{ u.qrCode.id }}</span></div>
+                    <div class="kv-row"><span class="k">Total Scans</span><span class="v">{{ u.qrCode.scanCount
+                            }}</span></div>
+                    <div class="kv-row"><span class="k">Created</span><span class="v">{{ formatDate(u.qrCode.createdAt)
+                            }}</span></div>
+                </div>
+            </div>
+            } @else {
+            <div class="muted">No QR code.</div>
+            }
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Barcode</div>
+
+                @if (u.barcode) {
+                <div class="card-actions">
+                    <button class="icon-btn" type="button" title="Copy Barcode URL" (click)="copyBarcodeUrl()">
+                        <fa-icon [icon]="faCopy"></fa-icon>
+                    </button>
+                    <button class="icon-btn" type="button" title="Download barcode"
+                        (click)="downloadBarcode(u.barcode.id, u.barcode.barcodeImage.fileName)">
+                        <fa-icon [icon]="faDownload"></fa-icon>
+                    </button>
+
+                    <button class="icon-btn danger" type="button" title="Delete barcode"
+                        (click)="openDeleteBarcodeConfirm(u.barcode.id)">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </div>
+                } @else {
+                <button class="small-btn" type="button" (click)="addBarcodeToUrl()">
+                    Add Barcode
+                </button>
+                }
+            </div>
+            @if (u.barcode) {
+            <div class="media-row">
+                <img class="thumb" [src]="blobUrl(u.barcode.barcodeImage.urlPath) ?? ''" alt="Barcode" />
+                <div class="media-meta">
+                    <div class="kv-row"><span class="k">ID</span><span class="v">{{ u.barcode.id }}</span></div>
+                    <div class="kv-row"><span class="k">Total Scans</span><span class="v">{{ u.barcode.scanCount
+                            }}</span></div>
+                    <div class="kv-row"><span class="k">Created</span><span class="v">{{
+                            formatDate(u.barcode.createdAt) }}</span></div>
+                </div>
+            </div>
+            } @else {
+            <div class="muted">No barcode.</div>
+            }
+        </div>
+    </div>
+    <app-utm-parameter-list [utmParameters]="u.umtParameters" [urlCode]="u.code" (addUtm)="openCreateUtmModal()"
+        (addQrCode)="addQrCodeToUtmParameter($event)" (deleteUtm)="openDeleteUtmConfirm($event)"
+        (details)="openUtmDetails($event)"></app-utm-parameter-list>
+
+    <app-create-utm-parameter-modal [isOpen]="createUtmOpen()" [urlId]="url()?.id ?? null"
+        (cancel)="closeCreateUtmModal()" (created)="onUtmCreated()"></app-create-utm-parameter-modal>
+    <app-utm-parameter-details-modal [isOpen]="utmDetailsOpen()" [urlId]="url()?.id ?? null"
+        [utmParameterId]="selectedUtmId()" [tags]="url()?.tags ?? []" (cancel)="closeUtmDetails()"
+        (changed)="onUtmDetailsChanged()"></app-utm-parameter-details-modal>
+    }
+    }
+    <app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
+        [confirmText]="confirmConfirmText()" [confirmVariant]="confirmVariant()" (cancel)="closeConfirm()"
+        (confirm)="confirmAction()"></app-confirm-modal>
+</div>

@@ -13,13 +13,15 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ShortenedUrlService } from '../../../core/services/shortened-url-service';
 import {
   CreateShortenedUrlRequest,
-  UmtParameterRequest,
-} from '../../../core/types/createShortenedUrlRequest';
+  UtmParameterRequest,
+} from '../../../core/types/createShortenedUrl';
+import { ErrorBox } from '../../../shared/components/error-box/error-box';
+import { toErrorList } from '../../../shared/utils/http-error-utils';
 
 @Component({
   selector: 'app-create-shortened-url-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ErrorBox],
   templateUrl: './create-shortened-url-modal.html',
   styleUrl: './create-shortened-url-modal.css',
 })
@@ -31,7 +33,7 @@ export class CreateShortenedUrlModal {
   private readonly urlService = inject(ShortenedUrlService);
 
   submitting = signal(false);
-  error = signal<string | null>(null);
+  errors = signal<string[]>([]);
 
   originalUrl = '';
 
@@ -41,8 +43,8 @@ export class CreateShortenedUrlModal {
   showTags = signal(false);
   tags = signal<string[]>(['']);
 
-  showUmt = signal(false);
-  umtParameters = signal<UmtParameterRequest[]>([
+  showUtm = signal(false);
+  utmParameters = signal<UtmParameterRequest[]>([
     { umtSource: '', umtMedium: '', umtCampaign: '' },
   ]);
 
@@ -53,7 +55,7 @@ export class CreateShortenedUrlModal {
   }
 
   reset(): void {
-    this.error.set(null);
+    this.errors.set([]);
     this.submitting.set(false);
 
     this.originalUrl = '';
@@ -64,8 +66,8 @@ export class CreateShortenedUrlModal {
     this.showTags.set(false);
     this.tags.set(['']);
 
-    this.showUmt.set(false);
-    this.umtParameters.set([{ umtSource: '', umtMedium: '', umtCampaign: '' }]);
+    this.showUtm.set(false);
+    this.utmParameters.set([{ umtSource: '', umtMedium: '', umtCampaign: '' }]);
   }
 
   onBackdropClick(): void {
@@ -94,22 +96,22 @@ export class CreateShortenedUrlModal {
     if (this.tags().length === 0) this.tags.set(['']);
   }
 
-  enableUmt(): void {
-    this.showUmt.set(true);
-    if (this.umtParameters().length === 0) this.addUmt();
+  enableUtm(): void {
+    this.showUtm.set(true);
+    if (this.utmParameters().length === 0) this.addUtm();
   }
 
-  addUmt(): void {
-    this.umtParameters.update((a) => [...a, { umtSource: '', umtMedium: '', umtCampaign: '' }]);
+  addUtm(): void {
+    this.utmParameters.update((a) => [...a, { umtSource: '', umtMedium: '', umtCampaign: '' }]);
   }
 
-  updateUmt(index: number, field: keyof UmtParameterRequest, value: string): void {
-    this.umtParameters.update((a) => a.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
+  updateUtm(index: number, field: keyof UtmParameterRequest, value: string): void {
+    this.utmParameters.update((a) => a.map((p, i) => (i === index ? { ...p, [field]: value } : p)));
   }
 
-  removeUmt(index: number): void {
-    this.umtParameters.update((a) => a.filter((_, i) => i !== index));
-    if (this.umtParameters().length === 0) this.addUmt();
+  removeUtm(index: number): void {
+    this.utmParameters.update((a) => a.filter((_, i) => i !== index));
+    if (this.utmParameters().length === 0) this.addUtm();
   }
 
   private isValidUrl(value: string): boolean {
@@ -121,29 +123,15 @@ export class CreateShortenedUrlModal {
     }
   }
 
-  private toErrorMessage(err: unknown): string {
-    if (err instanceof HttpErrorResponse) {
-      const api = err.error as any;
-      if (api?.message) return api.message;
-      if (api?.errors) {
-        const errors = Object.values(api.errors).flat();
-        return errors.join(', ');
-      }
-      return `Error ${err.status}: ${err.message}`;
-    }
-    return 'Failed to create URL. Please try again.';
-  }
-
   onSubmit(form: NgForm): void {
-    this.error.set(null);
-
+    this.errors.set([]);
     const original = (this.originalUrl ?? '').trim();
     if (!original) {
-      this.error.set('Original URL is required.');
+      this.errors.set(['Original URL is required.']);
       return;
     }
     if (!this.isValidUrl(original)) {
-      this.error.set('Original URL must be a valid http/https URL.');
+      this.errors.set(['Original URL must be a valid http/https URL.']);
       return;
     }
     if (form.invalid) return;
@@ -162,22 +150,21 @@ export class CreateShortenedUrlModal {
       if (cleanTags.length > 0) payload.tags = cleanTags;
     }
 
-    if (this.showUmt()) {
-      const raw = this.umtParameters().map((p) => ({
+    if (this.showUtm()) {
+      const utmParameters = this.utmParameters().map((p) => ({
         umtSource: (p.umtSource ?? '').trim(),
         umtMedium: (p.umtMedium ?? '').trim(),
         umtCampaign: (p.umtCampaign ?? '').trim(),
       }));
 
-      const nonEmpty = raw.filter((p) => p.umtSource || p.umtMedium || p.umtCampaign);
+      const hasNonEmpty = utmParameters.some((p) => !p.umtSource && !p.umtMedium && !p.umtCampaign);
 
-      const hasPartial = nonEmpty.some((p) => !p.umtSource || !p.umtMedium || !p.umtCampaign);
-      if (hasPartial) {
-        this.error.set('Each UMT parameter row must have Source, Medium, and Campaign.');
+      if (hasNonEmpty) {
+        this.errors.set(['At least one of UTM Source, Medium, or Campaign must be filled.']);
         return;
       }
-
-      if (nonEmpty.length > 0) payload.umtParameters = nonEmpty;
+      
+      payload.umtParameters = utmParameters;
     }
 
     this.submitting.set(true);
@@ -189,7 +176,7 @@ export class CreateShortenedUrlModal {
       },
       error: (err) => {
         this.submitting.set(false);
-        this.error.set(this.toErrorMessage(err));
+        this.errors.set(toErrorList(err));
       },
     });
   }

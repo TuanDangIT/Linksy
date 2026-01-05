@@ -21,7 +21,7 @@ namespace Linksy.Application.Urls.Features.GetUrl
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
         public GetUrlResponse(int id, string originalUrl, string code, int visitCount, bool isActive, IEnumerable<string>? tags, GetUrlQrCodeDto? qrCode, GetUrlBarcodeDto? barcode,
-            IEnumerable<GetUrlLandingPageItemDto>? landingPageItems, IEnumerable<GetUrlUmtParameterDto>? umtParameters)
+            IEnumerable<GetUrlLandingPageItemDto>? landingPageItems, IEnumerable<GetUrlUmtParameterDto>? umtParameters, DateTime createdAt, DateTime? updatedAt)
         {
             Id = id;
             OriginalUrl = originalUrl;
@@ -33,6 +33,8 @@ namespace Linksy.Application.Urls.Features.GetUrl
             Barcode = barcode;
             LandingPageItems = landingPageItems;
             UmtParameters = umtParameters?.ToArray();
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
         }
     }
 }

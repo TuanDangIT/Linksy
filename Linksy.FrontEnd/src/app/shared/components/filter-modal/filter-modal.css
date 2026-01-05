@@ -79,3 +79,16 @@
   border-color: var(--primary);
   color: var(--primary);
 }
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.date-sep {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}

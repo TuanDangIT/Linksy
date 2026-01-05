@@ -1,0 +1,17 @@
+.error-box {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--danger-dark); 
+  background: var(--danger-light); 
+  color: var(--danger-dark);
+}
+
+.error-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.error-list li {
+  margin: 0.15rem 0;
+}

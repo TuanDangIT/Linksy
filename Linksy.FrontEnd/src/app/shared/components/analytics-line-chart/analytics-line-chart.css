@@ -1,0 +1,148 @@
+.chart {
+  width: 100%;
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.card.with-top-margin {
+  margin-top: 0.75rem;
+}
+
+.card canvas {
+  display: block;
+  height: 220px !important;
+}
+
+.card-title {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.icon-btn {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  border-radius: 10px;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.icon-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.muted {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  z-index: 50;
+}
+
+.modal {
+  width: min(520px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.header .title {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+}
+
+.form {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.label {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.input {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.hint {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn {
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.btn.secondary {
+  background: transparent;
+}

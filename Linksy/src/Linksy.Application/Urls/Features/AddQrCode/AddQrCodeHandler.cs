@@ -39,9 +39,7 @@ namespace Linksy.Application.Urls.Features.AddQrCode
                 throw new UrlQrCodeAlreadyExistsException(request.UrlId);
             }
             var userId = _contextService.Identity!.Id;
-            var qrCodeQueryParameter = _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + qrCodeQueryParameter;
-            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(linksyUrl, userId, cancellationToken);
+            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(url.Code, userId, cancellationToken);
             var qrCode = QrCode.CreateQrCode(url, new Image(qrCodeUrlPath, fileName), request.Tags, userId);
             url.AddQrCode(qrCode);
             await _urlRepository.UpdateAsync(cancellationToken);

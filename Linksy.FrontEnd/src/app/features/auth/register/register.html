@@ -14,39 +14,53 @@
         <div class="form-group">
           <label for="email" class="sr-only">Email</label>
           <input id="email" name="email" type="email" autocomplete="email" email required
-            class="form-control form-control-top" placeholder="Email address">
+            class="form-control form-control-top" placeholder="Email address" ngModel />
         </div>
+
+        <div class="form-group">
+          <label for="firstName" class="sr-only">First name</label>
+          <input id="firstName" name="firstName" type="text" autocomplete="given-name" required class="form-control"
+            placeholder="First name" ngModel />
+        </div>
+
+        <div class="form-group">
+          <label for="lastName" class="sr-only">Last name</label>
+          <input id="lastName" name="lastName" type="text" autocomplete="family-name" required class="form-control"
+            placeholder="Last name" ngModel />
+        </div>
+
+        <div class="form-group">
+          <label for="gender" class="sr-only">Gender</label>
+          <select id="gender" name="gender" class="form-control" [ngModel]="''">
+            <option value="" disabled hidden>Select gender</option>
+            <option value="Undefined">Undefined</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="username" class="sr-only">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required class="form-control"
+            placeholder="Username" ngModel />
+        </div>
+
         <div class="form-group">
           <label for="password" class="sr-only">Password</label>
           <input id="password" name="password" type="password" autocomplete="new-password" required class="form-control"
-            placeholder="Password">
+            placeholder="Password" ngModel />
         </div>
+
         <div class="form-group">
-          <label for="confirm-password" class="sr-only">Confirm Password</label>
-          <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" required
-            class="form-control form-control-bottom" placeholder="Confirm Password">
+          <label for="confirmPassword" class="sr-only">Confirm Password</label>
+          <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required
+            class="form-control form-control-bottom" placeholder="Confirm Password" ngModel />
         </div>
       </div>
 
-      <!-- @if (error()) {
-        <div class="error-message" role="alert">
-          {{ error() }}
-        </div>
-      } -->
-      @if (error()) {
-      <div class="error-message" role="alert">
-        {{ error() }}
-      </div>
-      }
+      <app-error-box [errors]="errors()"></app-error-box>
+
       <div>
-        <!-- <button type="submit" class="btn btn-primary" [disabled]="isLoading()">
-          @if (isLoading()) {
-            <span class="spinner"></span>
-            Signing up...
-          } @else {
-            Sign Up
-          }
-        </button> -->
         <button type="submit" class="btn btn-primary">Sign Up</button>
       </div>
     </form>

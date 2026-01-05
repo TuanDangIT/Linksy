@@ -12,33 +12,33 @@ export class LandingPageService {
   private readonly apiUrl = environment.apiBaseUrl + '/landingpages';
   private readonly httpClient = inject(HttpClient);
 
-  getUrls(params?: BrowseLandingPagesRequest): Observable<ApiResponse<BrowseLandingPagesResponse>> {
-    let httpParams = new HttpParams();
+  // getUrls(params?: BrowseLandingPagesRequest): Observable<ApiResponse<BrowseLandingPagesResponse>> {
+  //   let httpParams = new HttpParams();
 
-    if (params) {
-      if (params.pageNumber) {
-        httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
-      }
+  //   if (params) {
+  //     if (params.pageNumber) {
+  //       httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
+  //     }
 
-      if (params.pageSize) {
-        httpParams = httpParams.set('pageSize', params.pageSize.toString());
-      }
+  //     if (params.pageSize) {
+  //       httpParams = httpParams.set('pageSize', params.pageSize.toString());
+  //     }
 
-      if (params.orders && params.orders.length > 0) {
-        params.orders.forEach((order) => {
-          httpParams = httpParams.append('orders', order);
-        });
-      }
+  //     if (params.orders && params.orders.length > 0) {
+  //       params.orders.forEach((order) => {
+  //         httpParams = httpParams.append('orders', order);
+  //       });
+  //     }
 
-      if (params.filters) {
-        Object.keys(params.filters).forEach((key) => {
-          httpParams = httpParams.append(`filters[${key}]`, params.filters![key]);
-        });
-      }
-    }
+  //     if (params.filters) {
+  //       Object.keys(params.filters).forEach((key) => {
+  //         httpParams = httpParams.append(`filters[${key}]`, params.filters![key]);
+  //       });
+  //     }
+  //   }
 
-    return this.httpClient.get<ApiResponse<BrowseLandingPagesResponse>>(this.apiUrl, {
-      params: httpParams,
-    });
-  }
+  //   return this.httpClient.get<ApiResponse<BrowseLandingPagesResponse>>(this.apiUrl, {
+  //     params: httpParams,
+  //   });
+  // }
 }

@@ -31,7 +31,7 @@
         <th>QR Code</th>
         <th>Barcode</th>
         <th>Landing Page</th>
-        <th>UMT</th>
+        <th>UTM</th>
         <th>Tags</th>
         <th (click)="sortBy('CreatedAt')" class="sortable">
           Created<span class="sort-icon">{{ getSortIcon('CreatedAt') }}</span>
@@ -43,12 +43,14 @@
     <tbody>
       @for (url of urls(); track url.id) {
       <tr>
-        <td class="id-cell">{{ url.id }}</td>
+        <td class="id-cell">
+          <a class="id-link" [routerLink]="['/shortened-urls', url.id]">{{ url.id }}</a>
+        </td>
 
         <td class="code-cell">
           <div class="code-wrapper">
             <code>{{ url.code }}</code>
-            <button class="btn-copy" (click)="copyToClipboard(url.code)">📋</button>
+            <button class="btn-copy" (click)="copyToClipboard(url.code)"><fa-icon [icon]="faCopy"></fa-icon></button>
           </div>
         </td>
 
@@ -121,6 +123,9 @@
           }
         </td>
         <td class="actions-cell">
+          <button type="button" class="action-btn" title="Details" (click)="openDetails(url.id)">
+            <fa-icon [icon]="faEye"></fa-icon>
+          </button>
           <button type="button" class="action-btn" title="Toggle active" (click)="openToggleActiveConfirm(url)">
             <fa-icon [icon]="faUpload"></fa-icon>
           </button>
@@ -168,6 +173,7 @@
 <app-filter-modal [isOpen]="isFilterModalOpen()" [availableFilters]="availableFilters" (cancel)="closeFilterModal()"
   (apply)="applyFilters($event)"></app-filter-modal>
 <app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
-  [confirmText]="confirmConfirmText()" (cancel)="closeConfirm()" (confirm)="confirmAction()"></app-confirm-modal>
+  [confirmText]="confirmConfirmText()" [confirmVariant]="confirmVariant()" (cancel)="closeConfirm()"
+  (confirm)="confirmAction()"></app-confirm-modal>
 <app-create-shortened-url-modal [isOpen]="isCreateModalOpen()" (cancel)="closeCreateModal()" (created)="onUrlCreated()">
 </app-create-shortened-url-modal>

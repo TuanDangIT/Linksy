@@ -23,16 +23,16 @@ namespace Linksy.API.Exceptions
         {
             _logger.LogError(exception, "An exception occured at {now}.", _timeProvider.GetUtcNow().UtcDateTime);
             var response = Map(exception);
-            if (response is ValidationProblemDetails validationProblemDetails)
-            {
-                httpContext.Response.StatusCode = validationProblemDetails.Status ?? throw new ArgumentNullException();
-                await httpContext.Response.WriteAsJsonAsync(validationProblemDetails, cancellationToken);
-                return true;
-            }
             response.Extensions = new Dictionary<string, object?>()
             {
                 { "traceId", httpContext.TraceIdentifier }
             };
+            if (response is ValidationProblemDetails validationProblemDetailsResponse)
+            {
+                httpContext.Response.StatusCode = validationProblemDetailsResponse.Status ?? throw new ArgumentNullException();
+                await httpContext.Response.WriteAsJsonAsync(validationProblemDetailsResponse, cancellationToken);
+                return true;
+            }
             httpContext.Response.StatusCode = (int)response.Status!;
             await httpContext.Response.WriteAsJsonAsync(response, cancellationToken);
             return true;
@@ -60,7 +60,7 @@ namespace Linksy.API.Exceptions
                     Type = _serverErrorTypeUrl,
                     Title = "There was a server error",
                     Status = (int)HttpStatusCode.InternalServerError,
-                    Detail = e.Message
+                    Detail = "Ther was an internal server error. Please try again later.",
                 }
             };
     }

@@ -21,17 +21,15 @@ namespace Linksy.Application.QrCodes.Features.CreateQrCode
         private readonly IQrCodeRepository _qrCodeRepository;
         private readonly IGenerateShotenedUrlService _generateShotenedUrlService;
         private readonly IContextService _contextService;
-        private readonly LinksyConfig _linksyConfig;
         private readonly IScanCodeService _scanCodeService;
         private readonly ILogger<CreateQrCodeHandler> _logger;
 
         public CreateQrCodeHandler(IQrCodeRepository qrCodeRepository, IGenerateShotenedUrlService generateShotenedUrlService, IContextService contextService, 
-            LinksyConfig linksyConfig, IScanCodeService scanCodeService, ILogger<CreateQrCodeHandler> logger)
+            IScanCodeService scanCodeService, ILogger<CreateQrCodeHandler> logger)
         {
             _qrCodeRepository = qrCodeRepository;
             _generateShotenedUrlService = generateShotenedUrlService;
             _contextService = contextService;
-            _linksyConfig = linksyConfig;
             _scanCodeService = scanCodeService;
             _logger = logger;
         }
@@ -40,9 +38,7 @@ namespace Linksy.Application.QrCodes.Features.CreateQrCode
             var userId = _contextService.Identity!.Id;
             var umtParameters = request.Url.UmtParameters?.Select(u => UmtParameter.CreateUmtParameter(u.UmtSource, u.UmtMedium, u.UmtCampaign, userId));
             var url = await _generateShotenedUrlService.GenerateShortenedUrlAsync(request.Url.OriginalUrl, request.Url.CustomCode, request.Url.Tags, umtParameters, userId, cancellationToken);
-            var qrCodeQueryParameter = _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + url.Code + "?" + qrCodeQueryParameter;
-            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(linksyUrl, userId, cancellationToken);
+            var (qrCodeUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(url.Code, userId, cancellationToken);
 
             var qrCode = QrCode.CreateQrCode(url, new Image(qrCodeUrlPath, fileName), request.Tags, userId);
             await _qrCodeRepository.CreateAsync(qrCode, cancellationToken);

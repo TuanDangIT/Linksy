@@ -1,4 +1,4 @@
-export interface UmtParameterRequest {
+export interface UtmParameterRequest {
   umtSource: string;
   umtMedium: string;
   umtCampaign: string;
@@ -8,5 +8,10 @@ export interface CreateShortenedUrlRequest {
   originalUrl: string;
   customCode?: string;
   tags?: string[];
-  umtParameters?: UmtParameterRequest[];
+  umtParameters?: UtmParameterRequest[];
+}
+
+export interface CreateShortenedUrlResponse {
+  urlId: number;
+  shortenedUrl: string;
 }

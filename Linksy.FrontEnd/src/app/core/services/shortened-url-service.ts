@@ -4,8 +4,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { BrowseUrlsRequest, BrowseUrlsResponse } from '../types/browseUrls';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../types/apiResponse';
-import { CreateShortenedUrlRequest } from '../types/createShortenedUrlRequest';
-import { CreateShortenedUrlResponse } from '../types/createShortenedUrlResponse';
+import { CreateShortenedUrlRequest, CreateShortenedUrlResponse } from '../types/createShortenedUrl'; 
+import { UrlDetails } from '../models/url';
+import {
+  AddScanCodeToUrlRequest,
+  AddBarcodeToUrlResponse,
+  AddQrCodeToUrlResponse,
+} from '../types/addScanCodeToUrl';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +49,12 @@ export class ShortenedUrlService {
     });
   }
 
+  getUrlById(urlId: number): Observable<ApiResponse<UrlDetails>> {
+    return this.httpClient.get<ApiResponse<UrlDetails>>(`${this.apiUrl}/${urlId}`, {
+      withCredentials: true,
+    });
+  }
+
   createUrl(body: CreateShortenedUrlRequest): Observable<ApiResponse<CreateShortenedUrlResponse>> {
     return this.httpClient.post<ApiResponse<CreateShortenedUrlResponse>>(this.apiUrl, body, {
       withCredentials: true,
@@ -73,6 +84,28 @@ export class ShortenedUrlService {
       {
         withCredentials: true,
       }
+    );
+  }
+
+  addQrCodeToUrl(
+    urlId: number,
+    body: AddScanCodeToUrlRequest
+  ): Observable<ApiResponse<AddQrCodeToUrlResponse>> {
+    return this.httpClient.post<ApiResponse<AddQrCodeToUrlResponse>>(
+      `${this.apiUrl}/${urlId}/qrcode`,
+      body,
+      { withCredentials: true }
+    );
+  }
+
+  addBarcodeToUrl(
+    urlId: number,
+    body: AddScanCodeToUrlRequest
+  ): Observable<ApiResponse<AddBarcodeToUrlResponse>> {
+    return this.httpClient.post<ApiResponse<AddBarcodeToUrlResponse>>(
+      `${this.apiUrl}/${urlId}/barcode`,
+      body,
+      { withCredentials: true }
     );
   }
 }

@@ -1,6 +1,8 @@
-﻿using Linksy.API.API;
+﻿using Azure;
+using Linksy.API.API;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -22,18 +24,27 @@ namespace Linksy.API.Controllers
         {
             return base.Ok(new ApiResponse<T>(HttpStatusCode.OK, model));
         }
-        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, string entityName)
+        protected ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse>(TResponse? model, string errorMessage)
         {
             if (model is not null)
             {
                 return Ok(model);
             }
-            return NotFound(new ProblemDetails()
+
+            var errorResponse = new ProblemDetails()
             {
                 Type = _notFoundTypeUrl,
-                Title = $"{entityName} was not found.",
-                Status = (int)HttpStatusCode.NotFound
-            });
+                Title = $"Entity was not found.",
+                Status = (int)HttpStatusCode.NotFound,
+                Detail = errorMessage,
+            };
+
+            errorResponse.Extensions = new Dictionary<string, object?>()
+            {
+                { "traceId", HttpContext.TraceIdentifier }
+            };
+
+            return NotFound(errorResponse);
         }
         protected virtual ActionResult<ApiResponse<TResponse>> OkOrNotFound<TResponse, TEntityId>(TResponse? model, string entityName, TEntityId id)
         {

@@ -8,6 +8,9 @@
   --border-color: #E5E7EB;
   --text-primary: #1f3721;
   --text-secondary: #6B7280;
+
+  --danger-dark: #991b1b;
+  --danger-light: #fee2e2;
 }
 
 *, *::before, *::after {

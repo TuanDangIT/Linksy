@@ -39,12 +39,8 @@ namespace Linksy.Application.UmtParameters.Features.AddQrCodeToUmtParameter
                 throw new UmtParameterNotFoundException(request.UmtParameterId);
             var userId = _contextService.Identity!.Id;
 
-            var umtSourceQueryParameter = umtParameter.UmtSource is not null ? $"umt_source={umtParameter.UmtSource}&" : string.Empty;
-            var umtMediumQueryParameter = umtParameter.UmtMedium is not null ? $"&umt_medium={umtParameter.UmtMedium}&" : string.Empty;
-            var umtCampainQueryParameter = umtParameter.UmtCampaign is not null ? $"&umt_campaign={umtParameter.UmtCampaign}&" : string.Empty;
-            var qrCodeQueryParameter = umtSourceQueryParameter + umtMediumQueryParameter + umtCampainQueryParameter + _linksyConfig.ScanCode.QrCodeQueryParameter + "=true";
-            var linksyUrl = _linksyConfig.BaseUrl + "/" + umtParameter.Url.Code + "?" + qrCodeQueryParameter;
-            var (qrCodeImageUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(linksyUrl, userId, cancellationToken);
+            var (qrCodeImageUrlPath, fileName) = await _scanCodeService.GenerateQrCodeAsync(umtParameter.Url.Code, umtParameter.UmtSource, umtParameter.UmtMedium, umtParameter.UmtCampaign, 
+                userId, cancellationToken);
 
             var qrCode = QrCode.CreateQrCode(new Image(qrCodeImageUrlPath, fileName), request.Tags, userId);
             umtParameter.AddQrCode(qrCode);

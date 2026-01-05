@@ -12,11 +12,13 @@ namespace Linksy.Application.UmtParameters.Features.GetUmtParameter
         public int Id { get; init; }
         public int ScanCount { get; init; }
         public ImageDto Image { get; init; } = default!;
-        public GetUmtParameterQrCodeDto(int id, int scanCount, ImageDto image)
+        public DateTime CreatedAt { get; init; }
+        public GetUmtParameterQrCodeDto(int id, int scanCount, ImageDto image, DateTime createdAt)
         {
             Id = id;
             ScanCount = scanCount;
             Image = image;
+            CreatedAt = createdAt;
         }
     }
 }

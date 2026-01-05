@@ -28,7 +28,7 @@ namespace Linksy.API.Controllers
 
         [HttpGet("{barcodeId:int}")]
         public async Task<ActionResult<ApiResponse<GetBarcodeResponse>>> GetBarcodeById([FromRoute] int barcodeId, CancellationToken cancellationToken)
-            => OkOrNotFound(await _mediator.Send(new GetBarcode(barcodeId), cancellationToken), nameof(Barcode));
+            => OkOrNotFound(await _mediator.Send(new GetBarcode(barcodeId), cancellationToken), $"Barcode with ID: {barcodeId} was not found.");
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CreateBarcodeResponse>>> CreateBarcode([FromBody] CreateBarcode command, CancellationToken cancellationToken)

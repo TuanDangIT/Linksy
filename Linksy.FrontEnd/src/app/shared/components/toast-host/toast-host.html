@@ -1,0 +1,9 @@
+<div class="toast-stack" aria-live="polite" aria-atomic="true">
+    @for (t of toast.toasts(); track t.id) {
+    <div class="toast" [class.toast-success]="t.type === 'success'" [class.toast-error]="t.type === 'error'"
+        role="status">
+        <div class="msg">{{ t.message }}</div>
+        <button type="button" class="close" (click)="toast.dismiss(t.id)">×</button>
+    </div>
+    }
+</div>

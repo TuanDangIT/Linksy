@@ -26,7 +26,7 @@ namespace Linksy.API.Controllers
 
         [HttpGet("{qrCodeId:int}")]
         public async Task<ActionResult<ApiResponse<GetQrCodeResponse>>> GetQrCodeById([FromRoute] int qrCodeId, CancellationToken cancellationToken)
-            => OkOrNotFound(await _mediator.Send(new GetQrCode(qrCodeId), cancellationToken), nameof(QrCode));
+            => OkOrNotFound(await _mediator.Send(new GetQrCode(qrCodeId), cancellationToken), $"QrCode with ID: {qrCodeId} was not found.");
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CreateQrCodeResponse>>> CreateQrCode([FromBody] CreateQrCode command, CancellationToken cancellationToken)

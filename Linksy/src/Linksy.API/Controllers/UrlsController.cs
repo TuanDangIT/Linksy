@@ -1,4 +1,5 @@
 ﻿using Linksy.API.API;
+using Linksy.Application.Shared.Configuration;
 using Linksy.Application.Shared.DTO;
 using Linksy.Application.UmtParameters.Features.AddQrCodeToUmtParameter;
 using Linksy.Application.UmtParameters.Features.AddUmtParameterToUrl;
@@ -20,8 +21,11 @@ namespace Linksy.API.Controllers
     [Authorize]
     public class UrlsController : BaseController
     {
-        public UrlsController(IMediator mediator) : base(mediator)
+        private readonly LinksyConfig _linksyConfig;
+
+        public UrlsController(IMediator mediator, LinksyConfig linksyConfig) : base(mediator)
         {
+            _linksyConfig = linksyConfig;
         }
 
         [HttpGet]
@@ -57,7 +61,7 @@ namespace Linksy.API.Controllers
 
         [HttpGet("{urlId:int}")]
         public async Task<ActionResult<ApiResponse<GetUrlResponse>>> GetUrlById([FromRoute] int urlId, CancellationToken cancellationToken)
-            => OkOrNotFound(await _mediator.Send(new GetUrl(urlId), cancellationToken), nameof(Url), urlId);
+            => OkOrNotFound(await _mediator.Send(new GetUrl(urlId), cancellationToken), $"Url with ID: {urlId} was not found.");
 
         [HttpDelete("{urlId:int}")]
         public async Task<ActionResult> DeleteUrlById([FromRoute] int urlId, CancellationToken cancellationToken)

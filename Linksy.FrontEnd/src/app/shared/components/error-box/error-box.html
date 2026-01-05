@@ -1,0 +1,9 @@
+@if (errors && errors.length > 0) {
+<div class="error-box" role="alert" aria-live="polite">
+    <ul class="error-list">
+        @for (e of errors; track e) {
+        <li>{{ e }}</li>
+        }
+    </ul>
+</div>
+}

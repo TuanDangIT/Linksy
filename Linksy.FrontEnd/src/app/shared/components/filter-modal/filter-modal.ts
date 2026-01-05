@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, SimpleChanges, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { buildUtcDateRangeFilter } from '../../utils/date-utils';
 
-type FilterRow = { field: string; value: string };
+type FilterRow = { field: string; value: string; from?: string; to?: string };
 
 @Component({
   selector: 'app-filter-modal',
@@ -27,7 +28,12 @@ export class FilterModal {
         this.rows.set([]);
         return;
       }
-      this.rows.set([{ field: defaultField, value: '' }]);
+      const isDate = this.isDateField(defaultField);
+      this.rows.set([
+        isDate
+          ? { field: defaultField, value: '', from: '', to: '' }
+          : { field: defaultField, value: '' },
+      ]);
     }
   }
 
@@ -66,14 +72,35 @@ export class FilterModal {
   }
 
   updateField(index: number, field: string): void {
-    // Safety: don’t allow duplicates even if somehow forced
     if (this.usedFields(index).has(field)) return;
 
-    this.rows.update((current) => current.map((row, i) => (i === index ? { ...row, field } : row)));
+    const nextIsDate = this.isDateField(field);
+
+    this.rows.update((current) =>
+      current.map((row, i) => {
+        if (i !== index) return row;
+
+        return nextIsDate
+          ? { field, value: '', from: '', to: '' }
+          : { field, value: '', from: undefined, to: undefined };
+      })
+    );
   }
 
   updateValue(index: number, value: string): void {
     this.rows.update((current) => current.map((row, i) => (i === index ? { ...row, value } : row)));
+  }
+
+  updateDateFrom(index: number, value: string): void {
+    this.rows.update((current) =>
+      current.map((row, i) => (i === index ? { ...row, from: value } : row))
+    );
+  }
+
+  updateDateTo(index: number, value: string): void {
+    this.rows.update((current) =>
+      current.map((row, i) => (i === index ? { ...row, to: value } : row))
+    );
   }
 
   isDateField(field: string): boolean {
@@ -89,8 +116,16 @@ export class FilterModal {
 
     for (const row of this.rows()) {
       const key = row.field?.trim();
+      if (!key) continue;
+
+      if (this.isDateField(key)) {
+        const encoded = buildUtcDateRangeFilter(row.from, row.to);
+        if (encoded) result[key] = encoded;
+        continue;
+      }
+
       const value = row.value?.trim();
-      if (key && value) result[key] = value;
+      if (value) result[key] = value;
     }
 
     this.apply.emit(result);

@@ -1,0 +1,37 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="header">
+            <h2 class="title">Add UTM Parameter</h2>
+        </div>
+
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+            <div class="section">
+                <label class="label" for="utmSource">UTM Source</label>
+                <input id="utmSource" name="utmSource" class="input" type="text" [(ngModel)]="utmSource" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="utmMedium">UTM Medium</label>
+                <input id="utmMedium" name="utmMedium" class="input" type="text" [(ngModel)]="utmMedium" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="utmCampaign">UTM Campaign</label>
+                <input id="utmCampaign" name="utmCampaign" class="input" type="text"
+                    [(ngModel)]="utmCampaign" />
+            </div>
+
+            <app-error-box [errors]="errors()"></app-error-box>
+
+            <div class="actions">
+                <div class="spacer"></div>
+                <button type="button" class="btn secondary" (click)="cancel.emit()">Cancel</button>
+                <button type="submit" class="btn primary" [disabled]="submitting()">
+                    Add
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}
