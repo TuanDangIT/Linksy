@@ -1,0 +1,86 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="header">
+            <h2 class="title">Create QR Code</h2>
+        </div>
+
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+            <div class="section">
+                <label class="label" for="originalUrl">Original URL *</label>
+                <input id="originalUrl" name="originalUrl" class="input" type="url" required
+                    placeholder="https://example.com/page" [(ngModel)]="originalUrl" />
+            </div>
+
+            <div class="section">
+                @if (!showCustomCode()) {
+                <button type="button" class="btn secondary" (click)="enableCustomCode()">
+                    Add custom code
+                </button>
+                } @else {
+                <label class="label" for="customCode">Custom code</label>
+                <input id="customCode" name="customCode" class="input" type="text" placeholder="my-custom-code"
+                    [(ngModel)]="customCode" />
+                }
+            </div>
+
+            <div class="section">
+                @if (!showTags()) {
+                <button type="button" class="btn secondary" (click)="enableTags()">Add tags</button>
+                } @else {
+                <div class="section-header">
+                    <div class="label">Tags</div>
+                    <button type="button" class="btn secondary" (click)="addTag()">Add tag</button>
+                </div>
+
+                <div class="list">
+                    @for (tag of tags(); track $index; let i = $index) {
+                    <div class="row-2">
+                        <input class="input" type="text" placeholder="tag" [ngModel]="tag"
+                            (ngModelChange)="updateTag(i, $event)" name="tag_{{ i }}" />
+                        <button type="button" class="btn danger" (click)="removeTag(i)">Remove</button>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+
+            <div class="section">
+                @if (!showUtm()) {
+                <button type="button" class="btn secondary" (click)="enableUtm()">
+                    Add UTM parameters
+                </button>
+                } @else {
+                <div class="section-header">
+                    <div class="label">UTM parameters</div>
+                    <button type="button" class="btn secondary" (click)="addUtm()">Add row</button>
+                </div>
+
+                <div class="list">
+                    @for (p of utmParameters(); track $index; let i = $index) {
+                    <div class="utm-row">
+                        <input class="input" type="text" placeholder="UTM Source" [ngModel]="p.umtSource"
+                            (ngModelChange)="updateUtm(i, 'umtSource', $event)" name="utmSource_{{ i }}" />
+                        <input class="input" type="text" placeholder="UTM Medium" [ngModel]="p.umtMedium"
+                            (ngModelChange)="updateUtm(i, 'umtMedium', $event)" name="umtMedium_{{ i }}" />
+                        <input class="input" type="text" placeholder="UTM Campaign" [ngModel]="p.umtCampaign"
+                            (ngModelChange)="updateUtm(i, 'umtCampaign', $event)" name="umtCampaign_{{ i }}" />
+                        <button type="button" class="btn danger" (click)="removeUtm(i)">Remove</button>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            <app-error-box [errors]="errors()"></app-error-box>
+
+            <div class="actions">
+                <div class="spacer"></div>
+                <button type="button" class="btn secondary" (click)="cancel.emit()">Cancel</button>
+                <button type="submit" class="btn primary" [disabled]="submitting()">
+                    Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

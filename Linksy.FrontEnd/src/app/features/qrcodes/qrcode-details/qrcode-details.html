@@ -1,0 +1,105 @@
+<div class="page">
+    <div class="topbar">
+        <a class="back-link" routerLink="/qrcodes">← Back to QR Codes</a>
+    </div>
+
+    <app-error-box [errors]="errors()"></app-error-box>
+
+    @if (loading()) {
+    <div class="loading">Loading…</div>
+    } @else {
+    @if (data(); as d) {
+    <div class="grid">
+        <div class="card left">
+            <div class="image-wrap">
+                <img class="qr-image" [src]="blobUrl(d.image.urlPath) ?? ''" alt="QR code" />
+            </div>
+
+            <div class="tags">
+                <div class="tags-title">Tags</div>
+                @if (d.tags && d.tags.length > 0) {
+                <div class="tag-row">
+                    @for (t of d.tags; track t) {
+                    <span class="tag">{{ t }}</span>
+                    }
+                </div>
+                } @else {
+                <div class="muted">-</div>
+                }
+            </div>
+        </div>
+
+        <div class="card info">
+            <div class="section-title">Information</div>
+
+            <div class="kv">
+                <div class="kv-row"><span class="k">ID</span><span class="v">{{ d.id }}</span></div>
+
+                <div class="scan">
+                    <div class="scan-label">ScanCount</div>
+                    <div class="scan-value">{{ d.scanCount }}</div>
+                </div>
+
+                <div class="kv-row"><span class="k">CreatedAt</span><span class="v">{{ formatDate(d.createdAt) }}</span>
+                </div>
+                <div class="kv-row"><span class="k">Type</span><span class="v">{{ typeLabel() }}</span></div>
+            </div>
+        </div>
+
+        <div class="card details">
+            @if (d.url) {
+            <div class="section-title">URL details</div>
+
+            <div class="kv">
+                <div class="kv-row"><span class="k">URL ID</span><span class="v">{{ d.url.id }}</span></div>
+                <div class="kv-row"><span class="k">Code</span><span class="v">{{ d.url.code }}</span></div>
+                <div class="kv-row">
+                    <span class="k">Original URL</span>
+                    <span class="v">
+                        <a class="link" [href]="d.url.originalUrl" target="_blank" rel="noreferrer">
+                            {{ d.url.originalUrl }}
+                        </a>
+                    </span>
+                </div>
+            </div>
+            } @else if (d.umtParameter) {
+            <div class="section-title">UTM details</div>
+
+            <div class="kv">
+                <div class="kv-row"><span class="k">UTM ID</span><span class="v">{{ d.umtParameter.id }}</span></div>
+                <div class="kv-row"><span class="k">Source</span><span class="v">{{ d.umtParameter.umtSource ?? '-'
+                        }}</span></div>
+                <div class="kv-row"><span class="k">Medium</span><span class="v">{{ d.umtParameter.umtMedium ?? '-'
+                        }}</span></div>
+                <div class="kv-row"><span class="k">Campaign</span><span class="v">{{ d.umtParameter.umtCampaign ?? '-'
+                        }}</span></div>
+
+                <div class="divider"></div>
+
+                <div class="kv-row"><span class="k">URL ID</span><span class="v">{{ d.umtParameter.urlId }}</span></div>
+                <div class="kv-row"><span class="k">Code</span><span class="v">{{ d.umtParameter.code }}</span></div>
+                <div class="kv-row">
+                    <span class="k">Original URL</span>
+                    <span class="v">
+                        <a class="link" [href]="d.umtParameter.originalUrl" target="_blank" rel="noreferrer">
+                            {{ d.umtParameter.originalUrl }}
+                        </a>
+                    </span>
+                </div>
+            </div>
+            } @else {
+            <div class="muted">No URL/UTM data.</div>
+            }
+        </div>
+    </div>
+
+    <div class="chart">
+        <app-analytics-line-chart [title]="'Scans'" [entityType]="'qrcode'" [entityId]="qrCodeId"
+            (errors)="onChartErrors($event)">
+        </app-analytics-line-chart>
+    </div>
+    } @else {
+    <div class="muted">No data.</div>
+    }
+    }
+</div>

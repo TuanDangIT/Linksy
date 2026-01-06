@@ -2,9 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTrash, faDownload, faCopy, faEye } from '@fortawesome/free-solid-svg-icons';
 
-import { QrcodeService } from '../../../core/services/qrcode-service';
-import { QrcodeListItem } from '../../../core/models/qrcode';
-import { BrowseQrcodesRequest } from '../../../core/types/browseQrcodes';
+import { BarcodeService } from '../../../core/services/barcode-service';
+import { BarcodeListItem } from '../../../core/models/barcode';
+import { BrowseBarcodesRequest } from '../../../core/types/browseBarcodes';
 import { environment } from '../../../../environments/environment';
 
 import { FilterModal } from '../../../shared/components/filter-modal/filter-modal';
@@ -14,23 +14,23 @@ import { ToastService } from '../../../core/services/toast-service';
 import { copyToClipboard } from '../../../shared/utils/clipboard-utils';
 import { formatDate } from '../../../shared/utils/date-utils';
 
-import { CreateQrCodeModal } from '../create-qrcode-modal/create-qrcode-modal';
+import { CreateBarcodeModal } from '../create-barcode-modal/create-barcode-modal';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-qrcode-list',
-  imports: [FilterModal, FontAwesomeModule, ConfirmModal, CreateQrCodeModal, RouterLink],
-  templateUrl: './qrcode-list.html',
-  styleUrl: './qrcode-list.css',
+  selector: 'app-barcode-list',
+  imports: [FilterModal, FontAwesomeModule, ConfirmModal, CreateBarcodeModal, RouterLink],
+  templateUrl: './barcode-list.html',
+  styleUrl: './barcode-list.css',
   providers: [PaginationService],
 })
-export class QrcodeList {
+export class BarcodeList {
   private readonly toast = inject(ToastService);
-  private readonly qrcodeService = inject(QrcodeService);
+  private readonly barcodeService = inject(BarcodeService);
   private readonly pagination = inject(PaginationService);
   private readonly router = inject(Router);
 
-  qrcodes = signal<QrcodeListItem[]>([]);
+  barcodes = signal<BarcodeListItem[]>([]);
 
   availableFilters = [
     'Url.Code',
@@ -71,36 +71,36 @@ export class QrcodeList {
 
   isCreateModalOpen = signal(false);
 
-  private pendingDelete = signal<QrcodeListItem | null>(null);
+  private pendingDelete = signal<BarcodeListItem | null>(null);
 
   ngOnInit(): void {
     this.pagination.setInitialSort('CreatedAt', 'desc');
-    this.loadQrcodes();
+    this.loadBarcodes();
   }
 
-  loadQrcodes(): void {
-    const params = this.pagination.buildBrowseParams() as BrowseQrcodesRequest;
+  loadBarcodes(): void {
+    const params = this.pagination.buildBrowseParams() as BrowseBarcodesRequest;
 
-    this.qrcodeService.getQrcodes(params).subscribe({
+    this.barcodeService.getBarcodes(params).subscribe({
       next: (response) => {
         const paged = response.data.pagedResult;
         const outcome = this.pagination.ingestPagedResult(paged);
 
         if (outcome === 'empty') {
-          this.qrcodes.set([]);
+          this.barcodes.set([]);
           return;
         }
 
         if (outcome === 'reload') {
-          this.loadQrcodes();
+          this.loadBarcodes();
           return;
         }
 
-        this.qrcodes.set(paged.items);
+        this.barcodes.set(paged.items);
       },
       error: (err) => {
         console.error(err);
-        this.toast.error('Failed to load QR codes. Please try again.');
+        this.toast.error('Failed to load barcodes. Please try again.');
       },
     });
   }
@@ -108,7 +108,7 @@ export class QrcodeList {
   applyFilters(newFilters: Record<string, string>): void {
     this.pagination.applyFilters(newFilters);
     this.closeFilterModal();
-    this.loadQrcodes();
+    this.loadBarcodes();
   }
 
   get appliedFilters(): Array<{ key: string; value: string }> {
@@ -117,7 +117,7 @@ export class QrcodeList {
 
   clearFilters(): void {
     this.pagination.clearFilters();
-    this.loadQrcodes();
+    this.loadBarcodes();
   }
 
   openFilterModal(): void {
@@ -130,7 +130,7 @@ export class QrcodeList {
 
   sortBy(column: 'Id' | 'ScanCount' | 'CreatedAt'): void {
     this.pagination.sortBy(column);
-    this.loadQrcodes();
+    this.loadBarcodes();
   }
 
   getSortIcon(column: 'Id' | 'ScanCount' | 'CreatedAt'): string {
@@ -138,15 +138,15 @@ export class QrcodeList {
   }
 
   goToPage(page: number): void {
-    if (this.pagination.goToPage(page)) this.loadQrcodes();
+    if (this.pagination.goToPage(page)) this.loadBarcodes();
   }
 
   prevPage(): void {
-    if (this.pagination.prevPage()) this.loadQrcodes();
+    if (this.pagination.prevPage()) this.loadBarcodes();
   }
 
   nextPage(): void {
-    if (this.pagination.nextPage()) this.loadQrcodes();
+    if (this.pagination.nextPage()) this.loadBarcodes();
   }
 
   canGoPrev(): boolean {
@@ -158,7 +158,7 @@ export class QrcodeList {
   }
 
   setPageSize(newSize: number | string): void {
-    if (this.pagination.setPageSize(newSize)) this.loadQrcodes();
+    if (this.pagination.setPageSize(newSize)) this.loadBarcodes();
   }
 
   rangeStart(): number {
@@ -183,10 +183,10 @@ export class QrcodeList {
     return formatDate(date ?? null);
   }
 
-  openDeleteConfirm(qr: QrcodeListItem): void {
-    this.pendingDelete.set(qr);
-    this.confirmTitle.set('Delete QR Code');
-    this.confirmMessage.set(`Are you sure you want to delete QR code #${qr.id}?`);
+  openDeleteConfirm(b: BarcodeListItem): void {
+    this.pendingDelete.set(b);
+    this.confirmTitle.set('Delete Barcode');
+    this.confirmMessage.set(`Are you sure you want to delete barcode #${b.id}?`);
     this.confirmConfirmText.set('Delete');
     this.confirmVariant.set('danger');
     this.confirmOpen.set(true);
@@ -198,14 +198,14 @@ export class QrcodeList {
   }
 
   confirmDelete(): void {
-    const qr = this.pendingDelete();
-    if (!qr) return;
+    const b = this.pendingDelete();
+    if (!b) return;
 
-    this.qrcodeService.deleteQrCode(qr.id).subscribe({
+    this.barcodeService.deleteBarcode(b.id).subscribe({
       next: () => {
         this.closeConfirm();
-        this.toast.success('QR code deleted.');
-        this.loadQrcodes();
+        this.toast.success('Barcode deleted.');
+        this.loadBarcodes();
       },
       error: (err) => {
         console.error(err);
@@ -231,19 +231,8 @@ export class QrcodeList {
     return plain?.[1] ?? null;
   }
 
-  private saveBlob(blob: Blob, fileName: string): void {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  download(qrcodeId: number): void {
-    this.qrcodeService.downloadQrCode(qrcodeId).subscribe({
+  download(barcodeId: number): void {
+    this.barcodeService.downloadBarcode(barcodeId).subscribe({
       next: (res) => {
         const blob = res.body;
         if (!blob) {
@@ -255,11 +244,11 @@ export class QrcodeList {
           res.headers.get('content-disposition')
         );
 
-        this.saveBlob(blob, fromHeader ?? `qrcode-${qrcodeId}`);
+        this.saveBlob(blob, fromHeader ?? `barcode-${barcodeId}`);
       },
       error: (err) => {
         console.error(err);
-        this.toast.error('Failed to download QR code.');
+        this.toast.error('Failed to download barcode.');
       },
     });
   }
@@ -272,14 +261,25 @@ export class QrcodeList {
     this.isCreateModalOpen.set(false);
   }
 
-  onQrCreated(): void {
+  onBarcodeCreated(): void {
     this.closeCreateModal();
     this.currentPage.set(1);
-    this.toast.success('QR code created.');
-    this.loadQrcodes();
+    this.toast.success('Barcode created.');
+    this.loadBarcodes();
   }
 
   openDetails(qrcodeId: number): void {
-    this.router.navigate(['/qrcodes', qrcodeId]);
+    this.router.navigate(['/barcodes', qrcodeId]);
+  }
+
+  private saveBlob(blob: Blob, fileName: string): void {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 }

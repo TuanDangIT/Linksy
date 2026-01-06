@@ -14,11 +14,11 @@
 </div>
 }
 
-@if (qrcodes().length === 0) {
-<div class="empty-state">No QR codes found.</div>
+@if (barcodes().length === 0) {
+<div class="empty-state">No barcodes found.</div>
 } @else {
 <div class="table-container">
-    <table class="qrcode-table">
+    <table class="barcode-table">
         <thead>
             <tr>
                 <th (click)="sortBy('Id')" class="sortable">
@@ -26,84 +26,58 @@
                 </th>
                 <th>Url.Code</th>
                 <th>Url.OriginalUrl</th>
-                <th>UTM Source</th>
-                <th>UTM Medium</th>
-                <th>UTM Campaign</th>
+
                 <th (click)="sortBy('ScanCount')" class="sortable">
                     ScanCount<span class="sort-icon">{{ getSortIcon('ScanCount') }}</span>
                 </th>
-                <th>UTM</th>
+
                 <th>Tags</th>
+
                 <th (click)="sortBy('CreatedAt')" class="sortable">
                     CreatedAt<span class="sort-icon">{{ getSortIcon('CreatedAt') }}</span>
                 </th>
-                <!-- <th>UpdatedAt</th> -->
+
+                <th>UpdatedAt</th>
                 <th>Actions</th>
             </tr>
         </thead>
 
         <tbody>
-            @for (qr of qrcodes(); track qr.id) {
+            @for (b of barcodes(); track b.id) {
             <tr>
-                <td class="id-cell"><a class="id-link" [routerLink]="['/qrcodes', qr.id]">{{ qr.id }}</a></td>
+                <td class="id-cell"><a class="id-link" [routerLink]="['/barcodes', b.id]">{{ b.id }}</a></td>
 
-                @if(qr.url){
                 <td class="code-cell">
+                    @if (b.url.code) {
                     <div class="code-wrapper">
-                        <code>{{ qr.url.code }}</code>
-                        <button class="btn-copy" type="button" (click)="copyUrlCode(qr.url.code)">
+                        <code>{{ b.url.code }}</code>
+                        <button class="btn-copy" type="button" (click)="copyUrlCode(b.url.code)">
                             <fa-icon [icon]="faCopy"></fa-icon>
                         </button>
                     </div>
+                    } @else {
+                    <span>-</span>
+                    }
                 </td>
+
                 <td class="url-cell">
-                    <a [href]="qr.url.originalUrl" target="_blank" rel="noreferrer">
-                        {{ qr.url.originalUrl }}
+                    @if (b.url.originalUrl) {
+                    <a [href]="b.url.originalUrl" target="_blank" rel="noreferrer">
+                        {{ b.url.originalUrl }}
                     </a>
-                </td>
-                } @else {
-                <td class="code-cell">
-                    <div class="code-wrapper">
-                        <code>{{ qr.umtParameter!.url!.code }}</code>
-                        <button class="btn-copy" type="button" (click)="copyUrlCode(qr.umtParameter!.url!.code)">
-                            <fa-icon [icon]="faCopy"></fa-icon>
-                        </button>
-                    </div>
-                </td>
-                <td class="url-cell">
-                    <a [href]="qr.umtParameter!.url!.originalUrl" target="_blank" rel="noreferrer">
-                        {{ qr.umtParameter!.url!.originalUrl }}
-                    </a>
-                </td>
-                }
-
-                <td class="utm-cell">
-                    {{ qr.umtParameter?.umtSource ?? '-' }}
-                </td>
-
-                <td class="utm-cell">
-                    {{ qr.umtParameter?.umtMedium ?? '-' }}
-                </td>
-
-                <td class="utm-cell">
-                    {{ qr.umtParameter?.umtCampaign ?? '-' }}
+                    } @else {
+                    <span>-</span>
+                    }
                 </td>
 
                 <td class="visits-cell">
-                    <span class="visits-badge">{{ qr.scanCount }}</span>
-                </td>
-
-                <td class="flag-cell">
-                    <span class="flag-badge" [class.flag-true]="!!qr.umtParameter"
-                        [class.flag-false]="!qr.umtParameter">
-                        {{ qr.umtParameter ? 'True' : 'False' }}
-                    </span>
+                    <span class="visits-badge">{{ b.scanCount }}</span>
                 </td>
 
                 <td class="tags-cell">
-                    @if (qr.tags && qr.tags.length > 0) {
+                    @if (b.tags && b.tags.length > 0) {
                     <div class="tags">
-                        @for (tag of qr.tags; track tag) {
+                        @for (tag of b.tags; track tag) {
                         <span class="tag">{{ tag }}</span>
                         }
                     </div>
@@ -112,26 +86,26 @@
                     }
                 </td>
 
-                <td class="date-cell">{{ formatDate(qr.createdAt) }}</td>
+                <td class="date-cell">{{ formatDate(b.createdAt) }}</td>
 
-                <!-- <td class="date-cell">
-                    @if (qr.updatedAt) {
-                    {{ formatDate(qr.updatedAt) }}
+                <td class="date-cell">
+                    @if (b.updatedAt) {
+                    {{ formatDate(b.updatedAt) }}
                     } @else {
                     <span>-</span>
                     }
-                </td> -->
+                </td>
 
                 <td class="actions-cell">
-                    <button type="button" class="action-btn" title="Details" (click)="openDetails(qr.id)">
+                    <button type="button" class="action-btn" title="Details (mock)" (click)="openDetails(b.id)">
                         <fa-icon [icon]="faEye"></fa-icon>
                     </button>
 
-                    <button type="button" class="action-btn" title="Download" (click)="download(qr.id)">
+                    <button type="button" class="action-btn" title="Download" (click)="download(b.id)">
                         <fa-icon [icon]="faDownload"></fa-icon>
                     </button>
 
-                    <button type="button" class="action-btn danger" title="Delete" (click)="openDeleteConfirm(qr)">
+                    <button type="button" class="action-btn danger" title="Delete" (click)="openDeleteConfirm(b)">
                         <fa-icon [icon]="faTrash"></fa-icon>
                     </button>
                 </td>
@@ -178,5 +152,5 @@
     (confirm)="confirmDelete()">
 </app-confirm-modal>
 
-<app-create-qrcode-modal [isOpen]="isCreateModalOpen()" (cancel)="closeCreateModal()" (created)="onQrCreated()">
-</app-create-qrcode-modal>
+<app-create-barcode-modal [isOpen]="isCreateModalOpen()" (cancel)="closeCreateModal()" (created)="onBarcodeCreated()">
+</app-create-barcode-modal>

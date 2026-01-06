@@ -14,21 +14,32 @@ export class AnalyticsService {
     urlId: number,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
-    let params = new HttpParams().set('TimeRange', req.timeRange).set('Interval', req.interval);
-
-    if (req.timeRange === 'Custom') {
-      if (req.startDate) params = params.set('StartDate', req.startDate);
-      if (req.endDate) params = params.set('EndDate', req.endDate);
-    }
-
-    return this.http.get<ApiResponse<EngagementResponse>>(`${this.base}/urls/${urlId}`, {
-      params,
-      withCredentials: true,
-    });
+    return this.getEngagements(`urls/${urlId}`, req);
   }
 
   getUtmEngagements(
     utmParameterId: number,
+    req: AnalyticsRequest
+  ): Observable<ApiResponse<EngagementResponse>> {
+    return this.getEngagements(`umtparameters/${utmParameterId}`, req);
+  }
+
+  getQrCodeEngagements(
+    qrCodeId: number,
+    req: AnalyticsRequest
+  ): Observable<ApiResponse<EngagementResponse>> {
+    return this.getEngagements(`qrcodes/${qrCodeId}`, req);
+  }
+
+  getBarcodeEngagements(
+    barcodeId: number,
+    req: AnalyticsRequest
+  ): Observable<ApiResponse<EngagementResponse>> {
+    return this.getEngagements(`barcodes/${barcodeId}`, req);
+  }
+
+  private getEngagements(
+    endpoint: string,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
     let params = new HttpParams().set('TimeRange', req.timeRange).set('Interval', req.interval);
@@ -38,9 +49,9 @@ export class AnalyticsService {
       if (req.endDate) params = params.set('EndDate', req.endDate);
     }
 
-    return this.http.get<ApiResponse<EngagementResponse>>(
-      `${this.base}/umtparameters/${utmParameterId}`,
-      { params, withCredentials: true }
-    );
+    return this.http.get<ApiResponse<EngagementResponse>>(`${this.base}/${endpoint}`, {
+      params,
+      withCredentials: true,
+    });
   }
 }

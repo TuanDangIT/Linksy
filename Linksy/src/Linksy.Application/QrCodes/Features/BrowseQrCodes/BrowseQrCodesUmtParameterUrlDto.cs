@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.QrCodes.Features.BrowseQrCodes
 {
-    public record class BrowseQrCodesUmtParameterDto(int Id, string? UmtSource, string? UmtMedium, string? UmtCampaign, BrowseQrCodesUmtParameterUrlDto Url);
+    public record class BrowseQrCodesUmtParameterUrlDto(int Id, string OriginalUrl, string Code);
 }

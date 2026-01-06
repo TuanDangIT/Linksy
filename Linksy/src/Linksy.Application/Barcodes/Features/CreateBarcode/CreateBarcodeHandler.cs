@@ -2,6 +2,7 @@
 using Linksy.Application.QrCodes.Features.CreateQrCode;
 using Linksy.Application.Shared.BlobStorage;
 using Linksy.Application.Shared.Configuration;
+using Linksy.Application.Shared.DTO;
 using Linksy.Application.Shared.ScanCodes;
 using Linksy.Domain.DomainServices;
 using Linksy.Domain.Entities.ScanCode;
@@ -45,7 +46,7 @@ namespace Linksy.Application.Barcodes.Features.CreateBarcode
             var barcode = Barcode.CreateBarcode(url, new Image(barcodeUrlPath, fileName), request.Tags, userId);
             await _barcodeRepository.CreateAsync(barcode, cancellationToken);
             _logger.LogInformation("Barcode was created with ID: {BarcodeId} for URL ID: {UrlId} by user with ID: {UserId}.", barcode.Id, url.Id, userId);
-            return new CreateBarcodeResponse(barcode.Id, url.Id, barcodeUrlPath, fileName);
+            return new CreateBarcodeResponse(barcode.Id, url.Id, new ImageDto(barcodeUrlPath, fileName));
         }
     }
 }

@@ -22,7 +22,7 @@ import { toErrorList } from '../../utils/http-error-utils';
 import { toUtcDayEndIso, toUtcDayStartIso } from '../../utils/date-utils';
 import { AnalyticsRequest, TimeInterval, TimeRange } from '../../../core/types/analytics';
 
-export type AnalyticsEntityType = 'url' | 'utm';
+export type AnalyticsEntityType = 'url' | 'utm' | 'qrcode' | 'barcode';
 
 const allowedIntervalsByRange: Record<Lowercase<TimeRange>, TimeInterval[]> = {
   day: ['Minutes30', 'Hourly'],
@@ -83,8 +83,8 @@ export class AnalyticsLineChart {
 
   timeRange = signal<TimeRange>('Day');
   interval = signal<TimeInterval>('Hourly');
-  fromDate = signal<string>(''); 
-  toDate = signal<string>(''); 
+  fromDate = signal<string>('');
+  toDate = signal<string>('');
 
   readonly timeRanges: Array<{ value: TimeRange; label: string }> = [
     { value: 'Day', label: 'Day (today)' },
@@ -191,7 +191,7 @@ export class AnalyticsLineChart {
   }
 
   private load(override?: AnalyticsRequest): void {
-    if (!this.isBrowser) return; 
+    if (!this.isBrowser) return;
     if (!this.entityId || this.entityId <= 0) return;
 
     const req: AnalyticsRequest = override ?? {
@@ -201,10 +201,20 @@ export class AnalyticsLineChart {
 
     this.loading.set(true);
 
-    const request$ =
-      this.entityType === 'url'
-        ? this.analytics.getUrlEngagements(this.entityId, req)
-        : this.analytics.getUtmEngagements(this.entityId, req);
+    const request$ = (() => {
+      switch (this.entityType) {
+        case 'url':
+          return this.analytics.getUrlEngagements(this.entityId, req);
+        case 'utm':
+          return this.analytics.getUtmEngagements(this.entityId, req);
+        case 'qrcode':
+          return this.analytics.getQrCodeEngagements(this.entityId, req);
+        case 'barcode':
+          return this.analytics.getBarcodeEngagements(this.entityId, req);
+        default:
+          throw new Error(`Unknown entity type: ${this.entityType}`);
+      }
+    })();
 
     request$.subscribe({
       next: (res) => {

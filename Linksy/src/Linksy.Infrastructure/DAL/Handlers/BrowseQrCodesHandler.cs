@@ -50,15 +50,14 @@ namespace Linksy.Infrastructure.DAL.Handlers
                     ? new BrowseQrCodeDto(
                         q.Id,
                         new BrowseScanCodesUrlDto(q.Url.Id, q.Url.OriginalUrl, q.Url.Code),
-                        q.Url.IsActive,
                         q.Url.TagsList,
                         q.ScanCount,
                         q.CreatedAt,
                         q.UpdatedAt)
                     : new BrowseQrCodeDto(
                         q.Id,
-                        new BrowseQrCodesUmtParameterDto(q.UmtParameter!.Id, q.UmtParameter.UmtSource, q.UmtParameter.UmtMedium, q.UmtParameter.UmtCampaign),
-                        q.UmtParameter.IsActive, 
+                        new BrowseQrCodesUmtParameterDto(q.UmtParameter!.Id, q.UmtParameter.UmtSource, q.UmtParameter.UmtMedium, q.UmtParameter.UmtCampaign, 
+                        new BrowseQrCodesUmtParameterUrlDto(q.UmtParameter.Url.Id, q.UmtParameter.Url.OriginalUrl, q.UmtParameter.Url.Code)),
                         q.TagsList, 
                         q.ScanCount,
                         q.CreatedAt,

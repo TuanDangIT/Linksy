@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.Shared.DTO
 {
-    public record class BrowseScanCodesUrlDto(int UrlId, string OriginalUrl, string Code);
+    public record class BrowseScanCodesUrlDto(int Id, string OriginalUrl, string Code);
 }

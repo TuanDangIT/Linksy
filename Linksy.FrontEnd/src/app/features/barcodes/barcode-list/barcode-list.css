@@ -21,7 +21,7 @@
   font-weight: 600;
 }
 
-.url-table {
+.barcode-table {
   border-collapse: collapse;
   border-spacing: 0;
   border-radius: 12px;
@@ -29,12 +29,12 @@
   width: 100%;
 }
 
-.url-table thead {
+.barcode-table thead {
   background: var(--primary);
   color: white;
 }
 
-.url-table th {
+.barcode-table th {
   padding: 1rem;
   text-align: left;
   font-weight: 600;
@@ -43,21 +43,21 @@
   letter-spacing: 0.05em;
 }
 
-.url-table th:first-child {
+.barcode-table th:first-child {
   border-top-left-radius: 12px;
 }
 
-.url-table th:last-child {
+.barcode-table th:last-child {
   border-top-right-radius: 12px;
 }
 
-.url-table th.sortable {
+.barcode-table th.sortable {
   cursor: pointer;
   user-select: none;
   transition: all 0.2s;
 }
 
-.url-table th.sortable:hover {
+.barcode-table th.sortable:hover {
   background: var(--primary-hover);
 }
 
@@ -67,37 +67,37 @@
   opacity: 0.8;
 }
 
-.url-table tbody tr {
+.barcode-table tbody tr {
   transition: all 0.2s;
 }
 
-.url-table tbody tr:nth-child(odd) {
+.barcode-table tbody tr:nth-child(odd) {
   background: #ffffff;
 }
 
-.url-table tbody tr:nth-child(even) {
+.barcode-table tbody tr:nth-child(even) {
   background: #f9fafb;
 }
 
-.url-table tbody tr:hover {
+.barcode-table tbody tr:hover {
   background: #f3f4f6;
 }
 
-.url-table tbody tr:last-child td:first-child {
+.barcode-table tbody tr:last-child td:first-child {
   border-bottom-left-radius: 12px;
 }
 
-.url-table tbody tr:last-child td:last-child {
+.barcode-table tbody tr:last-child td:last-child {
   border-bottom-right-radius: 12px;
 }
 
-.url-table td {
+.barcode-table td {
   padding: 1rem;
   font-size: 0.9rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
-.url-table tbody tr:last-child td {
+.barcode-table tbody tr:last-child td {
   border-bottom: none;
 }
 

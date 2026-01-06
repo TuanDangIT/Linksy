@@ -1,0 +1,77 @@
+<div class="page">
+    <div class="topbar">
+        <a class="back-link" routerLink="/barcodes">← Back to Barcodes</a>
+    </div>
+
+    <app-error-box [errors]="errors()"></app-error-box>
+
+    @if (loading()) {
+    <div class="loading">Loading…</div>
+    } @else {
+    @if (data(); as d) {
+    <div class="grid">
+        <div class="card left">
+            <div class="image-wrap">
+                <img class="barcode-image" [src]="blobUrl(d.image.urlPath) ?? ''" alt="Barcode" />
+            </div>
+
+            <div class="tags">
+                <div class="tags-title">Tags</div>
+                @if (d.tags && d.tags.length > 0) {
+                <div class="tag-row">
+                    @for (t of d.tags; track t) {
+                    <span class="tag">{{ t }}</span>
+                    }
+                </div>
+                } @else {
+                <div class="muted">-</div>
+                }
+            </div>
+        </div>
+
+        <div class="card info">
+            <div class="section-title">Information</div>
+
+            <div class="kv">
+                <div class="kv-row"><span class="k">ID</span><span class="v">{{ d.id }}</span></div>
+
+                <div class="scan">
+                    <div class="scan-label">ScanCount</div>
+                    <div class="scan-value">{{ d.scanCount }}</div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="kv-row"><span class="k">URL ID</span><span class="v">{{ d.url.id }}</span></div>
+                <div class="kv-row"><span class="k">Code</span><span class="v">{{ d.url.code }}</span></div>
+                <div class="kv-row">
+                    <span class="k">Original URL</span>
+                    <span class="v">
+                        @if (d.url.originalUrl) {
+                        <a class="link" [href]="d.url.originalUrl" target="_blank" rel="noreferrer">
+                            {{ d.url.originalUrl }}
+                        </a>
+                        } @else {
+                        <span>-</span>
+                        }
+                    </span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="kv-row"><span class="k">CreatedAt</span><span class="v">{{ formatDate(d.createdAt) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart">
+        <app-analytics-line-chart [title]="'Scans'" [entityType]="'barcode'" [entityId]="barcodeId"
+            (errors)="onChartErrors($event)">
+        </app-analytics-line-chart>
+    </div>
+    } @else {
+    <div class="muted">No data.</div>
+    }
+    }
+</div>
