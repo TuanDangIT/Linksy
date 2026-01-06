@@ -9,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 import { copyToClipboard } from '../../../shared/utils/clipboard-utils';
 import { formatDate } from '../../../shared/utils/date-utils';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../shared/utils/http-error-utils';
+import { buildShortUrl, saveBlob, toErrorList } from '../../../shared/utils/http-utils';
 import { ConfirmModal } from '../../../shared/components/confirm-modal/confirm-modal';
 import { ToastService } from '../../../core/services/toast-service';
 import { QrcodeService } from '../../../core/services/qrcode-service';
@@ -271,34 +271,7 @@ export class ShortenedUrlDetails {
     });
   }
 
-  private getFileNameFromContentDisposition(value: string | null): string | null {
-    if (!value) return null;
-
-    const utf8 = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(value);
-    if (utf8?.[1]) {
-      try {
-        return decodeURIComponent(utf8[1]);
-      } catch {
-        return utf8[1];
-      }
-    }
-
-    const plain = /filename\s*=\s*"?([^";]+)"?/i.exec(value);
-    return plain?.[1] ?? null;
-  }
-
-  private saveBlob(blob: Blob, fileName: string): void {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  downloadQrCode(qrcodeId: number, fallbackFileName?: string): void {
+  downloadQrCode(qrcodeId: number, fileName: string): void {
     this.qrcodeService.downloadQrCode(qrcodeId).subscribe({
       next: (res) => {
         const blob = res.body;
@@ -306,10 +279,8 @@ export class ShortenedUrlDetails {
           this.toast.error('Download failed.');
           return;
         }
-        const fromHeader = this.getFileNameFromContentDisposition(
-          res.headers.get('content-disposition')
-        );
-        this.saveBlob(blob, fromHeader ?? fallbackFileName ?? `qrcode-${qrcodeId}`);
+
+        saveBlob(blob, fileName.split('/').pop() ?? `qrcode-${qrcodeId}`);
       },
       error: (err) => {
         console.error(err);
@@ -318,7 +289,7 @@ export class ShortenedUrlDetails {
     });
   }
 
-  downloadBarcode(barcodeId: number, fallbackFileName?: string): void {
+  downloadBarcode(barcodeId: number, fileName: string): void {
     this.barcodeService.downloadBarcode(barcodeId).subscribe({
       next: (res) => {
         const blob = res.body;
@@ -326,10 +297,8 @@ export class ShortenedUrlDetails {
           this.toast.error('Download failed.');
           return;
         }
-        const fromHeader = this.getFileNameFromContentDisposition(
-          res.headers.get('content-disposition')
-        );
-        this.saveBlob(blob, fromHeader ?? fallbackFileName ?? `barcode-${barcodeId}`);
+
+        saveBlob(blob, fileName.split('/').pop() ?? `barcode-${barcodeId}`);
       },
       error: (err) => {
         console.error(err);
@@ -415,19 +384,19 @@ export class ShortenedUrlDetails {
   copyShortenedUrl(): void {
     const u = this.url();
     if (!u) return;
-    copyToClipboard(this.buildShortUrl(u.code, {}));
+    copyToClipboard(buildShortUrl(u.code, {}));
   }
 
   copyQrUrl(): void {
     const u = this.url();
     if (!u) return;
-    copyToClipboard(this.buildShortUrl(u.code, { isQrCode: true }));
+    copyToClipboard(buildShortUrl(u.code, { isQrCode: true }));
   }
 
   copyBarcodeUrl(): void {
     const u = this.url();
     if (!u) return;
-    copyToClipboard(this.buildShortUrl(u.code, { isBarcode: true }));
+    copyToClipboard(buildShortUrl(u.code, { isBarcode: true }));
   }
 
   onAnalyticsErrors(errs: string[]): void {
@@ -437,28 +406,5 @@ export class ShortenedUrlDetails {
   private reload(): void {
     if (this.urlId == null) return;
     this.loadUrl(this.urlId);
-  }
-
-  private buildShortUrl(
-    code: string,
-    query: Record<string, string | null | undefined | boolean>
-  ): string {
-    const params = new URLSearchParams();
-
-    for (const [key, value] of Object.entries(query)) {
-      if (value === undefined || value === null) continue;
-      if (typeof value === 'boolean') {
-        if (value) params.set(key, 'true');
-        continue;
-      }
-
-      const trimmed = value.trim();
-      if (!trimmed) continue;
-      params.set(key, trimmed);
-    }
-
-    const qs = params.toString();
-    const base = environment.redirectingShortenedUrlBaseUrl;
-    return qs ? `${base}/${code}?${qs}` : `${base}/${code}`;
   }
 }

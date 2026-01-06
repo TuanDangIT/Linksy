@@ -31,6 +31,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             var landingPage = await _dbContext.LandingPages
                 .Where(lp => lp.Code == request.Code && lp.IsPublished)
                 .Include(lp => lp.LandingPageItems)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (landingPage is null)
@@ -41,6 +42,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Query()
                 .OfType<UrlLandingPageItem>()
                 .Include(lpi => lpi.Url)
+                .IgnoreQueryFilters()
                 .LoadAsync(cancellationToken);
 
             await _dbContext.Entry(landingPage)
@@ -48,6 +50,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .Query()
                 .OfType<ImageLandingPageItem>()
                 .Include(lpi => lpi.Url)
+                .IgnoreQueryFilters()
                 .LoadAsync(cancellationToken);
 
             landingPage.AddView(LandingPageView.CreateLandingPageView(landingPage, request.IpAddress, _timeProvider.GetUtcNow().UtcDateTime));

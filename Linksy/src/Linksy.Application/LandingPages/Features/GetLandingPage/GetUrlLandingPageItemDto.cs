@@ -12,8 +12,8 @@ namespace Linksy.Application.LandingPages.Features.GetLandingPage
         public string BackgroundColor { get; init; } = string.Empty;
         public string FontColor { get; init; } = string.Empty;
         public string Url { get; init; } = string.Empty;
-        public GetUrlLandingPageItemDto(string type, int order, int clickCount, DateTime createdAt, DateTime? updatedAt,
-            string content, string backgroundColor, string fontColor, string url) : base(type, order, clickCount, createdAt, updatedAt)
+        public GetUrlLandingPageItemDto(int id, string type, int order, int clickCount, DateTime createdAt, DateTime? updatedAt,
+            string content, string backgroundColor, string fontColor, string url) : base(id, type, order, clickCount, createdAt, updatedAt)
         {
             Content = content;
             BackgroundColor = backgroundColor;

@@ -4,4 +4,5 @@ export const environment = {
   azureBlobStorageBaseUrl: 'http://localhost:10000',
   redirectingShortenedUrlBaseUrl: 'http://localhost:5257',
   redirectingLandingPageBaseUrl: 'http://localhost:5257/lp',
+  frontEndBaseUrl: 'http://localhost:4200',
 };

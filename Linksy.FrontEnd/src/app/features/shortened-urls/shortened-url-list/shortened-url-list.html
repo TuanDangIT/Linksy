@@ -123,14 +123,14 @@
           }
         </td>
         <td class="actions-cell">
-          <button type="button" class="action-btn" title="Details" (click)="openDetails(url.id)">
+          <button type="button" class="action-btn" title="Shortened URL details" (click)="openDetails(url.id)">
             <fa-icon [icon]="faEye"></fa-icon>
           </button>
           <button type="button" class="action-btn" title="Toggle active" (click)="openToggleActiveConfirm(url)">
             <fa-icon [icon]="faUpload"></fa-icon>
           </button>
 
-          <button type="button" class="action-btn danger" title="Delete" (click)="openDeleteConfirm(url)">
+          <button type="button" class="action-btn danger" title="Delete Shortened URL" (click)="openDeleteConfirm(url)">
             <fa-icon [icon]="faTrash"></fa-icon>
           </button>
         </td>

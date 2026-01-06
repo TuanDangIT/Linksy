@@ -18,6 +18,55 @@
   flex-wrap: wrap;
 }
 
+.icon-btn {
+  border: 1px solid var(--border-color);
+  background: transparent;
+  border-radius: 10px;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.icon-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.top-action {
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.top-action.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.top-action.primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.top-action.danger {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.top-action.danger:hover {
+  filter: brightness(0.95);
+}
+
 .back-link {
   color: var(--text-secondary);
   text-decoration: none;

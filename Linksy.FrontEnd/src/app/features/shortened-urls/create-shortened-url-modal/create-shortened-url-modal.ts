@@ -16,7 +16,7 @@ import {
   UtmParameterRequest,
 } from '../../../core/types/createShortenedUrl';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../shared/utils/http-error-utils';
+import { isValidUrl, toErrorList } from '../../../shared/utils/http-utils';
 
 @Component({
   selector: 'app-create-shortened-url-modal',
@@ -114,15 +114,6 @@ export class CreateShortenedUrlModal {
     if (this.utmParameters().length === 0) this.addUtm();
   }
 
-  private isValidUrl(value: string): boolean {
-    try {
-      const u = new URL(value);
-      return u.protocol === 'http:' || u.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }
-
   onSubmit(form: NgForm): void {
     this.errors.set([]);
     const original = (this.originalUrl ?? '').trim();
@@ -130,7 +121,7 @@ export class CreateShortenedUrlModal {
       this.errors.set(['Original URL is required.']);
       return;
     }
-    if (!this.isValidUrl(original)) {
+    if (!isValidUrl(original)) {
       this.errors.set(['Original URL must be a valid http/https URL.']);
       return;
     }
@@ -163,7 +154,7 @@ export class CreateShortenedUrlModal {
         this.errors.set(['At least one of UTM Source, Medium, or Campaign must be filled.']);
         return;
       }
-      
+
       payload.umtParameters = utmParameters;
     }
 

@@ -44,14 +44,14 @@ namespace Linksy.Application.LandingPages.Features.CreateLandingPage
             {
                 var fileName = "landing-pages/logos/" + request.LogoImage.FileName;
                 var logoUrlPath = await _blobStorageService.UploadAsync(request.LogoImage, fileName, _containerName, cancellationToken);
-                logoImage = new Image(fileName, logoUrlPath);
+                logoImage = new Image(logoUrlPath, fileName);
             }
 
             if (request.BackgroundImage is not null)
             {
                 var fileName = "landing-pages/background-images/" + request.BackgroundImage.FileName;
                 var backgroundImageUrl = await _blobStorageService.UploadAsync(request.BackgroundImage, fileName, _containerName, cancellationToken);
-                backgroundImage = new Image(fileName, backgroundImageUrl);
+                backgroundImage = new Image(backgroundImageUrl, fileName);
             }
 
             var landingPage = LandingPage.CreateLandingPage(request.Code, request.Title, request.TitleFontColor,

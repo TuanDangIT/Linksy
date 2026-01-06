@@ -9,6 +9,7 @@ namespace Linksy.Application.LandingPages.Features.GetLandingPage
 {
     public record class GetLandingPageResponse
     {
+        public int Id { get; init; }
         public string Code { get; init; } = string.Empty;
         public bool IsActive { get; init; } = false;
         public int EngagementCount { get; init; } 
@@ -24,9 +25,10 @@ namespace Linksy.Application.LandingPages.Features.GetLandingPage
         public IEnumerable<object>? LandingPageItems { get; init; } 
         public DateTime CreatedAt { get; init; }
         public DateTime? UpdatedAt { get; init; }
-        public GetLandingPageResponse(string code, bool isActive, int engagementCount, int viewCount, string title, string titleFontColor, string? description, 
+        public GetLandingPageResponse(int id, string code, bool isActive, int engagementCount, int viewCount, string title, string titleFontColor, string? description, 
             string? descriptionFontColor, ImageDto? logoImage, string? backgroundColor, ImageDto? backgroundImage, IEnumerable<string>? tags, DateTime createdAt, DateTime? updatedAt, IEnumerable<object> landingPageItems) 
         {
+            Id = id;
             Title = title;
             Code = code;
             IsActive = isActive;

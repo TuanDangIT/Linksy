@@ -13,7 +13,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { QrcodeService } from '../../../core/services/qrcode-service';
 import { CreateQrCodeRequest, UtmParameterRequest } from '../../../core/types/createQrCode';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../shared/utils/http-error-utils';
+import { isValidUrl, toErrorList } from '../../../shared/utils/http-utils';
 
 @Component({
   selector: 'app-create-qrcode-modal',
@@ -109,15 +109,6 @@ export class CreateQrCodeModal {
     if (this.utmParameters().length === 0) this.addUtm();
   }
 
-  private isValidUrl(value: string): boolean {
-    try {
-      const u = new URL(value);
-      return u.protocol === 'http:' || u.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }
-
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
@@ -126,7 +117,7 @@ export class CreateQrCodeModal {
       this.errors.set(['Original URL is required.']);
       return;
     }
-    if (!this.isValidUrl(original)) {
+    if (!isValidUrl(original)) {
       this.errors.set(['Original URL must be a valid http/https URL.']);
       return;
     }

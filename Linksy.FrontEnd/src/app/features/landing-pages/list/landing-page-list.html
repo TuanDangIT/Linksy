@@ -1,1 +1,159 @@
-<p>landing-page-list works!</p>
+<div class="toolbar">
+    <button class="toolbar-btn primary" type="button" (click)="openCreateModal()">Create</button>
+    <button class="toolbar-btn primary" type="button" (click)="openFilterModal()">Filters</button>
+    <button class="toolbar-btn" type="button" (click)="clearFilters()">Clear</button>
+</div>
+
+@if (appliedFilters.length > 0) {
+<div class="applied-filters">
+    @for (f of appliedFilters; track f.key) {
+    <span class="filter-chip">
+        <strong>{{ f.key }}</strong>: {{ f.value }}
+    </span>
+    }
+</div>
+}
+
+@if (landingPageItems().length === 0) {
+<div class="empty-state">No landing pages found.</div>
+} @else {
+<div class="table-container">
+    <table class="landing-page-table">
+        <thead>
+            <tr>
+                <th (click)="sortBy('Id')" class="sortable">
+                    ID<span class="sort-icon">{{ getSortIcon('Id') }}</span>
+                </th>
+
+                <th>Code</th>
+                <th>Title</th>
+
+                <th>Published</th>
+
+                <th (click)="sortBy('ViewCount')" class="sortable">
+                    ViewCount<span class="sort-icon">{{ getSortIcon('ViewCount') }}</span>
+                </th>
+
+                <th (click)="sortBy('EngagementCount')" class="sortable">
+                    EngagementCount<span class="sort-icon">{{ getSortIcon('EngagementCount') }}</span>
+                </th>
+
+                <th>Tags</th>
+
+                <th (click)="sortBy('CreatedAt')" class="sortable">
+                    CreatedAt<span class="sort-icon">{{ getSortIcon('CreatedAt') }}</span>
+                </th>
+
+                <th>UpdatedAt</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @for (lp of landingPageItems(); track lp.id) {
+            <tr>
+                <td class="id-cell">
+                    <a class="id-link" [routerLink]="['/landing-pages', lp.id]">{{ lp.id }}</a>
+                </td>
+
+                <td class="code-cell">
+                    <div class="code-wrapper">
+                        <code>{{ lp.code }}</code>
+                        <button class="btn-copy" type="button" title="Copy landing page URL"
+                            (click)="copyLandingPageUrl(lp.code)">
+                            <fa-icon [icon]="faCopy"></fa-icon>
+                        </button>
+                    </div>
+                </td>
+
+                <td class="title-cell">{{ lp.title }}</td>
+
+                <td class="flag-cell">
+                    <span class="flag-badge" [class.flag-true]="lp.isPublished" [class.flag-false]="!lp.isPublished">
+                        {{ lp.isPublished ? 'True' : 'False' }}
+                    </span>
+                </td>
+
+                <td class="visits-cell">
+                    <span class="visits-badge">{{ lp.viewCount }}</span>
+                </td>
+
+                <td class="visits-cell">
+                    <span class="visits-badge">{{ lp.engagementCount }}</span>
+                </td>
+
+                <td class="tags-cell">
+                    @if (lp.tags && lp.tags.length > 0) {
+                    <div class="tags">
+                        @for (tag of lp.tags; track tag) {
+                        <span class="tag">{{ tag }}</span>
+                        }
+                    </div>
+                    } @else {
+                    <span>-</span>
+                    }
+                </td>
+
+                <td class="date-cell">{{ formatDate(lp.createdAt) }}</td>
+
+                <td class="date-cell">
+                    @if (lp.updatedAt) { {{ formatDate(lp.updatedAt) }} } @else { <span>-</span> }
+                </td>
+
+                <td class="actions-cell">
+                    <button type="button" class="action-btn" title="Landing page details" (click)="openDetails(lp.id)">
+                        <fa-icon [icon]="faEye"></fa-icon>
+                    </button>
+                    <button type="button" class="action-btn" [title]="lp.isPublished ? 'Unpublish' : 'Publish'"
+                        (click)="openTogglePublishedConfirm(lp)">
+                        <fa-icon [icon]="faUpload"></fa-icon>
+                    </button>
+                    <button type="button" class="action-btn danger" title="Delete landing page"
+                        (click)="openDeleteConfirm(lp)">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination-container">
+    <div class="pagination-info">
+        Showing {{ rangeStart() }}-{{ rangeEnd() }} of {{ totalCount() }}
+    </div>
+
+    <div class="pagination-controls">
+        <label class="page-size">
+            Rows:
+            <select [value]="pageSize()" (change)="setPageSize(($any($event.target)).value)">
+                @for (size of pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+                }
+            </select>
+        </label>
+
+        <button class="page-btn" type="button" (click)="prevPage()" [disabled]="!canGoPrev()">Prev</button>
+
+        @for (page of pageNumbers; track page) {
+        <button class="page-btn" type="button" [class.active]="page === currentPage()" (click)="goToPage(page)">
+            {{ page }}
+        </button>
+        }
+
+        <button class="page-btn" type="button" (click)="nextPage()" [disabled]="!canGoNext()">Next</button>
+    </div>
+</div>
+}
+
+<app-filter-modal [isOpen]="isFilterModalOpen()" [availableFilters]="availableFilters" (cancel)="closeFilterModal()"
+    (apply)="applyFilters($event)">
+</app-filter-modal>
+
+<app-create-landing-page-modal [isOpen]="isCreateModalOpen()" (cancel)="closeCreateModal()" (created)="onCreated()">
+</app-create-landing-page-modal>
+
+<app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
+    [confirmText]="confirmConfirmText()" [confirmVariant]="confirmVariant()" (cancel)="closeConfirm()"
+    (confirm)="confirmAction()"></app-confirm-modal>

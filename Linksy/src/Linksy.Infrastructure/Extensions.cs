@@ -57,7 +57,8 @@ namespace Linksy.Infrastructure
                     builder.WithOrigins("http://localhost:4200")
                            .AllowAnyMethod()
                            .AllowAnyHeader()
-                           .AllowCredentials();
+                           .AllowCredentials()
+                           .WithExposedHeaders("Content-Disposition");
                 });
             });
             return services;

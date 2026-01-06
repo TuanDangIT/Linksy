@@ -51,7 +51,8 @@
                 <td class="code-cell">
                     <div class="code-wrapper">
                         <code>{{ qr.url.code }}</code>
-                        <button class="btn-copy" type="button" (click)="copyUrlCode(qr.url.code)">
+                        <button class="btn-copy" type="button" title="Copy QR code URL"
+                            (click)="copyQrCodeUrl(qr, true)">
                             <fa-icon [icon]="faCopy"></fa-icon>
                         </button>
                     </div>
@@ -65,7 +66,7 @@
                 <td class="code-cell">
                     <div class="code-wrapper">
                         <code>{{ qr.umtParameter!.url!.code }}</code>
-                        <button class="btn-copy" type="button" (click)="copyUrlCode(qr.umtParameter!.url!.code)">
+                        <button class="btn-copy" type="button" (click)="copyQrCodeUrl(qr, false)">
                             <fa-icon [icon]="faCopy"></fa-icon>
                         </button>
                     </div>
@@ -123,15 +124,15 @@
                 </td> -->
 
                 <td class="actions-cell">
-                    <button type="button" class="action-btn" title="Details" (click)="openDetails(qr.id)">
+                    <button type="button" class="action-btn" title="QrCode details" (click)="openDetails(qr.id)">
                         <fa-icon [icon]="faEye"></fa-icon>
                     </button>
 
-                    <button type="button" class="action-btn" title="Download" (click)="download(qr.id)">
+                    <button type="button" class="action-btn" title="Download QrCode" (click)="download(qr.id)">
                         <fa-icon [icon]="faDownload"></fa-icon>
                     </button>
 
-                    <button type="button" class="action-btn danger" title="Delete" (click)="openDeleteConfirm(qr)">
+                    <button type="button" class="action-btn danger" title="Delete QrCode" (click)="openDeleteConfirm(qr)">
                         <fa-icon [icon]="faTrash"></fa-icon>
                     </button>
                 </td>

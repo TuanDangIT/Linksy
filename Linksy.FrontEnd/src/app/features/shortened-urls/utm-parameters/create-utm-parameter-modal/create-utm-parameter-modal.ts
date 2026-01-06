@@ -11,7 +11,7 @@ import {
 import { FormsModule, NgForm } from '@angular/forms';
 import { UtmParameterService } from '../../../../core/services/utm-parameter-service';
 import { ErrorBox } from '../../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../../shared/utils/http-error-utils';
+import { toErrorList } from '../../../../shared/utils/http-utils';
 
 @Component({
   selector: 'app-create-utm-parameter-modal',

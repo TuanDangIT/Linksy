@@ -1,0 +1,128 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="header">
+            <h2 class="title">Create Landing Page</h2>
+        </div>
+
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+            <div class="section">
+                <label class="label" for="code">Code *</label>
+                <input id="code" name="code" class="input" type="text" required placeholder="my-landing-page"
+                    [(ngModel)]="code" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="title">Title *</label>
+                <input id="title" name="title" class="input" type="text" required placeholder="Title"
+                    [(ngModel)]="title" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="titleFontColor">Title font color (hex) *</label>
+                <div class="row-2">
+                    <input id="titleFontColor" name="titleFontColor" class="input" type="text" required
+                        placeholder="#FFFFFF" [(ngModel)]="titleFontColor" />
+                    <input class="input" type="color" [(ngModel)]="titleFontColor" name="titleFontColorPicker"
+                        title="Pick title font color" />
+                </div>
+            </div>
+
+            <div class="section">
+                @if (!showDescription()) {
+                <button type="button" class="btn secondary" (click)="enableDescription()">
+                    Add description
+                </button>
+                } @else {
+                <label class="label" for="description">Description *</label>
+                <input id="description" name="description" class="input" type="text" required placeholder="Description"
+                    [(ngModel)]="description" />
+
+                <div class="spacer-8"></div>
+
+                <label class="label" for="descriptionFontColor">Description font color (hex) *</label>
+                <div class="row-2">
+                    <input id="descriptionFontColor" name="descriptionFontColor" class="input" type="text" required
+                        placeholder="#FFFFFF" [(ngModel)]="descriptionFontColor" />
+                    <input class="input" type="color" [(ngModel)]="descriptionFontColor"
+                        name="descriptionFontColorPicker" title="Pick description font color" />
+                </div>
+                }
+            </div>
+
+            <div class="section">
+                @if (!showLogo()) {
+                <button type="button" class="btn secondary" (click)="enableLogo()">
+                    Add logo image
+                </button>
+                } @else {
+                <label class="label" for="logoImage">Logo image</label>
+                <input id="logoImage" name="logoImage" class="input" type="file" (change)="onLogoSelected($event)" />
+                }
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <div class="label">Background *</div>
+                    <div class="bg-toggle">
+                        <button type="button" class="btn secondary" [class.active]="backgroundMode() === 'color'"
+                            (click)="setBackgroundMode('color')">
+                            Color
+                        </button>
+                        <button type="button" class="btn secondary" [class.active]="backgroundMode() === 'image'"
+                            (click)="setBackgroundMode('image')">
+                            Image
+                        </button>
+                    </div>
+                </div>
+
+                @if (backgroundMode() === 'color') {
+                <label class="label" for="backgroundColor">Background color (hex) *</label>
+                <div class="row-2">
+                    <input id="backgroundColor" name="backgroundColor" class="input" type="text" required
+                        placeholder="#0EA5E9" [(ngModel)]="backgroundColor" />
+                    <input class="input" type="color" [(ngModel)]="backgroundColor" name="backgroundColorPicker"
+                        title="Pick background color" />
+                </div>
+
+                } @else {
+                <label class="label" for="backgroundImage">Background image *</label>
+                <input id="backgroundImage" name="backgroundImage" class="input" type="file"
+                    (change)="onBackgroundSelected($event)" />
+                }
+            </div>
+
+            <div class="section">
+                @if (!showTags()) {
+                <button type="button" class="btn secondary" (click)="enableTags()">Add tags</button>
+                } @else {
+                <div class="section-header">
+                    <div class="label">Tags</div>
+                    <button type="button" class="btn secondary" (click)="addTag()">Add tag</button>
+                </div>
+
+                <div class="list">
+                    @for (tag of tags(); track $index; let i = $index) {
+                    <div class="row-2">
+                        <input class="input" type="text" placeholder="tag" [ngModel]="tag"
+                            (ngModelChange)="updateTag(i, $event)" name="tag_{{ i }}" />
+                        <button type="button" class="btn danger" (click)="removeTag(i)">Remove</button>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+
+            <app-error-box [errors]="errors()"></app-error-box>
+
+            <div class="actions">
+                <div class="spacer"></div>
+                <button type="button" class="btn secondary" (click)="cancel.emit()">Cancel</button>
+                <button type="submit" class="btn primary" [disabled]="submitting()">
+                    Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+}

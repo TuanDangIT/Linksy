@@ -10,7 +10,7 @@
 }
 
 .modal {
-  width: min(560px, 100%);
+  width: min(760px, 100%);
   background: var(--surface);
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -22,6 +22,10 @@
 }
 
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 0.75rem;
 }
 
@@ -32,22 +36,44 @@
 }
 
 .section {
+  margin-top: 0.75rem;
+}
+
+.section-header {
   display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .label {
-  font-size: 0.9rem;
+  display: block;
+  font-size: 0.85rem;
   color: var(--text-secondary);
+  margin-bottom: 0.35rem;
 }
 
 .input {
+  width: 100%;
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 0.65rem 0.75rem;
+  padding: 0.6rem 0.75rem;
   background: #fff;
+  color: var(--text-primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .actions {
@@ -59,6 +85,10 @@
 
 .spacer {
   flex: 1;
+}
+
+.spacer-8 {
+  height: 8px;
 }
 
 .btn {
@@ -81,6 +111,21 @@
 }
 
 .btn.secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn.danger:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.bg-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.bg-toggle .btn.active {
   border-color: var(--primary);
   color: var(--primary);
 }

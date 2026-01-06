@@ -10,6 +10,7 @@ import { authGuard, noAuthGuard } from './core/guards/auth-guard';
 import { ShortenedUrlDetails } from './features/shortened-urls/shortened-url-details/shortened-url-details';
 import { QrcodeDetails } from './features/qrcodes/qrcode-details/qrcode-details';
 import { BarcodeDetails } from './features/barcodes/barcode-details/barcode-details';
+import { LandingPageDetails } from './features/landing-pages/landing-page-details/landing-page-details';
 
 export const routes: Routes = [
   { path: 'login', component: Login, title: 'Login', canActivate: [noAuthGuard] },
@@ -29,6 +30,12 @@ export const routes: Routes = [
         path: 'shortened-urls',
         component: ShortenedUrlList,
         title: 'Shortened URLs',
+        canActivate: [authGuard],
+      },
+      {
+        path: 'landing-pages/:id',
+        component: LandingPageDetails,
+        title: 'Landing Page Details',
         canActivate: [authGuard],
       },
       {

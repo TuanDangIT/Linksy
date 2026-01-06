@@ -6,6 +6,7 @@ import { UtmParameterDetails } from '../../../../core/models/url';
 import { environment } from '../../../../../environments/environment';
 import { copyToClipboard } from '../../../../shared/utils/clipboard-utils';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { buildShortUrl } from '../../../../shared/utils/http-utils';
 
 @Component({
   selector: 'app-utm-parameter-list',
@@ -32,31 +33,11 @@ export class UtmParameterList {
     if (!code) return;
 
     copyToClipboard(
-      this.buildShortUrl(code, {
+      buildShortUrl(code, {
         umtSource: p.umtSource ?? null,
         umtMedium: p.umtMedium ?? null,
         umtCampaign: p.umtCampaign ?? null,
       })
     );
-  }
-
-  private buildShortUrl(
-    code: string,
-    query: Record<string, string | null | undefined | boolean>
-  ): string {
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(query)) {
-      if (value === undefined || value === null) continue;
-      if (typeof value === 'boolean') {
-        if (value) params.set(key, 'true');
-        continue;
-      }
-      const trimmed = value.trim();
-      if (!trimmed) continue;
-      params.set(key, trimmed);
-    }
-    const qs = params.toString();
-    const base = environment.redirectingShortenedUrlBaseUrl;
-    return qs ? `${base}/${code}?${qs}` : `${base}/${code}`;
   }
 }

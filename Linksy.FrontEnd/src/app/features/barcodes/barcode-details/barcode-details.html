@@ -1,6 +1,22 @@
 <div class="page">
     <div class="topbar">
-        <a class="back-link" routerLink="/barcodes">← Back to Barcodes</a>
+        <a class="back-link" routerLink="/qrcodes">← Back to QR Codes</a>
+
+        @if (data(); as d) {
+        <div class="topbar-actions">
+            <button class="icon-btn" type="button" title="Copy QR code URL" (click)="copyBarcodeUrl(d.url.code)">
+                <fa-icon [icon]="faCopy"></fa-icon>
+            </button>
+
+            <button class="top-action primary" type="button" (click)="downloadBarcode()">
+                Download
+            </button>
+
+            <button class="top-action danger" type="button" (click)="openDeleteConfirm()">
+                Delete
+            </button>
+        </div>
+        }
     </div>
 
     <app-error-box [errors]="errors()"></app-error-box>
@@ -74,4 +90,8 @@
     <div class="muted">No data.</div>
     }
     }
+    <app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
+        [confirmText]="confirmConfirmText()" [confirmVariant]="confirmVariant()" (cancel)="closeConfirm()"
+        (confirm)="confirmDelete()">
+    </app-confirm-modal>
 </div>

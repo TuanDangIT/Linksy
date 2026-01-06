@@ -11,8 +11,8 @@ namespace Linksy.Application.LandingPages.Features.GetLandingPage
         public string ImageUrl { get; init; } = string.Empty;
         public string AltText { get; init; } = string.Empty;
         public string? Url { get; init; } = string.Empty;
-        public GetImageLandingPageItemDto(string type, int order, int clickCount, DateTime createdAt, DateTime? updatedAt,
-            string imageUrl, string altText, string? url) : base(type, order, clickCount, createdAt, updatedAt)
+        public GetImageLandingPageItemDto(int id, string type, int order, int clickCount, DateTime createdAt, DateTime? updatedAt,
+            string imageUrl, string altText, string? url) : base(id, type, order, clickCount, createdAt, updatedAt)
         {
             ImageUrl = imageUrl;
             AltText = altText;

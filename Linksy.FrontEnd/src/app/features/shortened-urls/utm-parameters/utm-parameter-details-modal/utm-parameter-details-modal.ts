@@ -14,7 +14,12 @@ import { faDownload, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { UtmParameterService } from '../../../../core/services/utm-parameter-service';
 import { QrcodeService } from '../../../../core/services/qrcode-service';
 import { ErrorBox } from '../../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../../shared/utils/http-error-utils';
+import {
+  buildShortUrl,
+  getFileNameFromContentDisposition,
+  saveBlob,
+  toErrorList,
+} from '../../../../shared/utils/http-utils';
 import { ConfirmModal } from '../../../../shared/components/confirm-modal/confirm-modal';
 import { environment } from '../../../../../environments/environment';
 import { UtmParameterDetails } from '../../../../core/models/utm-parameter';
@@ -30,13 +35,7 @@ import { AnalyticsLineChart } from '../../../../shared/components/analytics-line
 @Component({
   selector: 'app-utm-parameter-details-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    FontAwesomeModule,
-    ErrorBox,
-    ConfirmModal,
-    AnalyticsLineChart
-],
+  imports: [CommonModule, FontAwesomeModule, ErrorBox, ConfirmModal, AnalyticsLineChart],
   templateUrl: './utm-parameter-details-modal.html',
   styleUrl: './utm-parameter-details-modal.css',
 })
@@ -159,10 +158,10 @@ export class UtmParameterDetailsModal {
           this.toast.error('Download failed.');
           return;
         }
-        const fromHeader = this.getFileNameFromContentDisposition(
+        const fromHeader = getFileNameFromContentDisposition(
           res.headers.get('content-disposition')
         );
-        this.saveBlob(blob, fromHeader ?? fallbackFileName ?? `qrcode-${qrcodeId}`);
+        saveBlob(blob, fromHeader ?? fallbackFileName ?? `qrcode-${qrcodeId}`);
       },
       error: (err) => {
         console.error(err);
@@ -233,8 +232,8 @@ export class UtmParameterDetailsModal {
     if (!d) return;
 
     copyToClipboard(
-      this.buildShortUrl(d.url.code, {
-        umtSource: d.umtSource,
+      buildShortUrl(d.url.code, {
+        umtSource: d.umtSource ?? null,
         umtMedium: d.umtMedium ?? null,
         umtCampaign: d.umtCampaign ?? null,
         isQrCode: !!d.qrCode,
@@ -246,7 +245,7 @@ export class UtmParameterDetailsModal {
     const d = this.data();
     if (!d) return;
     copyToClipboard(
-      this.buildShortUrl(d.url.code, {
+      buildShortUrl(d.url.code, {
         umtSource: d.umtSource ?? null,
         umtMedium: d.umtMedium ?? null,
         umtCampaign: d.umtCampaign ?? null,
@@ -257,50 +256,5 @@ export class UtmParameterDetailsModal {
 
   onAnalyticsErrors(errs: string[]): void {
     this.errors.set([...this.errors(), ...errs]);
-  }
-
-  private buildShortUrl(
-    code: string,
-    query: Record<string, string | null | undefined | boolean>
-  ): string {
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(query)) {
-      if (value === undefined || value === null) continue;
-      if (typeof value === 'boolean') {
-        params.set(key, 'true');
-      } else {
-        params.set(key, value.toString());
-      }
-    }
-    const qs = params.toString();
-    const base = environment.redirectingShortenedUrlBaseUrl;
-    return qs ? `${base}/${code}?${qs}` : `${base}/${code}`;
-  }
-
-  private getFileNameFromContentDisposition(value: string | null): string | null {
-    if (!value) return null;
-
-    const utf8 = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(value);
-    if (utf8?.[1]) {
-      try {
-        return decodeURIComponent(utf8[1]);
-      } catch {
-        return utf8[1];
-      }
-    }
-
-    const plain = /filename\s*=\s*"?([^";]+)"?/i.exec(value);
-    return plain?.[1] ?? null;
-  }
-
-  private saveBlob(blob: Blob, fileName: string): void {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
   }
 }

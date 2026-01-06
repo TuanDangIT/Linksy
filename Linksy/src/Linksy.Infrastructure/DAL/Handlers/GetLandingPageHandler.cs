@@ -50,6 +50,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 .LoadAsync(cancellationToken);
 
             var response = new GetLandingPageResponse(
+                landingPage.Id,
                 landingPage.Code,
                 landingPage.IsPublished,
                 landingPage.EngagementCount,
@@ -69,6 +70,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                     return lpi switch
                     {
                         UrlLandingPageItem urlItem => new GetUrlLandingPageItemDto(
+                            urlItem.Id,
                             urlItem.Type.ToString(),
                             urlItem.Order,
                             urlItem.ClickCount,
@@ -80,6 +82,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                             urlItem.Url.Code
                         ),
                         TextLandingPageItem textItem => new GetTextLandingPageItemDto(
+                            textItem.Id,
                             textItem.Type.ToString(),
                             textItem.Order,
                             textItem.ClickCount,
@@ -90,6 +93,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                             textItem.FontColor
                         ),
                         ImageLandingPageItem imageItem => new GetImageLandingPageItemDto(
+                            imageItem.Id,
                             imageItem.Type.ToString(),
                             imageItem.Order,
                             imageItem.ClickCount,
@@ -100,6 +104,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                             imageItem.Url?.Code
                         ),
                         YouTubeLandingPageItem youTubeLandingPageItem => new GetYoutubeLandingPageItemDto(
+                            youTubeLandingPageItem.Id,
                             youTubeLandingPageItem.Type.ToString(),
                             youTubeLandingPageItem.Order,
                             youTubeLandingPageItem.ClickCount,

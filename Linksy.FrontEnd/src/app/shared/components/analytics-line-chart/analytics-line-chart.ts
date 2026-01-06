@@ -18,11 +18,12 @@ import type { ChartConfiguration } from 'chart.js';
 
 import { AnalyticsService } from '../../../core/services/analytics-service';
 import { ErrorBox } from '../error-box/error-box';
-import { toErrorList } from '../../utils/http-error-utils';
+import { toErrorList } from '../../utils/http-utils';
 import { toUtcDayEndIso, toUtcDayStartIso } from '../../utils/date-utils';
 import { AnalyticsRequest, TimeInterval, TimeRange } from '../../../core/types/analytics';
 
-export type AnalyticsEntityType = 'url' | 'utm' | 'qrcode' | 'barcode';
+export type AnalyticsEntityType = 'url' | 'utm' | 'qrcode' | 'barcode' | 'landingpage';
+export type AnalyticsMetric = 'engagements' | 'views';
 
 const allowedIntervalsByRange: Record<Lowercase<TimeRange>, TimeInterval[]> = {
   day: ['Minutes30', 'Hourly'],
@@ -55,7 +56,9 @@ export class AnalyticsLineChart {
   @Input() initialTimeRange: TimeRange = 'Day';
   @Input() initialInterval: TimeInterval = 'Hourly';
 
-  @Input() reloadKey: unknown;
+  // @Input() reloadKey: unknown;
+
+  @Input() metric: AnalyticsMetric = 'engagements';
 
   @Output() errors = new EventEmitter<string[]>();
 
@@ -105,9 +108,9 @@ export class AnalyticsLineChart {
     this.load();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['entityId'] || changes['reloadKey']) this.load();
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['entityId'] || changes['reloadKey']) this.load();
+  // }
 
   openSettings(): void {
     this.settingsErrors.set([]);
@@ -201,7 +204,16 @@ export class AnalyticsLineChart {
 
     this.loading.set(true);
 
+    const isViews = this.metric === 'views';
+
     const request$ = (() => {
+      if (isViews) {
+        if (this.entityType !== 'landingpage') {
+          throw new Error(`Views metric is only supported for landing pages.`);
+        }
+        return this.analytics.getLandingPageViews(this.entityId, req);
+      }
+
       switch (this.entityType) {
         case 'url':
           return this.analytics.getUrlEngagements(this.entityId, req);
@@ -211,6 +223,8 @@ export class AnalyticsLineChart {
           return this.analytics.getQrCodeEngagements(this.entityId, req);
         case 'barcode':
           return this.analytics.getBarcodeEngagements(this.entityId, req);
+        case 'landingpage':
+          return this.analytics.getLandingPageEngagements(this.entityId, req);
         default:
           throw new Error(`Unknown entity type: ${this.entityType}`);
       }
@@ -222,11 +236,12 @@ export class AnalyticsLineChart {
         const labels = points.map((p) => this.formatLabel(p.periodStart, req.interval));
         const counts = points.map((p) => p.count ?? 0);
         const uniqueIps = points.map((p) => p.uniqueIpCount ?? 0);
+        const label= this.metric === 'views' ? 'Views' : 'Visits';
 
         this.chartData.set({
           labels,
           datasets: [
-            { label: 'Visits', data: counts, tension: 0.25 },
+            { label: label, data: counts, tension: 0.25 },
             { label: 'Unique IPs', data: uniqueIps, tension: 0.25 },
           ],
         });

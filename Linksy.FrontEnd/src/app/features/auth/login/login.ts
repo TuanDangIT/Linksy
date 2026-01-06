@@ -5,7 +5,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../shared/utils/http-error-utils';
+import { toErrorList } from '../../../shared/utils/http-utils';
 
 @Component({
   selector: 'app-login',

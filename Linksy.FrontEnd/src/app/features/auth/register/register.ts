@@ -6,7 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
 import { RegisterRequest, Gender } from '../../../core/types/registerRequest';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
-import { toErrorList } from '../../../shared/utils/http-error-utils';
+import { toErrorList } from '../../../shared/utils/http-utils';
 
 @Component({
   selector: 'app-register',
@@ -36,7 +36,7 @@ export class Register {
       confirmPassword: form.value.confirmPassword,
     };
 
-    console.log("Registering user:", payload);
+    console.log('Registering user:', payload);
     this.authService.register(payload).subscribe({
       next: () => this.router.navigate(['/login']),
       error: (err) => this.errors.set(toErrorList(err)),

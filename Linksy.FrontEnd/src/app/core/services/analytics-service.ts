@@ -8,37 +8,54 @@ import { AnalyticsRequest, EngagementResponse } from '../types/analytics';
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
   private readonly http = inject(HttpClient);
-  private readonly base = environment.apiBaseUrl + '/Analytics/engagements';
+
+  private readonly engagementsBase = environment.apiBaseUrl + '/Analytics/engagements';
+  private readonly viewsBase = environment.apiBaseUrl + '/Analytics/views';
 
   getUrlEngagements(
     urlId: number,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
-    return this.getEngagements(`urls/${urlId}`, req);
+    return this.getAnalytics(this.engagementsBase, `urls/${urlId}`, req);
   }
 
   getUtmEngagements(
     utmParameterId: number,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
-    return this.getEngagements(`umtparameters/${utmParameterId}`, req);
+    return this.getAnalytics(this.engagementsBase, `umtparameters/${utmParameterId}`, req);
   }
 
   getQrCodeEngagements(
     qrCodeId: number,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
-    return this.getEngagements(`qrcodes/${qrCodeId}`, req);
+    return this.getAnalytics(this.engagementsBase, `qrcodes/${qrCodeId}`, req);
   }
 
   getBarcodeEngagements(
     barcodeId: number,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
-    return this.getEngagements(`barcodes/${barcodeId}`, req);
+    return this.getAnalytics(this.engagementsBase, `barcodes/${barcodeId}`, req);
   }
 
-  private getEngagements(
+  getLandingPageEngagements(
+    landingPageId: number,
+    req: AnalyticsRequest
+  ): Observable<ApiResponse<EngagementResponse>> {
+    return this.getAnalytics(this.engagementsBase, `landingpages/${landingPageId}`, req);
+  }
+
+  getLandingPageViews(
+    landingPageId: number,
+    req: AnalyticsRequest
+  ): Observable<ApiResponse<EngagementResponse>> {
+    return this.getAnalytics(this.viewsBase, `landingpages/${landingPageId}`, req);
+  }
+
+  private getAnalytics(
+    base: string,
     endpoint: string,
     req: AnalyticsRequest
   ): Observable<ApiResponse<EngagementResponse>> {
@@ -49,7 +66,7 @@ export class AnalyticsService {
       if (req.endDate) params = params.set('EndDate', req.endDate);
     }
 
-    return this.http.get<ApiResponse<EngagementResponse>>(`${this.base}/${endpoint}`, {
+    return this.http.get<ApiResponse<EngagementResponse>>(`${base}/${endpoint}`, {
       params,
       withCredentials: true,
     });

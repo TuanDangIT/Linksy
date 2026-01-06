@@ -51,7 +51,8 @@
                     @if (b.url.code) {
                     <div class="code-wrapper">
                         <code>{{ b.url.code }}</code>
-                        <button class="btn-copy" type="button" (click)="copyUrlCode(b.url.code)">
+                        <button class="btn-copy" type="button" title="Copy Barcode URL"
+                            (click)="copyBarcodeUrl(b.url.code)">
                             <fa-icon [icon]="faCopy"></fa-icon>
                         </button>
                     </div>
@@ -97,15 +98,15 @@
                 </td>
 
                 <td class="actions-cell">
-                    <button type="button" class="action-btn" title="Details (mock)" (click)="openDetails(b.id)">
+                    <button type="button" class="action-btn" title="Barcode details" (click)="openDetails(b.id)">
                         <fa-icon [icon]="faEye"></fa-icon>
                     </button>
 
-                    <button type="button" class="action-btn" title="Download" (click)="download(b.id)">
+                    <button type="button" class="action-btn" title="Download Barcode" (click)="download(b.id)">
                         <fa-icon [icon]="faDownload"></fa-icon>
                     </button>
 
-                    <button type="button" class="action-btn danger" title="Delete" (click)="openDeleteConfirm(b)">
+                    <button type="button" class="action-btn danger" title="Delete Barcode" (click)="openDeleteConfirm(b)">
                         <fa-icon [icon]="faTrash"></fa-icon>
                     </button>
                 </td>

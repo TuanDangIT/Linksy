@@ -17,6 +17,12 @@ import { formatDate } from '../../../shared/utils/date-utils';
 import { CreateBarcodeModal } from '../create-barcode-modal/create-barcode-modal';
 import { Router, RouterLink } from '@angular/router';
 
+import {
+  buildShortUrl,
+  getFileNameFromContentDisposition,
+  saveBlob,
+} from '../../../shared/utils/http-utils';
+
 @Component({
   selector: 'app-barcode-list',
   imports: [FilterModal, FontAwesomeModule, ConfirmModal, CreateBarcodeModal, RouterLink],
@@ -173,10 +179,9 @@ export class BarcodeList {
     return this.pagination.pageNumbers(5);
   }
 
-  copyUrlCode(code: string | null | undefined): void {
+  copyBarcodeUrl(code: string): void {
     const c = (code ?? '').trim();
-    if (!c) return;
-    copyToClipboard(`${environment.redirectingShortenedUrlBaseUrl}/${c}`);
+    copyToClipboard(buildShortUrl(c, { isBarcode: true }));
   }
 
   formatDate(date: string | null | undefined): string {
@@ -215,22 +220,6 @@ export class BarcodeList {
     });
   }
 
-  private getFileNameFromContentDisposition(value: string | null): string | null {
-    if (!value) return null;
-
-    const utf8 = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(value);
-    if (utf8?.[1]) {
-      try {
-        return decodeURIComponent(utf8[1]);
-      } catch {
-        return utf8[1];
-      }
-    }
-
-    const plain = /filename\s*=\s*"?([^";]+)"?/i.exec(value);
-    return plain?.[1] ?? null;
-  }
-
   download(barcodeId: number): void {
     this.barcodeService.downloadBarcode(barcodeId).subscribe({
       next: (res) => {
@@ -240,11 +229,11 @@ export class BarcodeList {
           return;
         }
 
-        const fromHeader = this.getFileNameFromContentDisposition(
+        const fromHeader = getFileNameFromContentDisposition(
           res.headers.get('content-disposition')
         );
 
-        this.saveBlob(blob, fromHeader ?? `barcode-${barcodeId}`);
+        saveBlob(blob, fromHeader?.split('/').pop() ?? `barcode-${barcodeId}`);
       },
       error: (err) => {
         console.error(err);
@@ -270,16 +259,5 @@ export class BarcodeList {
 
   openDetails(qrcodeId: number): void {
     this.router.navigate(['/barcodes', qrcodeId]);
-  }
-
-  private saveBlob(blob: Blob, fileName: string): void {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
   }
 }

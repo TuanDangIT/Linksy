@@ -9,8 +9,8 @@ namespace Linksy.Application.LandingPages.Features.GetLandingPage
     public record class GetYoutubeLandingPageItemDto : GetLandingPageItemDto
     {
         public string VideoUrl { get; init; } = string.Empty;
-        public GetYoutubeLandingPageItemDto(string type, int order, int clickCount, DateTime createdAt, DateTime? updatedAt, string videoUrl) : 
-            base(type, order, clickCount, createdAt, updatedAt)
+        public GetYoutubeLandingPageItemDto(int id, string type, int order, int clickCount, DateTime createdAt, DateTime? updatedAt, string videoUrl) : 
+            base(id, type, order, clickCount, createdAt, updatedAt)
         {
             VideoUrl = videoUrl;
         }

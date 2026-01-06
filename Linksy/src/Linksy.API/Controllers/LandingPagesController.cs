@@ -2,6 +2,7 @@
 using Linksy.Application.LandingPages.Features.AddLandingPageEngagement;
 using Linksy.Application.LandingPages.Features.BrowseLandingPages;
 using Linksy.Application.LandingPages.Features.CreateLandingPage;
+using Linksy.Application.LandingPages.Features.DeleteLandingPage;
 using Linksy.Application.LandingPages.Features.GetLandingPage;
 using Linksy.Application.LandingPages.Features.GetPublishedLandingPage;
 using Linksy.Application.LandingPages.Features.PublishLandingPage;
@@ -48,17 +49,24 @@ namespace Linksy.API.Controllers
             return Ok();
         }
 
-        [HttpPost("{landingPageId:int}/publish")]   
+        [HttpPatch("{landingPageId:int}/publish")]   
         public async Task<ActionResult> PublishLandingPage([FromRoute] int landingPageId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new PublishLandingPage(landingPageId, true), cancellationToken);
             return Ok();
         }
 
-        [HttpPost("{landingPageId:int}/unpublish")]
+        [HttpPatch("{landingPageId:int}/unpublish")]
         public async Task<ActionResult> UnpublishLandingPage([FromRoute] int landingPageId, CancellationToken cancellationToken)
         {
             await _mediator.Send(new PublishLandingPage(landingPageId, false), cancellationToken);
+            return Ok();
+        }
+
+        [HttpDelete("{landingPageId:int}")]
+        public async Task<ActionResult> DeleteLandingPage([FromRoute] int landingPageId, CancellationToken cancellationToken)
+        {
+            await _mediator.Send(new DeleteLandingPage(landingPageId), cancellationToken);
             return Ok();
         }
 

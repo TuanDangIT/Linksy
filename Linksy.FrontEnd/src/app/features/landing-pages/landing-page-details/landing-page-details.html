@@ -1,0 +1,185 @@
+<div class="page">
+    <div class="topbar">
+        <a class="back-link" routerLink="/landing-pages">← Back to Landing Pages</a>
+    </div>
+
+    <app-error-box [errors]="errors()"></app-error-box>
+
+    @if (loading()) {
+    <div class="loading">Loading…</div>
+    } @else {
+    @if (data(); as lp) {
+    <div class="grid">
+        <div class="card basic-card">
+            <div class="card-title">Landing Page</div>
+
+            <div class="stats-row">
+                <div class="stat">
+                    <div class="stat-label">Engagements</div>
+                    <div class="stat-value">{{ lp.engagementCount }}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Views</div>
+                    <div class="stat-value">{{ lp.viewCount }}</div>
+                </div>
+            </div>
+
+            <div class="kv">
+                <div class="kv-row"><span class="k">ID</span><span class="v">{{ lp.id }}</span></div>
+                <div class="kv-row"><span class="k">Code</span><span class="v">{{ lp.code }}</span></div>
+                <div class="kv-row">
+                    <span class="k">Active</span>
+                    <span class="v">{{ isActive(lp) ? 'Yes' : 'No' }}</span>
+                </div>
+
+                <div class="kv-row">
+                    <span class="k">Public URL</span>
+                    <span class="v">
+                        <a class="link" [href]="landingPagePublicUrl(lp.code)" target="_blank" rel="noreferrer">
+                            {{ landingPagePublicUrl(lp.code) }}
+                        </a>
+                    </span>
+                </div>
+
+                <div class="kv-row">
+                    <span class="k">Title</span>
+                    <span class="v two">
+                        <span class="main">{{ lp.title }}</span>
+                        <span class="muted-inline">{{ lp.titleFontColor }}</span>
+                    </span>
+                </div>
+
+                @if (lp.description) {
+                <div class="kv-row">
+                    <span class="k">Description</span>
+                    <span class="v two">
+                        <span class="main">{{ lp.description }}</span>
+                        <span class="muted-inline">{{ lp.descriptionFontColor }}</span>
+                    </span>
+                </div>
+                }
+
+                @if (lp.logoImage?.urlPath) {
+                <div class="kv-row">
+                    <span class="k">Logo</span>
+                    <span class="v">
+                        <img class="thumb" [src]="blobUrl(lp.logoImage!.urlPath)" alt="Logo" />
+                    </span>
+                </div>
+                }
+
+                @if (lp.backgroundColor) {
+                <div class="kv-row">
+                    <span class="k">Background color</span>
+                    <span class="v">{{ lp.backgroundColor }}</span>
+                </div>
+                }
+
+                @if (lp.backgroundImage?.urlPath) {
+                <div class="kv-row">
+                    <span class="k">Background image</span>
+                    <span class="v">
+                        <img class="thumb" [src]="blobUrl(lp.backgroundImage!.urlPath)" alt="Background" />
+                    </span>
+                </div>
+                }
+
+                <div class="kv-row"><span class="k">Created</span><span class="v">{{ formatDate(lp.createdAt) }}</span>
+                </div>
+                <div class="kv-row"><span class="k">Updated</span><span class="v">{{ formatDate(lp.updatedAt) }}</span>
+                </div>
+            </div>
+
+            @if (lp.tags && lp.tags.length > 0) {
+            <div class="tags">
+                @for (t of lp.tags; track t) {
+                <span class="tag">{{ t }}</span>
+                }
+            </div>
+            }
+        </div>
+
+        <app-analytics-line-chart [title]="'Engagement chart'" [entityType]="'landingpage'" [metric]="'engagements'"
+            [entityId]="landingPageId" (errors)="onAnalyticsErrors($event)"></app-analytics-line-chart>
+
+        <app-analytics-line-chart [title]="'View chart'" [entityType]="'landingpage'" [metric]="'views'"
+            [entityId]="landingPageId" (errors)="onAnalyticsErrors($event)"></app-analytics-line-chart>
+    </div>
+
+    <div class="card items-card">
+        <div class="section-head">
+            <div class="section-title">Landing page items</div>
+            <button type="button" class="small-btn" (click)="addLandingPageElement()">Add landing page element</button>
+        </div>
+
+        @if (itemsSorted().length === 0) {
+        <div class="muted">No items.</div>
+        } @else {
+        <div class="items-grid">
+            @for (item of itemsSorted(); track item.id) {
+            <div class="item-card">
+                <div class="item-head">
+                    <div class="item-title">{{ item.type }} #{{ item.order }}</div>
+                    <button type="button" class="icon-btn danger" title="Delete item"
+                        (click)="openDeleteItemConfirm(item)">
+                        <fa-icon [icon]="faTrash"></fa-icon>
+                    </button>
+                </div>
+
+                <div class="item-body">
+                    @switch (item.type) {
+                    @case ('Text') {
+                    <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
+                    <div class="row"><span class="k">Content</span><span class="v">{{ item.content }}</span></div>
+                    <div class="row"><span class="k">Background</span><span class="v">{{ item.backgroundColor }}</span>
+                    </div>
+                    <div class="row"><span class="k">Font</span><span class="v">{{ item.fontColor }}</span></div>
+                    }
+                    @case ('YouTube') {
+                    <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
+                    <div class="row">
+                        <span class="k">Video URL</span>
+                        <span class="v">
+                            <a class="link" [href]="item.videoUrl" target="_blank" rel="noreferrer">{{ item.videoUrl
+                                }}</a>
+                        </span>
+                    </div>
+                    }
+                    @case ('Url') {
+                    <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
+                    <div class="row"><span class="k">Content</span><span class="v">{{ item.content }}</span></div>
+                    <div class="row"><span class="k">URL</span><span class="v">{{ item.url ?? '-' }}</span></div>
+                    <div class="row"><span class="k">Background</span><span class="v">{{ item.backgroundColor }}</span>
+                    </div>
+                    <div class="row"><span class="k">Font</span><span class="v">{{ item.fontColor }}</span></div>
+                    }
+                    @case ('Image') {
+                    <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
+                    <img class="item-image" [src]="blobUrl(item.imageUrl) ?? ''" [alt]="item.altText" />
+                    <div class="row"><span class="k">Alt</span><span class="v">{{ item.altText }}</span></div>
+                    <div class="row"><span class="k">URL</span><span class="v">{{ item.url ?? '-' }}</span></div>
+                    }
+                    }
+                </div>
+
+                <div class="items-meta">
+                    <div class="row"><span class="k">Clicks</span><span class="v">{{ item.clickCount }}</span></div>
+                    <div class="row"><span class="k">Created</span><span class="v">{{ formatDate(item.createdAt)
+                            }}</span></div>
+                    <div class="row"><span class="k">Updated</span><span class="v">{{ formatDate(item.updatedAt)
+                            }}</span></div>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+
+    <app-confirm-modal [isOpen]="confirmOpen()" [title]="confirmTitle()" [message]="confirmMessage()"
+        [confirmText]="confirmConfirmText()" [confirmVariant]="confirmVariant()" (cancel)="closeConfirm()"
+        (confirm)="confirmAction()"></app-confirm-modal>
+    <app-create-landing-page-item-modal [isOpen]="createItemOpen()" [landingPageId]="landingPageId"
+        (cancel)="closeCreateItemModal()" (created)="onItemCreated()"></app-create-landing-page-item-modal>
+    }
+    }
+</div>

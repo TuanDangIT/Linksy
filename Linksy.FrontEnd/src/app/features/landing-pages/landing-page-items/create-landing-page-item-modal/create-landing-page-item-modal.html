@@ -1,0 +1,89 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="header">
+            <h2 class="title">Add landing page element</h2>
+        </div>
+
+        <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+            <div class="section">
+                <label class="label" for="type">Type *</label>
+                <select id="type" name="type" class="input" [ngModel]="type()" (ngModelChange)="type.set($event)"
+                    required>
+                    <option [ngValue]="'Text'">Text</option>
+                    <option [ngValue]="'YouTube'">YouTube</option>
+                    <option [ngValue]="'Image'">Image</option>
+                    <option [ngValue]="'Url'">Url</option>
+                </select>
+            </div>
+
+            @if (type() === 'Text' || type() === 'Url') {
+            <div class="section">
+                <label class="label" for="content">Content *</label>
+                <input id="content" name="content" class="input" type="text" required [(ngModel)]="content" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="backgroundColor">Background color (hex) *</label>
+                <div class="row-2">
+                    <input id="backgroundColor" name="backgroundColor" class="input" type="text" required
+                        placeholder="#FFFFFF" [(ngModel)]="backgroundColor" />
+                    <input class="input" type="color" [ngModel]="backgroundColor"
+                        (ngModelChange)="backgroundColor = $event" name="backgroundColorPicker" title="Pick color" />
+                </div>
+            </div>
+
+            <div class="section">
+                <label class="label" for="fontColor">Font color (hex) *</label>
+                <div class="row-2">
+                    <input id="fontColor" name="fontColor" class="input" type="text" required placeholder="#000000"
+                        [(ngModel)]="fontColor" />
+                    <input class="input" type="color" [ngModel]="fontColor" (ngModelChange)="fontColor = $event"
+                        name="fontColorPicker" title="Pick color" />
+                </div>
+            </div>
+
+            @if (type() === 'Url') {
+            <div class="section">
+                <label class="label" for="urlId">UrlId (optional)</label>
+                <input id="urlId" name="urlId" class="input" type="number" placeholder="e.g. 1" [(ngModel)]="urlId" />
+            </div>
+            }
+            }
+
+            @if (type() === 'YouTube') {
+            <div class="section">
+                <label class="label" for="youTubeUrl">YouTube URL *</label>
+                <input id="youTubeUrl" name="youTubeUrl" class="input" type="text" required [(ngModel)]="youTubeUrl" />
+            </div>
+            }
+
+            @if (type() === 'Image') {
+            <div class="section">
+                <label class="label" for="image">Image *</label>
+                <input id="image" name="image" class="input" type="file" (change)="onImageSelected($event)" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="altText">Alt text *</label>
+                <input id="altText" name="altText" class="input" type="text" required [(ngModel)]="altText" />
+            </div>
+
+            <div class="section">
+                <label class="label" for="imageUrlId">UrlId (optional)</label>
+                <input id="imageUrlId" name="imageUrlId" class="input" type="number" placeholder="e.g. 1"
+                    [(ngModel)]="urlId" />
+            </div>
+            }
+
+            <app-error-box [errors]="errors()"></app-error-box>
+
+            <div class="actions">
+                <div class="spacer"></div>
+                <button type="button" class="btn secondary" (click)="cancel.emit()">Cancel</button>
+                <button type="submit" class="btn primary" [disabled]="submitting()">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+}
