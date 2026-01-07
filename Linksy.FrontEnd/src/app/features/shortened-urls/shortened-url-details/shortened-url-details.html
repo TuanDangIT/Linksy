@@ -162,10 +162,13 @@
             <div class="muted">No barcode.</div>
             }
         </div>
+        <div class="header-footer">
+            <app-utm-parameter-list style="width: 100%;" [utmParameters]="u.umtParameters" [urlCode]="u.code" [urlId]="u.id"
+                (addUtm)="openCreateUtmModal()" (addQrCode)="addQrCodeToUtmParameter($event)"
+                (deleteUtm)="openDeleteUtmConfirm($event)" (details)="openUtmDetails($event)">
+            </app-utm-parameter-list>
+        </div>
     </div>
-    <app-utm-parameter-list [utmParameters]="u.umtParameters" [urlCode]="u.code" (addUtm)="openCreateUtmModal()"
-        (addQrCode)="addQrCodeToUtmParameter($event)" (deleteUtm)="openDeleteUtmConfirm($event)"
-        (details)="openUtmDetails($event)"></app-utm-parameter-list>
 
     <app-create-utm-parameter-modal [isOpen]="createUtmOpen()" [urlId]="url()?.id ?? null"
         (cancel)="closeCreateUtmModal()" (created)="onUtmCreated()"></app-create-utm-parameter-modal>

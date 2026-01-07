@@ -4,6 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../types/apiResponse';
 import { AnalyticsRequest, EngagementResponse } from '../types/analytics';
+import {
+  UtmCampaignCountsResponse,
+  UtmMediumCountsResponse,
+  UtmSourceCountsResponse,
+} from '../types/utm-parameter-counts';
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
@@ -11,6 +16,7 @@ export class AnalyticsService {
 
   private readonly engagementsBase = environment.apiBaseUrl + '/Analytics/engagements';
   private readonly viewsBase = environment.apiBaseUrl + '/Analytics/views';
+  private readonly countsBase = environment.apiBaseUrl + '/Analytics/counts';
 
   getUrlEngagements(
     urlId: number,
@@ -70,5 +76,26 @@ export class AnalyticsService {
       params,
       withCredentials: true,
     });
+  }
+
+  getUrlUtmCampaignCounts(urlId: number): Observable<ApiResponse<UtmCampaignCountsResponse>> {
+    return this.http.get<ApiResponse<UtmCampaignCountsResponse>>(
+      `${this.countsBase}/urls/${urlId}/umtparameters/campaigns`,
+      { withCredentials: true }
+    );
+  }
+
+  getUrlUtmMediumCounts(urlId: number): Observable<ApiResponse<UtmMediumCountsResponse>> {
+    return this.http.get<ApiResponse<UtmMediumCountsResponse>>(
+      `${this.countsBase}/urls/${urlId}/umtparameters/mediums`,
+      { withCredentials: true }
+    );
+  }
+
+  getUrlUtmSourceCounts(urlId: number): Observable<ApiResponse<UtmSourceCountsResponse>> {
+    return this.http.get<ApiResponse<UtmSourceCountsResponse>>(
+      `${this.countsBase}/urls/${urlId}/umtparameters/sources`,
+      { withCredentials: true }
+    );
   }
 }

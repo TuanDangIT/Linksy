@@ -1,0 +1,31 @@
+@if (isOpen) {
+<div class="overlay" (click)="onBackdropClick()">
+    <div class="modal" (click)="$event.stopPropagation()">
+        <div class="head">
+            <h2 class="title">UTM Types Analytics</h2>
+            <button class="close" type="button" (click)="cancel.emit()">Close</button>
+        </div>
+
+        <app-error-box [errors]="errors()"></app-error-box>
+
+        @if (loading()) {
+        <div class="muted">Loading…</div>
+        } @else {
+        @if (charts().length === 0) {
+        <div class="muted">No charts.</div>
+        } @else {
+        <div class="grid">
+            @for (c of charts(); track c.title) {
+            <div class="card">
+                <div class="card-title">{{ c.title }}</div>
+                <div class="chart-wrap">
+                    <canvas baseChart [type]="'doughnut'" [data]="c.data" [options]="chartOptions"></canvas>
+                </div>
+            </div>
+            }
+        </div>
+        }
+        }
+    </div>
+</div>
+}

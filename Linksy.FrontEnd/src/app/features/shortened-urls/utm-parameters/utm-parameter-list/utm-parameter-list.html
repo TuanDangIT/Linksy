@@ -1,7 +1,10 @@
 <div class="section-head">
     <div class="section-title">UTM Parameters</div>
     <button class="small-btn" type="button" (click)="addUtm.emit()">Add UTM</button>
+    <button class="small-btn" type="button" (click)="openStats()">Statistics</button>
 </div>
+<app-utm-parameter-type-analytics-circle-charts-modal [isOpen]="statsOpen()" [urlId]="urlId" (cancel)="closeStats()">
+</app-utm-parameter-type-analytics-circle-charts-modal>
 
 @if (!utmParameters || utmParameters.length === 0) {
 <div class="muted">No UTM parameters.</div>
