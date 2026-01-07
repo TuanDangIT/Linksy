@@ -196,15 +196,13 @@ export class LandingPageList {
     return this.pagination.pageNumbers(5);
   }
   copyLandingPageUrl(code: string): void {
-    const c = (code ?? '').trim();
-    if (!c) return;
-    copyToClipboard(this.buildLandingPageUrl(c));
+    if (!code) return;
+    copyToClipboard(this.buildLandingPageUrl(code));
   }
 
   openLandingPage(code: string): void {
-    const c = (code ?? '').trim();
-    if (!c) return;
-    window.open(this.buildLandingPageUrl(c), '_blank', 'noopener,noreferrer');
+    if (!code) return;
+    window.open(this.buildLandingPageUrl(code), '_blank', 'noopener,noreferrer');
   }
 
   formatDate(date: string | null | undefined): string {
@@ -281,7 +279,7 @@ export class LandingPageList {
   }
 
   private buildLandingPageUrl(code: string): string {
-    const base = (environment.redirectingLandingPageBaseUrl ?? '').replace(/\/+$/, '');
+    const base = environment.frontEndRedirectLandingPageUrl;
     return `${base}/${code}`;
   }
 }

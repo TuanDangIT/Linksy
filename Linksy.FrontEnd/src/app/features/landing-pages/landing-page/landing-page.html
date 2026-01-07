@@ -1,0 +1,65 @@
+<div class="lp-page" [ngStyle]="getBackgroundStyle()">
+    @if (loading()) {
+    <div class="lp-loading">Loading...</div>
+    } @else if (notFound()) {
+    <div class="lp-not-found">Landing page not found.</div>
+    } @else if (data(); as lp) {
+    <div class="lp-container">
+        @if (lp.logoImage?.urlPath) {
+        <div class="lp-logo">
+            <img [src]="blobUrl(lp.logoImage?.urlPath!)" alt="Logo" />
+        </div>
+        }
+
+        <div class="lp-title" [style.color]="lp.titleFontColor">
+            {{ lp.title }}
+        </div>
+
+        @if (lp.description) {
+        <div class="lp-description" [style.color]="lp.descriptionFontColor ?? '#666'">
+            {{ lp.description }}
+        </div>
+        }
+
+        <div class="lp-items">
+            @for (item of itemsSorted(); track item.id) {
+            @switch (item.type) {
+            @case ('Text') {
+            <div class="lp-item lp-text" [style.background-color]="item.backgroundColor" [style.color]="item.fontColor">
+                {{ item.content }}
+            </div>
+            }
+
+            @case ('Url') {
+            <div class="lp-item lp-url" [style.background-color]="item.backgroundColor" [style.color]="item.fontColor"
+                (click)="onItemClick(item)">
+                {{ item.content }}
+            </div>
+            }
+
+            @case ('Image') {
+            <div class="lp-item lp-image">
+                @if (item.urlCode) {
+                <img class="clickable" [src]="blobUrl(item.imageUrl)" [alt]="item.altText"
+                    (click)="onItemClick(item)" />
+                } @else {
+                <img [src]="blobUrl(item.imageUrl)" [alt]="item.altText" (click)="onItemClick(item)" />
+                }
+            </div>
+            }
+
+            @case ('YouTube') {
+            @if (youTubeEmbedUrl(item.videoUrl); as embedUrl) {
+            <div class="lp-item lp-youtube" (click)="onItemClick(item)">
+                <iframe [src]="embedUrl" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+            }
+            }
+            }
+            }
+        </div>
+    </div>
+    }
+</div>

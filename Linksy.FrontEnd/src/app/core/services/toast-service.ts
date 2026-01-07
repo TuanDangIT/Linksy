@@ -14,11 +14,10 @@ export class ToastService {
   }
 
   private push(type: ToastType, message: string, durationMs: number): void {
-    const msg = (message ?? '').trim();
-    if (!msg) return;
+    if (!message) return;
 
     const id = crypto?.randomUUID?.() ?? `${Date.now()}_${Math.random()}`;
-    const toast: Toast = { id, type, message: msg };
+    const toast: Toast = { id, type, message: message };
 
     this.toasts.update((current) => [...current, toast]);
     setTimeout(() => this.dismiss(id), durationMs);

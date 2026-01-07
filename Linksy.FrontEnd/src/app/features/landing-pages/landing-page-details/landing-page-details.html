@@ -1,6 +1,18 @@
 <div class="page">
     <div class="topbar">
         <a class="back-link" routerLink="/landing-pages">← Back to Landing Pages</a>
+
+        @if (data(); as lp) {
+        <div class="topbar-actions">
+            <button class="top-action primary" type="button" (click)="openTogglePublishedConfirm()">
+                {{ isActive(lp) ? 'Unpublish' : 'Publish' }}
+            </button>
+
+            <button class="top-action danger" type="button" (click)="openDeletePageConfirm()">
+                Delete
+            </button>
+        </div>
+        }
     </div>
 
     <app-error-box [errors]="errors()"></app-error-box>
@@ -155,7 +167,7 @@
                     }
                     @case ('Image') {
                     <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
-                    <img class="item-image" [src]="blobUrl(item.imageUrl) ?? ''" [alt]="item.altText" />
+                    <img class="item-image" [src]="blobUrl(item.imageUrl)" [alt]="item.altText" />
                     <div class="row"><span class="k">Alt</span><span class="v">{{ item.altText }}</span></div>
                     <div class="row"><span class="k">URL</span><span class="v">{{ item.url ?? '-' }}</span></div>
                     }

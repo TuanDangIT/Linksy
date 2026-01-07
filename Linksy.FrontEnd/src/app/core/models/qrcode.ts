@@ -1,7 +1,5 @@
 import { BlobFileRef } from '../types/blobFileRef';
 
-export interface Qrcode {}
-
 export interface QrcodeListItem {
   id: number;
   tags?: string[];

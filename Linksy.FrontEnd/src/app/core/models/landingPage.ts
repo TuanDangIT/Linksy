@@ -1,6 +1,16 @@
 import { BlobFileRef } from '../types/blobFileRef';
 
-export interface LandingPage {}
+export interface LandingPage {
+  id: number;
+  title: string;
+  titleFontColor: string;
+  description?: string;
+  descriptionFontColor?: string;
+  logoImage?: BlobFileRef;
+  backgroundColor?: string;
+  backgroundImage?: BlobFileRef;
+  landingPageItems: PublicLandingPageItem[];
+}
 
 export interface LandingPageListItem {
   id: number;
@@ -76,3 +86,42 @@ export type LandingPageItem =
   | YouTubeLandingPageItem
   | UrlLandingPageItem
   | ImageLandingPageItem;
+
+export interface PublicLandingPageItemBase {
+  id: number; 
+  type: LandingPageItemType;
+  order: number;
+}
+
+export interface PublicTextLandingPageItem extends PublicLandingPageItemBase {
+  type: 'Text';
+  content: string;
+  backgroundColor: string;
+  fontColor: string;
+}
+
+export interface PublicYouTubeLandingPageItem extends PublicLandingPageItemBase {
+  type: 'YouTube';
+  videoUrl: string;
+}
+
+export interface PublicUrlLandingPageItem extends PublicLandingPageItemBase {
+  type: 'Url';
+  content: string;
+  backgroundColor: string;
+  fontColor: string;
+  urlCode: string | null;
+}
+
+export interface PublicImageLandingPageItem extends PublicLandingPageItemBase {
+  type: 'Image';
+  imageUrl: string;
+  altText: string;
+  urlCode: string | null;
+}
+
+export type PublicLandingPageItem =
+  | PublicTextLandingPageItem
+  | PublicYouTubeLandingPageItem
+  | PublicUrlLandingPageItem
+  | PublicImageLandingPageItem;

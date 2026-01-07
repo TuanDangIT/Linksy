@@ -10,12 +10,11 @@ import {
 } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 
-import {
-  LandingPageItemService,
-} from '../../../../core/services/landing-page-item-service';
+import { LandingPageItemService } from '../../../../core/services/landing-page-item-service';
 import { CreateLandingPageItemType } from '../../../../core/types/createLandingPageItem';
 import { ErrorBox } from '../../../../shared/components/error-box/error-box';
 import { toErrorList } from '../../../../shared/utils/http-utils';
+import { isHex } from '../../../../shared/utils/hex-utils';
 
 @Component({
   selector: 'app-create-landing-page-item-modal',
@@ -46,7 +45,7 @@ export class CreateLandingPageItemModal {
 
   imageFile: File | null = null;
   altText = '';
-  urlId = ''; 
+  urlId = '';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['isOpen']?.currentValue === true) this.reset();
@@ -78,17 +77,6 @@ export class CreateLandingPageItemModal {
     this.imageFile = input.files?.[0] ?? null;
   }
 
-  private isHex(value: string): boolean {
-    const v = (value ?? '').trim();
-    return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v);
-  }
-
-  private parseNullableInt(value: string | null | undefined): number | null {
-    const n = Number(value);
-    if (Number.isNaN(n)) return null;
-    return n;
-  }
-
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
@@ -101,26 +89,26 @@ export class CreateLandingPageItemModal {
     const t = this.type();
     const errs: string[] = [];
 
-    const content = (this.content ?? '').trim();
-    const bg = (this.backgroundColor ?? '').trim();
-    const fc = (this.fontColor ?? '').trim();
+    const content = this.content;
+    const bg = this.backgroundColor;
+    const fc = this.fontColor;
 
     if (t === 'Text' || t === 'Url') {
       if (!content) errs.push('Content is required.');
       if (!bg) errs.push('Background color is required.');
       if (!fc) errs.push('Font color is required.');
-      if (bg && !this.isHex(bg)) errs.push('Background color must be hex (e.g. #FFAA00).');
-      if (fc && !this.isHex(fc)) errs.push('Font color must be hex (e.g. #FFFFFF).');
+      if (bg && !isHex(bg)) errs.push('Background color must be hex (e.g. #FFAA00).');
+      if (fc && !isHex(fc)) errs.push('Font color must be hex (e.g. #FFFFFF).');
     }
 
     if (t === 'YouTube') {
-      const yt = (this.youTubeUrl ?? '').trim();
+      const yt = this.youTubeUrl;
       if (!yt) errs.push('YouTube URL is required.');
     }
 
     if (t === 'Image') {
       if (!this.imageFile) errs.push('Image file is required.');
-      const alt = (this.altText ?? '').trim();
+      const alt = this.altText;
       if (!alt) errs.push('Alt text is required.');
     }
 
@@ -149,7 +137,7 @@ export class CreateLandingPageItemModal {
 
     if (t === 'YouTube') {
       this.landingPageItems
-        .createYouTubeItem(landingPageId, { youTubeUrl: (this.youTubeUrl ?? '').trim() })
+        .createYouTubeItem(landingPageId, { youTubeUrl: this.youTubeUrl })
         .subscribe({
           next: () => {
             this.submitting.set(false);
@@ -188,7 +176,7 @@ export class CreateLandingPageItemModal {
 
     const fd = new FormData();
     fd.append('Image', this.imageFile!, this.imageFile!.name);
-    fd.append('AltText', (this.altText ?? '').trim());
+    fd.append('AltText', this.altText);
 
     const parsedUrlId = this.parseNullableInt(this.urlId);
     if (parsedUrlId != null) fd.append('UrlId', String(parsedUrlId));
@@ -203,5 +191,11 @@ export class CreateLandingPageItemModal {
         this.errors.set(toErrorList(err));
       },
     });
+  }
+
+  private parseNullableInt(value: string | null | undefined): number | null {
+    const n = Number(value);
+    if (Number.isNaN(n)) return null;
+    return n;
   }
 }

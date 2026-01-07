@@ -14,6 +14,7 @@ import { ConfirmModal } from '../../../shared/components/confirm-modal/confirm-m
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { copyToClipboard } from '../../../shared/utils/clipboard-utils';
+import { blobUrl } from '../../../shared/utils/blob-utils';
 
 @Component({
   selector: 'app-barcode-details',
@@ -65,27 +66,8 @@ export class BarcodeDetails {
     this.load(id);
   }
 
-  private load(id: number): void {
-    this.loading.set(true);
-    this.errors.set([]);
-
-    this.barcodeService.getBarcodeById(id).subscribe({
-      next: (res) => {
-        this.data.set(res.data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errors.set(toErrorList(err));
-      },
-    });
-  }
-
-  blobUrl(path: string | null | undefined): string | null {
-    const p = (path ?? '').trim();
-    if (!p) return null;
-    const base = (environment.azureBlobStorageBaseUrl ?? '').replace(/\/+$/, '');
-    return `${base}${p}`;
+  blobUrl(path: string): string {
+    return blobUrl(path);
   }
 
   formatDate(value: string | null | undefined): string {
@@ -153,7 +135,22 @@ export class BarcodeDetails {
   }
 
   copyBarcodeUrl(code: string): void {
-    const c = (code ?? '').trim();
-    copyToClipboard(buildShortUrl(c, { isBarcode: true }));
+    copyToClipboard(buildShortUrl(code, { isBarcode: true }));
+  }
+
+  private load(id: number): void {
+    this.loading.set(true);
+    this.errors.set([]);
+
+    this.barcodeService.getBarcodeById(id).subscribe({
+      next: (res) => {
+        this.data.set(res.data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.errors.set(toErrorList(err));
+      },
+    });
   }
 }

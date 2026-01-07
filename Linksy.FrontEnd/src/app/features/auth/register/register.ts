@@ -27,11 +27,11 @@ export class Register {
     if (form.invalid) return;
 
     const payload: RegisterRequest = {
-      email: (form.value.email ?? '').trim(),
-      firstName: (form.value.firstName ?? '').trim(),
-      lastName: (form.value.lastName ?? '').trim(),
-      gender: ((form.value.gender ?? '').toString().trim() || 'Undefined') as Gender,
-      username: (form.value.username ?? '').trim(),
+      email: form.value.email,
+      firstName: form.value.firstName,
+      lastName: form.value.lastName,
+      gender: (form.value.gender ?? 'Undefined') as Gender,
+      username: form.value.username,
       password: form.value.password,
       confirmPassword: form.value.confirmPassword,
     };

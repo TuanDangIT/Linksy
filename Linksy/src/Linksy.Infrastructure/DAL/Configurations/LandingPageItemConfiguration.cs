@@ -71,6 +71,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .HasMaxLength(16)
                 .IsRequired()
                 .HasColumnName("UrlLandingPageItem_FontColor");
+            builder.Property(u => u.UrlId)
+                .HasColumnName("UrlLandingPageItem_UrlId");
             builder.HasOne(u => u.Url)
                 .WithMany(u => u.UrlLandingPageItems)
                 .HasForeignKey(u => u.UrlId);
@@ -106,6 +108,8 @@ namespace Linksy.Infrastructure.DAL.Configurations
                 .IsRequired()
                 .HasMaxLength(256)
                 .HasColumnName("ImageLandingPageItem_AltText");
+            builder.Property(i => i.UrlId)
+                .HasColumnName("ImageLandingPageItem_UrlId");
             builder.HasOne(i => i.Url)
                 .WithMany(u => u.ImageLandingPageItems)
                 .HasForeignKey(i => i.UrlId);

@@ -11,13 +11,13 @@ namespace Linksy.Application.LandingPages.Features.GetPublishedLandingPage
         public string Content { get; init; } = string.Empty;
         public string BackgroundColor { get; init; } = string.Empty;
         public string FontColor { get; init; } = string.Empty;
-        public string Url { get; init; } = string.Empty;
-        public GetPublishedUrlLandingPageItemDto(string type, int order, string content, string backgroundColor, string fontColor, string url) : base(type, order)
+        public string UrlCode { get; init; } = string.Empty;
+        public GetPublishedUrlLandingPageItemDto(int id, string type, int order, string content, string backgroundColor, string fontColor, string urlCode) : base(id, type, order)
         {
             Content = content;
             BackgroundColor = backgroundColor;
             FontColor = fontColor;
-            Url = url;
+            UrlCode = urlCode;
         }
     }
 }

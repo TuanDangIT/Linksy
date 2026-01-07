@@ -56,6 +56,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
             landingPage.AddView(LandingPageView.CreateLandingPageView(landingPage, request.IpAddress, _timeProvider.GetUtcNow().UtcDateTime));
 
             var response = new GetPublishedLandingPageResponse(
+                landingPage.Id,
                 landingPage.Title,
                 landingPage.TitleFontColor,
                 landingPage.Description,
@@ -63,13 +64,12 @@ namespace Linksy.Infrastructure.DAL.Handlers
                 landingPage.LogoImage != null ? new ImageDto(landingPage.LogoImage.UrlPath, landingPage.LogoImage.FileName) : null,
                 landingPage.BackgroundColor,
                 landingPage.BackgroundImage != null ? new ImageDto(landingPage.BackgroundImage.UrlPath, landingPage.BackgroundImage.FileName) : null,
-                landingPage.TagsList,
-                landingPage.CreatedAt,
                 landingPage.LandingPageItems.Select<LandingPageItem, object>(lpi =>
                 {
                     return lpi switch
                     {
                         UrlLandingPageItem urlItem => new GetPublishedUrlLandingPageItemDto(
+                            urlItem.Id,
                             urlItem.Type.ToString(),
                             urlItem.Order,
                             urlItem.Content,
@@ -78,6 +78,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                             urlItem.Url.Code
                         ),
                         TextLandingPageItem textItem => new GetPublishedTextLandingPageItemDto(
+                            textItem.Id,
                             textItem.Type.ToString(),
                             textItem.Order,
                             textItem.Content,
@@ -85,6 +86,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                             textItem.FontColor
                         ),
                         ImageLandingPageItem imageItem => new GetPublishedImageLandingPageItemDto(
+                            imageItem.Id,
                             imageItem.Type.ToString(),
                             imageItem.Order,
                             imageItem.Image.UrlPath,
@@ -92,6 +94,7 @@ namespace Linksy.Infrastructure.DAL.Handlers
                             imageItem.Url?.Code
                         ),
                         YouTubeLandingPageItem youTubeLandingPageItem => new GetPublishedYoutubeLandingPageItemDto(
+                            youTubeLandingPageItem.Id,
                             youTubeLandingPageItem.Type.ToString(),
                             youTubeLandingPageItem.Order,
                             youTubeLandingPageItem.VideoUrl

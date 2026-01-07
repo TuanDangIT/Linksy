@@ -182,20 +182,19 @@ export class QrcodeList {
     console.log(qr);
     console.log(isUrlType);
     const code = (isUrlType ? qr.url?.code : qr.umtParameter?.url?.code) ?? '';
-    const c = code.trim();
 
-    if (!c) {
+    if (!code) {
       this.toast.error('Missing code to copy.');
       return;
     }
 
     if (isUrlType) {
-      copyToClipboard(buildShortUrl(c, { isQrCode: true }));
+      copyToClipboard(buildShortUrl(code, { isQrCode: true }));
       return;
     }
 
     copyToClipboard(
-      buildShortUrl(c, {
+      buildShortUrl(code, {
         umtSource: qr.umtParameter?.umtSource ?? null,
         umtMedium: qr.umtParameter?.umtMedium ?? null,
         umtCampaign: qr.umtParameter?.umtCampaign ?? null,

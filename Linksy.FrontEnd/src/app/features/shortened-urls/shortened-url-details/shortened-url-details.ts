@@ -21,6 +21,7 @@ import { UtmParameterDetailsModal } from '../utm-parameters/utm-parameter-detail
 import type { ChartConfiguration } from 'chart.js';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { AnalyticsLineChart } from '../../../shared/components/analytics-line-chart/analytics-line-chart';
+import { blobUrl } from '../../../shared/utils/blob-utils';
 
 type PendingAction =
   | { type: 'url-delete' | 'url-activate' | 'url-deactivate' }
@@ -123,7 +124,7 @@ export class ShortenedUrlDetails {
   redirectUrl(): string {
     const u = this.url();
     if (!u) return '';
-    const base = (environment.redirectingShortenedUrlBaseUrl ?? '').replace(/\/+$/, '');
+    const base = environment.redirectingShortenedUrlBaseUrl;
     return `${base}/${u.code}`;
   }
 
@@ -132,11 +133,8 @@ export class ShortenedUrlDetails {
     if (value) copyToClipboard(value);
   }
 
-  blobUrl(path: string | null | undefined): string | null {
-    const p = (path ?? '').trim();
-    if (!p) return null;
-    const base = (environment.azureBlobStorageBaseUrl ?? '').replace(/\/+$/, '');
-    return `${base}${p}`;
+  blobUrl(path: string): string {
+    return blobUrl(path);
   }
 
   formatDate(date: string | null): string {
@@ -237,7 +235,7 @@ export class ShortenedUrlDetails {
     const u = this.url();
     if (!u) return;
 
-    const tags = (u.tags ?? []).map((t) => (t ?? '').trim()).filter(Boolean);
+    const tags = (u.tags ?? []).filter(Boolean);
 
     this.urlService.addQrCodeToUrl(u.id, { tags }).subscribe({
       next: () => {
@@ -256,7 +254,7 @@ export class ShortenedUrlDetails {
     const u = this.url();
     if (!u) return;
 
-    const tags = (u.tags ?? []).map((t) => (t ?? '').trim()).filter(Boolean);
+    const tags = (u.tags ?? []).filter(Boolean);
 
     this.urlService.addBarcodeToUrl(u.id, { tags }).subscribe({
       next: () => {
@@ -338,7 +336,7 @@ export class ShortenedUrlDetails {
     const u = this.url();
     if (!u) return;
 
-    const tags = (u.tags ?? []).map((t) => (t ?? '').trim()).filter(Boolean);
+    const tags = (u.tags ?? []).filter(Boolean);
 
     this.utmService.addQrCodeToUtmParameter(utmParameterId, { tags }).subscribe({
       next: () => {

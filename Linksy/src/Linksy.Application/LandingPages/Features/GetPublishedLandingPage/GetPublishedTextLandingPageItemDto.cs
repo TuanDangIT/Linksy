@@ -11,7 +11,7 @@ namespace Linksy.Application.LandingPages.Features.GetPublishedLandingPage
         public string Content { get; init; } = string.Empty;
         public string BackgroundColor { get; init; } = string.Empty;
         public string FontColor { get; init; } = string.Empty;
-        public GetPublishedTextLandingPageItemDto(string type, int order, string content, string backgroundColor, string fontColor) : base(type, order)
+        public GetPublishedTextLandingPageItemDto(int id, string type, int order, string content, string backgroundColor, string fontColor) : base(id, type, order)
         {
             Content = content;
             BackgroundColor = backgroundColor;

@@ -20,7 +20,9 @@ namespace Linksy.Application.Urls.Features.ShortenUrl
                 .MaximumLength(512);
             RuleFor(s => s.CustomCode)
                 .MinimumLength(1)
-                .MaximumLength(128);
+                .MaximumLength(128)
+                .Matches(@"^\S*$") 
+                .WithMessage("CustomCode cannot contain spaces.");
             RuleForEach(s => s.UmtParameters)
                     .ChildRules(umtParam =>
                     {

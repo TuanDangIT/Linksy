@@ -108,7 +108,7 @@
             </div>
             @if (u.qrCode) {
             <div class="media-row">
-                <img class="thumb" [src]="blobUrl(u.qrCode.qrCodeImage.urlPath) ?? ''" alt="QR code" />
+                <img class="thumb" [src]="blobUrl(u.qrCode.qrCodeImage.urlPath)" alt="QR code" />
                 <div class="media-meta">
                     <div class="kv-row"><span class="k">ID</span><span class="v">{{ u.qrCode.id }}</span></div>
                     <div class="kv-row"><span class="k">Total Scans</span><span class="v">{{ u.qrCode.scanCount
@@ -149,7 +149,7 @@
             </div>
             @if (u.barcode) {
             <div class="media-row">
-                <img class="thumb" [src]="blobUrl(u.barcode.barcodeImage.urlPath) ?? ''" alt="Barcode" />
+                <img class="thumb" [src]="blobUrl(u.barcode.barcodeImage.urlPath)" alt="Barcode" />
                 <div class="media-meta">
                     <div class="kv-row"><span class="k">ID</span><span class="v">{{ u.barcode.id }}</span></div>
                     <div class="kv-row"><span class="k">Total Scans</span><span class="v">{{ u.barcode.scanCount

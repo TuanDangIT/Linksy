@@ -5,4 +5,5 @@ export const environment = {
   redirectingShortenedUrlBaseUrl: 'http://localhost:5257',
   redirectingLandingPageBaseUrl: 'http://localhost:5257/lp',
   frontEndBaseUrl: 'http://localhost:4200',
+  frontEndRedirectLandingPageUrl: 'http://localhost:4200/lp',
 };

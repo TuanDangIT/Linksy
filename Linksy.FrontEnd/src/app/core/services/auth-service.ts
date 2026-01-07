@@ -91,24 +91,4 @@ export class AuthService {
     const user = this.currentUserSubject.value;
     return user?.roles.includes(role) ?? false;
   }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An error occurred';
-
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      if (error.error?.message) {
-        errorMessage = error.error.message;
-      } else if (error.error?.errors) {
-        const errors = Object.values(error.error.errors).flat();
-        errorMessage = errors.join(', ');
-      } else {
-        errorMessage = `Error ${error.status}: ${error.message}`;
-      }
-    }
-
-    console.error('Auth Service Error:', errorMessage);
-    return throwError(() => new Error(errorMessage));
-  }
 }

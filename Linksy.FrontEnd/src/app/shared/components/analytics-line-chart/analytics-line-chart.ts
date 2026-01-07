@@ -173,8 +173,8 @@ export class AnalyticsLineChart {
     };
 
     if (req.timeRange === 'Custom') {
-      const from = (this.fromDate() ?? '').trim();
-      const to = (this.toDate() ?? '').trim();
+      const from = this.fromDate();
+      const to = this.toDate();
 
       const errs = this.validateCustomRange(from, to);
       if (errs.length > 0) {

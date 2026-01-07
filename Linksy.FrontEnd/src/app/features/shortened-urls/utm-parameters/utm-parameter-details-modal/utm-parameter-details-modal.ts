@@ -31,6 +31,7 @@ import type { ChartConfiguration } from 'chart.js';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { AnalyticsService } from '../../../../core/services/analytics-service';
 import { AnalyticsLineChart } from '../../../../shared/components/analytics-line-chart/analytics-line-chart';
+import { blobUrl } from '../../../../shared/utils/blob-utils';
 
 @Component({
   selector: 'app-utm-parameter-details-modal',
@@ -143,11 +144,8 @@ export class UtmParameterDetailsModal {
     });
   }
 
-  blobUrl(path: string | null | undefined): string | null {
-    const p = (path ?? '').trim();
-    if (!p) return null;
-    const base = (environment.azureBlobStorageBaseUrl ?? '').replace(/\/+$/, '');
-    return `${base}${p}`;
+  blobUrl(path: string): string {
+    return blobUrl(path);
   }
 
   downloadQrCode(qrcodeId: number, fallbackFileName?: string): void {
@@ -207,7 +205,7 @@ export class UtmParameterDetailsModal {
     const utmId = this.utmParameterId ?? 0;
     if (!utmId || utmId <= 0) return;
 
-    const cleanTags = (this.tags ?? []).map((t) => (t ?? '').trim()).filter(Boolean);
+    const cleanTags = (this.tags ?? []).filter(Boolean);
 
     this.utmService.addQrCodeToUtmParameter(utmId, { tags: cleanTags }).subscribe({
       next: () => {

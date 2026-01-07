@@ -70,7 +70,7 @@
 
             @if (d.qrCode) {
             <div class="media-row">
-                <img class="thumb" [src]="blobUrl(d.qrCode.image.urlPath) ?? ''" alt="QR code" />
+                <img class="thumb" [src]="blobUrl(d.qrCode.image.urlPath)" alt="QR code" />
                 <div class="media-meta">
                     <div class="row"><span class="k">ID</span><span class="v">{{ d.qrCode.id }}</span></div>
                     <div class="row"><span class="k">Scans</span><span class="v">{{ d.qrCode.scanCount }}</span></div>

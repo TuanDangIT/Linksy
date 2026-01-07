@@ -9,7 +9,7 @@ namespace Linksy.Application.LandingPages.Features.GetPublishedLandingPage
     public record class GetPublishedYoutubeLandingPageItemDto : GetPublishedLandingPageItemDto
     {
         public string VideoUrl { get; init; } = string.Empty;
-        public GetPublishedYoutubeLandingPageItemDto(string type, int order, string videoUrl) : base(type, order)
+        public GetPublishedYoutubeLandingPageItemDto(int id, string type, int order, string videoUrl) : base(id, type, order)
         {
             VideoUrl = videoUrl;
         }

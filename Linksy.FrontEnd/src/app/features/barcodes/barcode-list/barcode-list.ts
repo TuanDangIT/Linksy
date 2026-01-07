@@ -180,8 +180,7 @@ export class BarcodeList {
   }
 
   copyBarcodeUrl(code: string): void {
-    const c = (code ?? '').trim();
-    copyToClipboard(buildShortUrl(c, { isBarcode: true }));
+    copyToClipboard(buildShortUrl(code, { isBarcode: true }));
   }
 
   formatDate(date: string | null | undefined): string {

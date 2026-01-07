@@ -22,11 +22,15 @@ namespace Linksy.Application.LandingPageItems.Features.AddUrlLandingPageItem
             RuleFor(a => a.BackgroundColor)
                 .NotNull()
                 .NotEmpty()
-                .MaximumLength(16);
+                .MaximumLength(16)
+                .Matches(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|[A-Fa-f0-9]{8})$")
+                .WithMessage("Must be a valid hex color (e.g., #FFFFFF, #FFF, or #FFFFFFFF for colors with alpha)"); ;
             RuleFor(a => a.FontColor)
                 .NotNull()
                 .NotEmpty()
-                .MaximumLength(16);
+                .MaximumLength(16)
+                .Matches(@"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|[A-Fa-f0-9]{8})$")
+                .WithMessage("Must be a valid hex color (e.g., #FFFFFF, #FFF, or #FFFFFFFF for colors with alpha)"); ;
         }
     }
 }

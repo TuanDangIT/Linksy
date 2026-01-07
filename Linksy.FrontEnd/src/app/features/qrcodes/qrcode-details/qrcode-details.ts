@@ -14,6 +14,7 @@ import { ToastService } from '../../../core/services/toast-service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { copyToClipboard } from '../../../shared/utils/clipboard-utils';
+import { blobUrl } from '../../../shared/utils/blob-utils';
 
 @Component({
   selector: 'app-qrcode-details',
@@ -65,33 +66,14 @@ export class QrcodeDetails {
     this.load(id);
   }
 
-  private load(id: number): void {
-    this.loading.set(true);
-    this.errors.set([]);
-
-    this.qrcodeService.getQrCodeById(id).subscribe({
-      next: (res) => {
-        this.data.set(res.data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errors.set(toErrorList(err));
-      },
-    });
-  }
-
   typeLabel(): 'URL' | 'UTM Parameter' {
     const d = this.data();
     if (!d) return 'URL';
     return d.url ? 'URL' : 'UTM Parameter';
   }
 
-  blobUrl(path: string | null | undefined): string | null {
-    const p = (path ?? '').trim();
-    if (!p) return null;
-    const base = (environment.azureBlobStorageBaseUrl ?? '').replace(/\/+$/, '');
-    return `${base}${p}`;
+  blobUrl(path: string): string {
+    return blobUrl(path);
   }
 
   formatDate(value: string | null | undefined): string {
@@ -160,14 +142,12 @@ export class QrcodeDetails {
   }
 
   copyQrCodeUrl(code: string, isUrlType: boolean): void {
-    const c = (code ?? '').trim();
-
     if (isUrlType) {
-      copyToClipboard(buildShortUrl(c, { isQrCode: true }));
+      copyToClipboard(buildShortUrl(code, { isQrCode: true }));
     } else {
       const d = this.data();
       copyToClipboard(
-        buildShortUrl(c, {
+        buildShortUrl(code, {
           umtSource: d!.umtParameter!.umtSource ?? null,
           umtMedium: d!.umtParameter!.umtMedium ?? null,
           umtCampaign: d!.umtParameter!.umtCampaign ?? null,
@@ -175,5 +155,21 @@ export class QrcodeDetails {
         })
       );
     }
+  }
+
+  private load(id: number): void {
+    this.loading.set(true);
+    this.errors.set([]);
+
+    this.qrcodeService.getQrCodeById(id).subscribe({
+      next: (res) => {
+        this.data.set(res.data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.errors.set(toErrorList(err));
+      },
+    });
   }
 }

@@ -18,7 +18,9 @@ namespace Linksy.Application.LandingPageItems.Features.AddYouTubeLandingPageItem
             RuleFor(a => a.YouTubeUrl)
                 .NotNull()
                 .NotEmpty()
-                .MaximumLength(512);
+                .MaximumLength(512)
+                .Matches(@"^(https?://)?((www|m)\.)?(youtube\.com/(watch\?v=|embed/|v/|shorts/)|youtu\.be/)([\w-]{11})([?&].*)?$")
+                .WithMessage("Must be a valid YouTube video URL.");
         }
     }
 }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { LandingPageService } from '../../../core/services/landing-page-service';
@@ -13,7 +13,8 @@ import { environment } from '../../../../environments/environment';
 import { formatDate } from '../../../shared/utils/date-utils';
 import { toErrorList } from '../../../shared/utils/http-utils';
 import { LandingPageItemService } from '../../../core/services/landing-page-item-service';
-import { CreateLandingPageItemModal } from '../landing-page-items/create-landing-page-item-modal/create-landing-page-item-modal';   
+import { CreateLandingPageItemModal } from '../landing-page-items/create-landing-page-item-modal/create-landing-page-item-modal';
+import { blobUrl } from '../../../shared/utils/blob-utils';
 
 @Component({
   selector: 'app-landing-page-details',
@@ -35,6 +36,7 @@ export class LandingPageDetails {
   private readonly landingPages = inject(LandingPageService);
   private readonly toast = inject(ToastService);
   private readonly landingPageItems = inject(LandingPageItemService);
+  private readonly router = inject(Router);
 
   landingPageId: number | null = null;
 
@@ -52,7 +54,13 @@ export class LandingPageDetails {
 
   createItemOpen = signal(false);
 
-  private pendingDeleteItem = signal<LandingPageItem | null>(null);
+  private pendingAction = signal<
+    | { type: 'deleteItem'; item: LandingPageItem }
+    | { type: 'publish' }
+    | { type: 'unpublish' }
+    | { type: 'deletePage' }
+    | null
+  >(null);
 
   ngOnInit(): void {
     const rawId = this.route.snapshot.paramMap.get('id');
@@ -68,22 +76,6 @@ export class LandingPageDetails {
     this.load(id);
   }
 
-  private load(id: number): void {
-    this.loading.set(true);
-    this.errors.set([]);
-
-    this.landingPages.getLandingPageById(id).subscribe({
-      next: (res) => {
-        this.data.set(res.data);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        this.loading.set(false);
-        this.errors.set(toErrorList(err));
-      },
-    });
-  }
-
   onAnalyticsErrors(errs: string[]): void {
     this.errors.set([...this.errors(), ...errs]);
   }
@@ -94,16 +86,12 @@ export class LandingPageDetails {
   }
 
   landingPagePublicUrl(code: string): string {
-    const c = (code ?? '').trim();
-    const base = (environment.redirectingLandingPageBaseUrl ?? '').replace(/\/+$/, '');
-    return `${base}/${c}`;
+    const base = environment.frontEndRedirectLandingPageUrl;
+    return `${base}/${code}`;
   }
 
-  blobUrl(path: string | null | undefined): string | null {
-    const p = (path ?? '').trim();
-    if (!p) return null;
-    const base = (environment.azureBlobStorageBaseUrl ?? '').replace(/\/+$/, '');
-    return `${base}${p}`;
+  blobUrl(path: string): string {
+    return blobUrl(path);
   }
 
   formatDate(date: string | null | undefined): string {
@@ -116,7 +104,7 @@ export class LandingPageDetails {
   }
 
   openDeleteItemConfirm(item: LandingPageItem): void {
-    this.pendingDeleteItem.set(item);
+    this.pendingAction.set({ type: 'deleteItem', item });
     this.confirmTitle.set('Delete landing page item');
     this.confirmMessage.set(`Delete item #${item.order} (${item.type})?`);
     this.confirmConfirmText.set('Delete');
@@ -126,25 +114,64 @@ export class LandingPageDetails {
 
   closeConfirm(): void {
     this.confirmOpen.set(false);
-    this.pendingDeleteItem.set(null);
+    this.pendingAction.set(null);
   }
 
   confirmAction(): void {
-    const item = this.pendingDeleteItem();
-    if (!item) return;
+    const action = this.pendingAction();
+    if (!action) return;
 
     const landingPageId = this.landingPageId;
     if (!landingPageId) return;
 
-    this.landingPageItems.deleteLandingPageItem(item.id).subscribe({
+    let request$;
+
+    switch (action.type) {
+      case 'deleteItem':
+        request$ = this.landingPageItems.deleteLandingPageItem(action.item.id);
+        request$.subscribe({
+          next: () => {
+            this.toast.success('Landing page item deleted.');
+            this.closeConfirm();
+            this.load(landingPageId);
+          },
+          error: (err) => {
+            console.error(err);
+            this.toast.error('Delete landing page item failed. Please try again.');
+            this.closeConfirm();
+          },
+        });
+        return;
+
+      case 'publish':
+        request$ = this.landingPages.publishLandingPage(landingPageId);
+        break;
+
+      case 'unpublish':
+        request$ = this.landingPages.unpublishLandingPage(landingPageId);
+        break;
+
+      case 'deletePage':
+        request$ = this.landingPages.deleteLandingPage(landingPageId);
+        break;
+    }
+
+    request$.subscribe({
       next: () => {
-        this.toast.success('Landing page item deleted.');
+        if (action.type === 'publish') this.toast.success('Landing page published.');
+        if (action.type === 'unpublish') this.toast.success('Landing page unpublished.');
+        if (action.type === 'deletePage') {
+          this.toast.success('Landing page deleted.');
+          this.closeConfirm();
+          this.router.navigate(['/landing-pages']);
+          return;
+        }
         this.closeConfirm();
         this.load(landingPageId);
       },
       error: (err) => {
         console.error(err);
-        this.toast.error('Delete landing page item failed. Please try again.');
+        this.toast.error('Action failed. Please try again.');
         this.closeConfirm();
       },
     });
@@ -166,5 +193,51 @@ export class LandingPageDetails {
     this.closeCreateItemModal();
     if (this.landingPageId) this.load(this.landingPageId);
     this.toast.success('Landing page element created.');
+  }
+
+  openTogglePublishedConfirm(): void {
+    const lp = this.data();
+    if (!lp) return;
+
+    const active = this.isActive(lp);
+    this.pendingAction.set({ type: active ? 'unpublish' : 'publish' });
+
+    this.confirmTitle.set(active ? 'Unpublish landing page' : 'Publish landing page');
+    this.confirmMessage.set(
+      active
+        ? `Unpublish landing page #${lp.id} (${lp.code})?`
+        : `Publish landing page #${lp.id} (${lp.code})?`
+    );
+    this.confirmConfirmText.set(active ? 'Unpublish' : 'Publish');
+    this.confirmVariant.set('primary');
+    this.confirmOpen.set(true);
+  }
+
+  openDeletePageConfirm(): void {
+    const lp = this.data();
+    if (!lp) return;
+
+    this.pendingAction.set({ type: 'deletePage' });
+    this.confirmTitle.set('Delete landing page');
+    this.confirmMessage.set(`Are you sure you want to delete landing page #${lp.id} (${lp.code})?`);
+    this.confirmConfirmText.set('Delete');
+    this.confirmVariant.set('danger');
+    this.confirmOpen.set(true);
+  }
+
+  private load(id: number): void {
+    this.loading.set(true);
+    this.errors.set([]);
+
+    this.landingPages.getLandingPageById(id).subscribe({
+      next: (res) => {
+        this.data.set(res.data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.errors.set(toErrorList(err));
+      },
+    });
   }
 }

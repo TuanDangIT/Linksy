@@ -14,7 +14,9 @@ namespace Linksy.Application.LandingPages.Features.CreateLandingPage
             RuleFor(c => c.Code)
                 .NotEmpty()
                 .NotNull()
-                .MaximumLength(128);
+                .MaximumLength(128)
+                .Matches(@"^\S*$")
+                .WithMessage("CustomCode cannot contain spaces.");
             RuleFor(c => c.Title)
                 .NotEmpty()
                 .NotNull()

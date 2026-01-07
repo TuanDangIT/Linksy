@@ -11,10 +11,12 @@ import { ShortenedUrlDetails } from './features/shortened-urls/shortened-url-det
 import { QrcodeDetails } from './features/qrcodes/qrcode-details/qrcode-details';
 import { BarcodeDetails } from './features/barcodes/barcode-details/barcode-details';
 import { LandingPageDetails } from './features/landing-pages/landing-page-details/landing-page-details';
+import { LandingPage } from './features/landing-pages/landing-page/landing-page';
 
 export const routes: Routes = [
   { path: 'login', component: Login, title: 'Login', canActivate: [noAuthGuard] },
   { path: 'register', component: Register, title: 'Register', canActivate: [noAuthGuard] },
+  { path: 'lp/:code', component: LandingPage, title: 'Landing Page' },
   {
     path: '',
     component: MainLayout,

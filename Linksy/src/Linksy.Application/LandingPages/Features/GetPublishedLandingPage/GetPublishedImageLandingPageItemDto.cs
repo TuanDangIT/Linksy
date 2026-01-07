@@ -10,12 +10,12 @@ namespace Linksy.Application.LandingPages.Features.GetPublishedLandingPage
     {
         public string ImageUrl { get; init; } = string.Empty;
         public string AltText { get; init; } = string.Empty;
-        public string? Url { get; init; } = string.Empty;
-        public GetPublishedImageLandingPageItemDto(string type, int order, string imageUrl, string altText, string? Url) : base(type, order)
+        public string? UrlCode { get; init; } = string.Empty;
+        public GetPublishedImageLandingPageItemDto(int id, string type, int order, string imageUrl, string altText, string? urlCode) : base(id, type, order)
         {
             ImageUrl = imageUrl;
             AltText = altText;
-            this.Url = Url;
+            UrlCode = urlCode;
         }
     }
 }

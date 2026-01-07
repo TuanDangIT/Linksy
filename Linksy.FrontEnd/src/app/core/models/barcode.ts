@@ -1,7 +1,5 @@
 import { BlobFileRef } from '../types/blobFileRef';
 
-export interface Barcode {}
-
 export interface BarcodeListItem {
   id: number;
   tags?: string[];

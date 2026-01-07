@@ -5,7 +5,7 @@ import { BrowseLandingPagesRequest, BrowseLandingPagesResponse } from '../types/
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../types/apiResponse';
 import { CreateLandingPageResponse } from '../types/createLandingPage';
-import { LandingPageDetails } from '../models/landingPage';
+import { LandingPage, LandingPageDetails } from '../models/landingPage';
 
 @Injectable({ providedIn: 'root' })
 export class LandingPageService {
@@ -45,6 +45,13 @@ export class LandingPageService {
     });
   }
 
+  getPublicLandingPage(code: string): Observable<ApiResponse<LandingPage>> {
+    return this.httpClient.get<ApiResponse<LandingPage>>(
+      `${environment.redirectingLandingPageBaseUrl}/${code}`,
+      {}
+    );
+  }
+
   createLandingPage(form: FormData): Observable<ApiResponse<CreateLandingPageResponse>> {
     return this.httpClient.post<ApiResponse<CreateLandingPageResponse>>(this.apiUrl, form, {
       withCredentials: true,
@@ -71,5 +78,12 @@ export class LandingPageService {
     return this.httpClient.delete<void>(`${this.apiUrl}/${landingPageId}`, {
       withCredentials: true,
     });
+  }
+
+  increaseEngagement(landingPageId: number, landingPageItemId: number) {
+    return this.httpClient.patch<void>(
+      `${this.apiUrl}/${landingPageId}/engagements`,
+      landingPageItemId
+    );
   }
 }

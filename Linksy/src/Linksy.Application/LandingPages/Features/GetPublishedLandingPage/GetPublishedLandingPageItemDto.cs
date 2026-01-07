@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Linksy.Application.LandingPages.Features.GetPublishedLandingPage
 {
-    public record class GetPublishedLandingPageItemDto(string Type, int Order);
+    public record class GetPublishedLandingPageItemDto(int Id, string Type, int Order);
 }

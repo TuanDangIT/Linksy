@@ -29,7 +29,7 @@ export class UtmParameterList {
   faEye = faEye;
 
   copyUtmUrl(p: UtmParameterDetails): void {
-    const code = (this.urlCode ?? '').trim();
+    const code = this.urlCode;
     if (!code) return;
 
     copyToClipboard(

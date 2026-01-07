@@ -12,6 +12,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 
 import { LandingPageService } from '../../../core/services/landing-page-service';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
+import { isHex } from '../../../shared/utils/hex-utils';
 
 @Component({
   selector: 'app-create-landing-page-modal',
@@ -118,40 +119,35 @@ export class CreateLandingPageModal {
     if (this.tags().length === 0) this.tags.set(['']);
   }
 
-  private isHex(value: string): boolean {
-    const v = (value ?? '').trim();
-    return /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v);
-  }
-
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
-    const code = (this.code ?? '').trim();
-    const title = (this.title ?? '').trim();
-    const titleFontColor = (this.titleFontColor ?? '').trim();
+    const code = this.code;
+    const title = this.title;
+    const titleFontColor = this.titleFontColor;
 
     const errs: string[] = [];
     if (!code) errs.push('Code is required.');
     if (!title) errs.push('Title is required.');
     if (!titleFontColor) errs.push('Title font color is required.');
-    if (titleFontColor && !this.isHex(titleFontColor))
+    if (titleFontColor && !isHex(titleFontColor))
       errs.push('Title font color must be hex (e.g. #FFAA00).');
 
     if (this.showDescription()) {
-      const desc = (this.description ?? '').trim();
-      const descColor = (this.descriptionFontColor ?? '').trim();
+      const desc = this.description;
+      const descColor = this.descriptionFontColor;
 
       if (!desc) errs.push('Description is required when enabled.');
       if (!descColor) errs.push('Description font color is required when enabled.');
-      if (descColor && !this.isHex(descColor))
+      if (descColor && !isHex(descColor))
         errs.push('Description font color must be hex (e.g. #FFFFFF).');
     }
 
     const mode = this.backgroundMode();
     if (mode === 'color') {
-      const bg = (this.backgroundColor ?? '').trim();
+      const bg = this.backgroundColor;
       if (!bg) errs.push('Background color is required (or switch to image).');
-      if (bg && !this.isHex(bg)) errs.push('Background color must be hex (e.g. #0EA5E9).');
+      if (bg && !isHex(bg)) errs.push('Background color must be hex (e.g. #0EA5E9).');
     } else {
       if (!this.backgroundImage)
         errs.push('Background image is required when image mode is selected.');
@@ -168,8 +164,8 @@ export class CreateLandingPageModal {
     fd.append('TitleFontColor', titleFontColor);
 
     if (this.showDescription()) {
-      fd.append('Description', (this.description ?? '').trim());
-      fd.append('DescriptionFontColor', (this.descriptionFontColor ?? '').trim());
+      fd.append('Description', this.description);
+      fd.append('DescriptionFontColor', this.descriptionFontColor);
     }
 
     if (this.showLogo() && this.logoImage) {
@@ -177,14 +173,14 @@ export class CreateLandingPageModal {
     }
 
     if (mode === 'color') {
-      fd.append('BackgroundColor', (this.backgroundColor ?? '').trim());
+      fd.append('BackgroundColor', this.backgroundColor);
     } else if (this.backgroundImage) {
       fd.append('BackgroundImage', this.backgroundImage, this.backgroundImage.name);
     }
 
     if (this.showTags()) {
       const cleanTags = this.tags()
-        .map((t) => (t ?? '').trim())
+        .map((t) => t)
         .filter(Boolean);
       for (const t of cleanTags) fd.append('Tags', t);
     }
@@ -198,7 +194,6 @@ export class CreateLandingPageModal {
       },
       error: (err) => {
         this.submitting.set(false);
-        // keep it simple like other modals
         this.errors.set(['Create landing page failed.']);
         console.error(err);
       },

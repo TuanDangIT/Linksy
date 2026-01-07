@@ -112,7 +112,7 @@ export class CreateQrCodeModal {
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
-    const original = (this.originalUrl ?? '').trim();
+    const original = this.originalUrl;
     if (!original) {
       this.errors.set(['Original URL is required.']);
       return;
@@ -128,13 +128,13 @@ export class CreateQrCodeModal {
     };
 
     if (this.showCustomCode()) {
-      const code = (this.customCode ?? '').trim();
+      const code = this.customCode;
       if (code) payload.url.customCode = code;
     }
 
     if (this.showTags()) {
       const cleanTags = this.tags()
-        .map((t) => (t ?? '').trim())
+        .map((t) => t)
         .filter(Boolean);
       if (cleanTags.length > 0) {
         payload.tags = cleanTags;
@@ -145,9 +145,9 @@ export class CreateQrCodeModal {
     if (this.showUtm()) {
       const cleaned = this.utmParameters()
         .map((p) => ({
-          umtSource: (p.umtSource ?? '').trim(),
-          umtMedium: (p.umtMedium ?? '').trim(),
-          umtCampaign: (p.umtCampaign ?? '').trim(),
+          umtSource: p.umtSource,
+          umtMedium: p.umtMedium,
+          umtCampaign: p.umtCampaign,
         }))
         .map((p) => ({
           ...(p.umtSource ? { umtSource: p.umtSource } : {}),
