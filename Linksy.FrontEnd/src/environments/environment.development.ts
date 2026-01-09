@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   apiBaseUrl: 'http://localhost:5257/api/v1',
   azureBlobStorageBaseUrl: 'http://localhost:10000',
   redirectingShortenedUrlBaseUrl: 'http://localhost:5257',

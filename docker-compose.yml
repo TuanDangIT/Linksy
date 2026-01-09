@@ -1,0 +1,61 @@
+networks:
+  linksy-network:
+
+services:
+  linksy-api:
+    depends_on:
+      - linksy-db
+      - linksy-azurite
+    container_name: linksy-api
+    build:
+      context: ./Linksy/src/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    networks:
+      - linksy-network
+    environment:
+      - ConnectionStrings__Postgres=Host=linksy-db;Database=linksydb;User ID=postgres;Password=mysecretpassword;Port=5432;
+      - ConnectionStrings__AzureBlobStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://linksy-azurite:10000/devstoreaccount1;
+
+  linksy-web:
+    container_name: linksy-web
+    depends_on:
+      - linksy-api
+      - linksy-azurite
+    build:
+      context: ./Linksy.FrontEnd/
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - linksy-network
+    environment:
+      - NODE_ENV=production
+      - PORT=4200
+
+  linksy-db:
+    image: postgres:latest
+    container_name: linksy-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+    networks:
+      - linksy-network
+    volumes:
+      - "C:/ProgramData/docker/volumes/postgres:/var/lib/postgresql"
+
+  linksy-azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: linksy-azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    networks:
+      - linksy-network
+    volumes:
+      - "C:/ProgramData/docker/volumes/azurite:/data"
