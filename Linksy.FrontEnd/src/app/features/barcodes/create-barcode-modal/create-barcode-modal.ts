@@ -112,27 +112,27 @@ export class CreateBarcodeModal {
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
-    if (!this.originalUrl) {
+    if (!this.originalUrl.trim()) {
       this.errors.set(['Original URL is required.']);
       return;
     }
-    if (!isValidUrl(this.originalUrl)) {
+    if (!isValidUrl(this.originalUrl.trim())) {
       this.errors.set(['Original URL must be a valid http/https URL.']);
       return;
     }
     if (form.invalid) return;
 
     const payload: CreateBarcodeRequest = {
-      url: { originalUrl: this.originalUrl },
+      url: { originalUrl: this.originalUrl.trim() },
     };
 
     if (this.showCustomCode()) {
-      if (this.customCode) payload.url.customCode = this.customCode;
+      if (this.customCode.trim()) payload.url.customCode = this.customCode.trim();
     }
 
     if (this.showTags()) {
       const cleanTags = this.tags()
-        .map((t) => t)
+        .map((t) => t.trim())
         .filter(Boolean);
       if (cleanTags.length > 0) {
         payload.tags = cleanTags;
@@ -143,9 +143,9 @@ export class CreateBarcodeModal {
     if (this.showUtm()) {
       const cleaned = this.utmParameters()
         .map((p) => ({
-          umtSource: p.umtSource,
-          umtMedium: p.umtMedium,
-          umtCampaign: p.umtCampaign,
+          umtSource: p.umtSource?.trim(),
+          umtMedium: p.umtMedium?.trim(),
+          umtCampaign: p.umtCampaign?.trim(),
         }))
         .map((p) => ({
           ...(p.umtSource ? { umtSource: p.umtSource } : {}),

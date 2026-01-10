@@ -54,7 +54,7 @@ namespace Linksy.Infrastructure
             {
                options.AddPolicy("AllowFrontEnd", builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200")
+                    builder.WithOrigins(configuration.GetSection("AllowedOrigin").Value!)
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials()

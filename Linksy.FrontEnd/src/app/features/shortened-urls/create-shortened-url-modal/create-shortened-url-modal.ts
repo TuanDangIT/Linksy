@@ -117,11 +117,11 @@ export class CreateShortenedUrlModal {
   onSubmit(form: NgForm): void {
     this.errors.set([]);
     const original = this.originalUrl;
-    if (!original) {
+    if (!original.trim()) {
       this.errors.set(['Original URL is required.']);
       return;
     }
-    if (!isValidUrl(original)) {
+    if (!isValidUrl(original.trim())) {
       this.errors.set(['Original URL must be a valid http/https URL.']);
       return;
     }
@@ -130,22 +130,22 @@ export class CreateShortenedUrlModal {
     const payload: CreateShortenedUrlRequest = { originalUrl: original };
 
     if (this.showCustomCode()) {
-      const code = this.customCode;
+      const code = this.customCode.trim();
       if (code) payload.customCode = code;
     }
 
     if (this.showTags()) {
       const cleanTags = this.tags()
-        .map((t) => t)
+        .map((t) => t.trim())
         .filter((t) => t.length > 0);
       if (cleanTags.length > 0) payload.tags = cleanTags;
     }
 
     if (this.showUtm()) {
       const utmParameters = this.utmParameters().map((p) => ({
-        umtSource: p.umtSource,
-        umtMedium: p.umtMedium,
-        umtCampaign: p.umtCampaign,
+        umtSource: p.umtSource?.trim(),
+        umtMedium: p.umtMedium?.trim(),
+        umtCampaign: p.umtCampaign?.trim(),
       }));
 
       const hasNonEmpty = utmParameters.some((p) => !p.umtSource && !p.umtMedium && !p.umtCampaign);

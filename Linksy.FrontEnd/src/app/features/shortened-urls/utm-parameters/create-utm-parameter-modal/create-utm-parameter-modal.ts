@@ -61,9 +61,9 @@ export class CreateUtmParameterModal {
       return;
     }
 
-    const umtSource = this.utmSource;
-    const umtMedium = this.utmMedium;
-    const umtCampaign = this.utmCampaign;
+    const umtSource = this.utmSource.trim();
+    const umtMedium = this.utmMedium.trim();
+    const umtCampaign = this.utmCampaign.trim();
 
     if (!umtSource && !umtMedium && !umtCampaign) {
       this.errors.set(['At least one of UTM Source, Medium, or Campaign must be filled.']);

@@ -89,9 +89,9 @@ export class CreateLandingPageItemModal {
     const t = this.type();
     const errs: string[] = [];
 
-    const content = this.content;
-    const bg = this.backgroundColor;
-    const fc = this.fontColor;
+    const content = this.content.trim();
+    const bg = this.backgroundColor.trim();
+    const fc = this.fontColor.trim();
 
     if (t === 'Text' || t === 'Url') {
       if (!content) errs.push('Content is required.');
@@ -102,13 +102,13 @@ export class CreateLandingPageItemModal {
     }
 
     if (t === 'YouTube') {
-      const yt = this.youTubeUrl;
+      const yt = this.youTubeUrl.trim();
       if (!yt) errs.push('YouTube URL is required.');
     }
 
     if (t === 'Image') {
       if (!this.imageFile) errs.push('Image file is required.');
-      const alt = this.altText;
+      const alt = this.altText.trim();
       if (!alt) errs.push('Alt text is required.');
     }
 
@@ -137,7 +137,7 @@ export class CreateLandingPageItemModal {
 
     if (t === 'YouTube') {
       this.landingPageItems
-        .createYouTubeItem(landingPageId, { youTubeUrl: this.youTubeUrl })
+        .createYouTubeItem(landingPageId, { youTubeUrl: this.youTubeUrl.trim() })
         .subscribe({
           next: () => {
             this.submitting.set(false);
@@ -152,7 +152,7 @@ export class CreateLandingPageItemModal {
     }
 
     if (t === 'Url') {
-      const parsedUrlId = this.parseNullableInt(this.urlId);
+      const parsedUrlId = this.parseNullableInt(this.urlId.trim());
 
       this.landingPageItems
         .createUrlItem(landingPageId, {
@@ -174,23 +174,26 @@ export class CreateLandingPageItemModal {
       return;
     }
 
-    const fd = new FormData();
-    fd.append('Image', this.imageFile!, this.imageFile!.name);
-    fd.append('AltText', this.altText);
+    if (t === 'Image') {
+      const fd = new FormData();
+      fd.append('Image', this.imageFile!, this.imageFile!.name.trim());
+      fd.append('AltText', this.altText.trim());
 
-    const parsedUrlId = this.parseNullableInt(this.urlId);
-    if (parsedUrlId != null) fd.append('UrlId', String(parsedUrlId));
+      const parsedUrlId = this.parseNullableInt(this.urlId.trim());
+      if (parsedUrlId != null) fd.append('UrlId', String(parsedUrlId));
 
-    this.landingPageItems.createImageItem(landingPageId, fd).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        this.created.emit();
-      },
-      error: (err) => {
-        this.submitting.set(false);
-        this.errors.set(toErrorList(err));
-      },
-    });
+      this.landingPageItems.createImageItem(landingPageId, fd).subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.created.emit();
+        },
+        error: (err) => {
+          this.submitting.set(false);
+          this.errors.set(toErrorList(err));
+        },
+      });
+      return;
+    }
   }
 
   private parseNullableInt(value: string | null | undefined): number | null {

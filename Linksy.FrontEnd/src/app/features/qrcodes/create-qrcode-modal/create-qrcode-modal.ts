@@ -112,29 +112,27 @@ export class CreateQrCodeModal {
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
-    const original = this.originalUrl;
-    if (!original) {
+    if (!this.originalUrl.trim()) {
       this.errors.set(['Original URL is required.']);
       return;
     }
-    if (!isValidUrl(original)) {
+    if (!isValidUrl(this.originalUrl.trim())) {
       this.errors.set(['Original URL must be a valid http/https URL.']);
       return;
     }
     if (form.invalid) return;
 
     const payload: CreateQrCodeRequest = {
-      url: { originalUrl: original },
+      url: { originalUrl: this.originalUrl.trim() },
     };
 
     if (this.showCustomCode()) {
-      const code = this.customCode;
-      if (code) payload.url.customCode = code;
+      if (this.customCode) payload.url.customCode = this.customCode.trim();
     }
 
     if (this.showTags()) {
       const cleanTags = this.tags()
-        .map((t) => t)
+        .map((t) => t.trim())
         .filter(Boolean);
       if (cleanTags.length > 0) {
         payload.tags = cleanTags;
@@ -145,9 +143,9 @@ export class CreateQrCodeModal {
     if (this.showUtm()) {
       const cleaned = this.utmParameters()
         .map((p) => ({
-          umtSource: p.umtSource,
-          umtMedium: p.umtMedium,
-          umtCampaign: p.umtCampaign,
+          umtSource: p.umtSource?.trim(),
+          umtMedium: p.umtMedium?.trim(),
+          umtCampaign: p.umtCampaign?.trim(),
         }))
         .map((p) => ({
           ...(p.umtSource ? { umtSource: p.umtSource } : {}),

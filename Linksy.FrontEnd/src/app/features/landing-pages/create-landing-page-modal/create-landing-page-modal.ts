@@ -122,9 +122,9 @@ export class CreateLandingPageModal {
   onSubmit(form: NgForm): void {
     this.errors.set([]);
 
-    const code = this.code;
-    const title = this.title;
-    const titleFontColor = this.titleFontColor;
+    const code = this.code.trim();
+    const title = this.title.trim();
+    const titleFontColor = this.titleFontColor.trim();
 
     const errs: string[] = [];
     if (!code) errs.push('Code is required.');
@@ -134,8 +134,8 @@ export class CreateLandingPageModal {
       errs.push('Title font color must be hex (e.g. #FFAA00).');
 
     if (this.showDescription()) {
-      const desc = this.description;
-      const descColor = this.descriptionFontColor;
+      const desc = this.description.trim();
+      const descColor = this.descriptionFontColor.trim();
 
       if (!desc) errs.push('Description is required when enabled.');
       if (!descColor) errs.push('Description font color is required when enabled.');
@@ -145,7 +145,7 @@ export class CreateLandingPageModal {
 
     const mode = this.backgroundMode();
     if (mode === 'color') {
-      const bg = this.backgroundColor;
+      const bg = this.backgroundColor.trim();
       if (!bg) errs.push('Background color is required (or switch to image).');
       if (bg && !isHex(bg)) errs.push('Background color must be hex (e.g. #0EA5E9).');
     } else {
@@ -159,28 +159,28 @@ export class CreateLandingPageModal {
     }
 
     const fd = new FormData();
-    fd.append('Code', code);
-    fd.append('Title', title);
-    fd.append('TitleFontColor', titleFontColor);
+    fd.append('Code', code.trim());
+    fd.append('Title', title.trim());
+    fd.append('TitleFontColor', titleFontColor.trim());
 
     if (this.showDescription()) {
-      fd.append('Description', this.description);
-      fd.append('DescriptionFontColor', this.descriptionFontColor);
+      fd.append('Description', this.description.trim());
+      fd.append('DescriptionFontColor', this.descriptionFontColor.trim());
     }
 
     if (this.showLogo() && this.logoImage) {
-      fd.append('LogoImage', this.logoImage, this.logoImage.name);
+      fd.append('LogoImage', this.logoImage, this.logoImage.name.trim());
     }
 
     if (mode === 'color') {
-      fd.append('BackgroundColor', this.backgroundColor);
+      fd.append('BackgroundColor', this.backgroundColor.trim());
     } else if (this.backgroundImage) {
-      fd.append('BackgroundImage', this.backgroundImage, this.backgroundImage.name);
+      fd.append('BackgroundImage', this.backgroundImage, this.backgroundImage.name.trim());
     }
 
     if (this.showTags()) {
       const cleanTags = this.tags()
-        .map((t) => t)
+        .map((t) => t.trim())
         .filter(Boolean);
       for (const t of cleanTags) fd.append('Tags', t);
     }
