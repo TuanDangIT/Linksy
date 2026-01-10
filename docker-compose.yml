@@ -18,6 +18,12 @@ services:
     environment:
       - ConnectionStrings__Postgres=Host=linksy-db;Database=linksydb;User ID=postgres;Password=mysecretpassword;Port=5432;
       - ConnectionStrings__AzureBlobStorage=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://linksy-azurite:10000/devstoreaccount1;
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/h/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
   linksy-web:
     container_name: linksy-web
@@ -34,6 +40,12 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4200
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   linksy-db:
     image: postgres:latest
@@ -47,6 +59,12 @@ services:
       - linksy-network
     volumes:
       - "C:/ProgramData/docker/volumes/postgres:/var/lib/postgresql"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   linksy-azurite:
     image: mcr.microsoft.com/azure-storage/azurite
@@ -59,3 +77,9 @@ services:
       - linksy-network
     volumes:
       - "C:/ProgramData/docker/volumes/azurite:/data"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "10000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

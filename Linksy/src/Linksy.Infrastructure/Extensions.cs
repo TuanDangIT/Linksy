@@ -61,6 +61,9 @@ namespace Linksy.Infrastructure
                            .WithExposedHeaders("Content-Disposition");
                 });
             });
+
+            services.AddHealthChecks();
+
             return services;
         }
 
@@ -74,6 +77,9 @@ namespace Linksy.Infrastructure
             app.UseCors("AllowFrontEnd");
             app.UseAuthorization();
             app.MapControllers();
+
+            app.MapHealthChecks("/h/health");
+
             return app;
         }
         public static void RegisterOptions<T>(this IServiceCollection services, string sectionName) where T : class, new()
