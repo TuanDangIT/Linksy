@@ -67,9 +67,9 @@ namespace Linksy.Domain.Entities.Url
             => _engagements!.Add(engagement);   
         public void AddUmtParameter(UmtParameter umtParameter)
         {
-            if(_umtParameters.Any(u => u.UmtSource == umtParameter.UmtSource &&
-                u.UmtMedium == umtParameter.UmtMedium &&
-                u.UmtCampaign == umtParameter.UmtCampaign))
+            if(_umtParameters.Any(u => u.UmtSource?.ToLower() == umtParameter.UmtSource?.ToLower() &&
+                u.UmtMedium?.ToLower() == umtParameter.UmtMedium?.ToLower() &&
+                u.UmtCampaign?.ToLower() == umtParameter.UmtCampaign?.ToLower()))
             {
                 throw new CannotHaveDuplicatedUmtParameterException();
             }

@@ -62,5 +62,5 @@ export const routes: Routes = [
       { path: 'barcodes', component: BarcodeList, title: 'Barcodes', canActivate: [authGuard] },
     ],
   },
-  { path: '**', redirectTo: '/shortened-urls' },
+  { path: '**', redirectTo: '/login' },
 ];

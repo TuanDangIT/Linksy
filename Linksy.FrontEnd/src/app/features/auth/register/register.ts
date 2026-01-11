@@ -36,7 +36,6 @@ export class Register {
       confirmPassword: form.value.confirmPassword,
     };
 
-    console.log('Registering user:', payload);
     this.authService.register(payload).subscribe({
       next: () => this.router.navigate(['/login']),
       error: (err) => this.errors.set(toErrorList(err)),

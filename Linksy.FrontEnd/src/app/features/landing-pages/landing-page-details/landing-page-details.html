@@ -146,6 +146,7 @@
                     <div class="row"><span class="k">Background</span><span class="v">{{ item.backgroundColor }}</span>
                     </div>
                     <div class="row"><span class="k">Font</span><span class="v">{{ item.fontColor }}</span></div>
+                    <div class="row"><span class="k">Clicks</span><span class="v">{{ item.clickCount }}</span></div>
                     }
                     @case ('YouTube') {
                     <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
@@ -164,18 +165,19 @@
                     <div class="row"><span class="k">Background</span><span class="v">{{ item.backgroundColor }}</span>
                     </div>
                     <div class="row"><span class="k">Font</span><span class="v">{{ item.fontColor }}</span></div>
+                    <div class="row"><span class="k">Clicks</span><span class="v">{{ item.clickCount }}</span></div>
                     }
                     @case ('Image') {
                     <div class="row"><span class="k">ID</span><span class="v">{{ item.id }}</span></div>
                     <img class="item-image" [src]="blobUrl(item.imageUrl)" [alt]="item.altText" />
                     <div class="row"><span class="k">Alt</span><span class="v">{{ item.altText }}</span></div>
                     <div class="row"><span class="k">URL</span><span class="v">{{ item.url ?? '-' }}</span></div>
+                    <div class="row"><span class="k">Clicks</span><span class="v">{{ item.clickCount }}</span></div>
                     }
                     }
                 </div>
 
                 <div class="items-meta">
-                    <div class="row"><span class="k">Clicks</span><span class="v">{{ item.clickCount }}</span></div>
                     <div class="row"><span class="k">Created</span><span class="v">{{ formatDate(item.createdAt)
                             }}</span></div>
                     <div class="row"><span class="k">Updated</span><span class="v">{{ formatDate(item.updatedAt)

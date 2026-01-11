@@ -152,7 +152,7 @@ export class CreateLandingPageItemModal {
     }
 
     if (t === 'Url') {
-      const parsedUrlId = this.parseNullableInt(this.urlId.trim());
+      const parsedUrlId = this.parseNullableInt(this.urlId);
 
       this.landingPageItems
         .createUrlItem(landingPageId, {
@@ -179,7 +179,7 @@ export class CreateLandingPageItemModal {
       fd.append('Image', this.imageFile!, this.imageFile!.name.trim());
       fd.append('AltText', this.altText.trim());
 
-      const parsedUrlId = this.parseNullableInt(this.urlId.trim());
+      const parsedUrlId = this.parseNullableInt(this.urlId);
       if (parsedUrlId != null) fd.append('UrlId', String(parsedUrlId));
 
       this.landingPageItems.createImageItem(landingPageId, fd).subscribe({

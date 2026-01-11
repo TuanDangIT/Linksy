@@ -179,8 +179,6 @@ export class QrcodeList {
   }
 
   copyQrCodeUrl(qr: QrcodeListItem, isUrlType: boolean): void {
-    console.log(qr);
-    console.log(isUrlType);
     const code = (isUrlType ? qr.url?.code : qr.umtParameter?.url?.code) ?? '';
 
     if (!code) {

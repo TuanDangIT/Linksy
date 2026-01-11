@@ -205,6 +205,10 @@
   margin: 0.6rem 0;
 }
 
+.code {
+  word-break: break-word;
+}
+
 .muted {
   color: var(--text-secondary);
 }

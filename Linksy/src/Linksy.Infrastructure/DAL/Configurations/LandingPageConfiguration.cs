@@ -13,7 +13,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<LandingPage> builder)
         {
-            builder.ToTable("LaningPages", t =>
+            builder.ToTable("LandingPages", t =>
             {
                 t.HasCheckConstraint("CK_LandingPage_ViewCount", "\"ViewCount\" >= 0");
                 t.HasCheckConstraint("CK_LandingPage_EngagementCount", "\"EngagementCount\" >= 0");

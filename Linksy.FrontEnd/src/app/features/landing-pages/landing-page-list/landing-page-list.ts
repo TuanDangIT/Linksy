@@ -40,6 +40,7 @@ export class LandingPageList {
 
   availableFilters = [
     'Code',
+    'Id',
     'Title',
     'IsPublished',
     'Tags',

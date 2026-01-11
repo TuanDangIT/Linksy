@@ -116,7 +116,7 @@ export class CreateLandingPageModal {
 
   removeTag(index: number): void {
     this.tags.update((t) => t.filter((_, i) => i !== index));
-    if (this.tags().length === 0) this.tags.set(['']);
+    if (this.tags().length === 0) this.showTags.set(false);
   }
 
   onSubmit(form: NgForm): void {
@@ -137,8 +137,7 @@ export class CreateLandingPageModal {
       const desc = this.description.trim();
       const descColor = this.descriptionFontColor.trim();
 
-      if (!desc) errs.push('Description is required when enabled.');
-      if (!descColor) errs.push('Description font color is required when enabled.');
+      if (desc && !descColor) errs.push('Description font color is required when description is provided.');
       if (descColor && !isHex(descColor))
         errs.push('Description font color must be hex (e.g. #FFFFFF).');
     }

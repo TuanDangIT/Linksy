@@ -10,6 +10,10 @@
   gap: 1rem;
 }
 
+.code {
+  word-break: break-word;
+}
+
 .topbar {
   display: flex;
   align-items: center;

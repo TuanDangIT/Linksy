@@ -13,7 +13,7 @@ namespace Linksy.Infrastructure.DAL.Configurations
     {
         public void Configure(EntityTypeBuilder<LandingPageEngagement> builder)
         {
-            builder.ToTable("LadingPageEngagements");
+            builder.ToTable("LandingPageEngagements");
             builder.HasOne(lpe => lpe.LandingPage)
                 .WithMany(lp => lp.Engagements)
                 .HasForeignKey(lpe => lpe.LandingPageId);

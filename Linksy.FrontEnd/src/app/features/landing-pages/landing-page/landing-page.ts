@@ -28,7 +28,7 @@ export class LandingPage {
   notFound = signal(false);
   data = signal<LandingPageModel | null>(null);
 
-  private readonly engagementCooldownMs = 10_000;
+  private readonly engagementCooldownMs = 30_000;
   private lastEngagementSent = new Map<number, number>();
 
   ngOnInit(): void {

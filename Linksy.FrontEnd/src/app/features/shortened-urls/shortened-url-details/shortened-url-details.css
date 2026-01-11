@@ -72,6 +72,10 @@
   white-space: nowrap;
 }
 
+.code {
+  word-break: break-word;
+}
+
 .icon-btn {
   border: 1px solid var(--border-color);
   background: transparent;
@@ -320,7 +324,6 @@
   align-items: center;
   gap: 0.5rem;
 }
-
 
 @media (min-width: 769px) {
   .header-card {

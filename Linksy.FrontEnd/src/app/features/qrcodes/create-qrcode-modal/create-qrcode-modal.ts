@@ -88,7 +88,7 @@ export class CreateQrCodeModal {
 
   removeTag(index: number): void {
     this.tags.update((t) => t.filter((_, i) => i !== index));
-    if (this.tags().length === 0) this.tags.set(['']);
+    if (this.tags().length === 0) this.showTags.set(false);
   }
 
   enableUtm(): void {
@@ -106,7 +106,7 @@ export class CreateQrCodeModal {
 
   removeUtm(index: number): void {
     this.utmParameters.update((a) => a.filter((_, i) => i !== index));
-    if (this.utmParameters().length === 0) this.addUtm();
+    if (this.utmParameters().length === 0) this.showUtm.set(false);
   }
 
   onSubmit(form: NgForm): void {

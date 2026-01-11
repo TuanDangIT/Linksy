@@ -13,7 +13,7 @@ import {
 } from '@angular/platform-browser';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authCookieTransferInterceptor } from './core/interceptors/auth-cookie-transfer-interceptor';
-import { setCookiePropagationInterceptor } from './core/interceptors/setCookiePropagationInterceptor';
+import { setCookiePropagationInterceptor } from './core/interceptors/set-cookie-propagation-interceptor';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 export const appConfig: ApplicationConfig = {

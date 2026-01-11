@@ -63,6 +63,7 @@
 .link {
   color: var(--primary);
   text-decoration: none;
+  word-break: break-word;
 }
 
 .link:hover {

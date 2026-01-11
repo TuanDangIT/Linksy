@@ -102,7 +102,7 @@ export class UtmParameterTypeAnalyticsCircleChartsModal {
     }).subscribe({
       next: (res) => {
         const charts: ChartVm[] = [];
-
+        
         const campaignItems = res.campaigns.data?.campaignCounts ?? [];
         const mediumItems = res.mediums.data?.mediumCounts ?? [];
         const sourceItems = res.sources.data?.sourceCounts ?? [];

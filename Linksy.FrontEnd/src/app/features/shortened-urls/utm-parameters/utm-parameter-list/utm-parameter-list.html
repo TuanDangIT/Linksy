@@ -38,9 +38,9 @@
         <div class="utm-head">
             <div class="utm-kv">
                 <div><span class="k">ID: </span> <span class="v">{{ p.id }}</span></div>
-                <div><span class="k">Source: </span> <span class="v">{{ p.umtSource }}</span></div>
-                <div><span class="k">Medium: </span> <span class="v">{{ p.umtMedium ?? 'N/A' }}</span></div>
-                <div><span class="k">Campaign: </span> <span class="v">{{ p.umtCampaign ?? 'N/A' }}</span></div>
+                <div><span class="k">Source: </span> <span class="v">{{ p.umtSource ?? '-' }}</span></div>
+                <div><span class="k">Medium: </span> <span class="v">{{ p.umtMedium ?? '-' }}</span></div>
+                <div><span class="k">Campaign: </span> <span class="v">{{ p.umtCampaign ?? '-' }}</span></div>
                 <div><span class="k">Visit count: </span> <span class="v">{{ p.visitCount }}</span></div>
 
                 @if (p.qrCodeId) {

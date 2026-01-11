@@ -33,7 +33,7 @@ export interface BarcodeDetails {
 
 export interface UtmParameterDetails {
   id: number;
-  umtSource: string;
+  umtSource: string | null;
   umtMedium: string | null;
   umtCampaign: string | null;
   visitCount: number;

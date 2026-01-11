@@ -25,7 +25,7 @@
             @for (item of itemsSorted(); track item.id) {
             @switch (item.type) {
             @case ('Text') {
-            <div class="lp-item lp-text" [style.background-color]="item.backgroundColor" [style.color]="item.fontColor">
+            <div class="lp-item lp-text" [style.background-color]="item.backgroundColor" [style.color]="item.fontColor" (click)="onItemClick(item)">
                 {{ item.content }}
             </div>
             }
@@ -50,7 +50,7 @@
 
             @case ('YouTube') {
             @if (youTubeEmbedUrl(item.videoUrl); as embedUrl) {
-            <div class="lp-item lp-youtube" (click)="onItemClick(item)">
+            <div class="lp-item lp-youtube">
                 <iframe [src]="embedUrl" frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen></iframe>

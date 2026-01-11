@@ -22,6 +22,7 @@ namespace Linksy.Infrastructure.Pagination.Configuration
         public HashSet<string> AllowedFilters => new(StringComparer.OrdinalIgnoreCase)
         {
             "Code",
+            "Id",
             "Title",
             "IsPublished",
             "Tags",

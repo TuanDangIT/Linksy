@@ -17,27 +17,18 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   readonly currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() {
-    this.checkAuthStatus().subscribe({
-      next: (user) => {
-        console.log('User authenticated');
-      },
-      error: () => {
-        console.log('User not authenticated');
-      },
-    });
-  }
+  constructor() {}
 
   checkAuthStatus(): Observable<User | null> {
     return this.httpClient
       .get<ApiResponse<User>>(`${this.apiUrl}`, {
         withCredentials: true,
-        transferCache: false
+        transferCache: false,
       })
       .pipe(
         map((response) => response.data),
         tap((user) => this.currentUserSubject.next(user)),
-        catchError(() => {
+        catchError((e) => {
           this.currentUserSubject.next(null);
           return throwError(() => null);
         })
