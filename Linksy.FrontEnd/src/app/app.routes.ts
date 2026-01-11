@@ -4,7 +4,7 @@ import { Register } from './features/auth/register/register';
 import { MainLayout } from './core/layouts/main-layout/main-layout';
 import { ShortenedUrlList } from './features/shortened-urls/shortened-url-list/shortened-url-list';
 import { LandingPageList } from './features/landing-pages/landing-page-list/landing-page-list';
-import { QrcodeList } from './features/qrcodes/list/qrcode-list';
+import { QrcodeList } from './features/qrcodes/qrcode-list/qrcode-list';
 import { BarcodeList } from './features/barcodes/barcode-list/barcode-list';
 import { authGuard, noAuthGuard } from './core/guards/auth-guard';
 import { ShortenedUrlDetails } from './features/shortened-urls/shortened-url-details/shortened-url-details';
