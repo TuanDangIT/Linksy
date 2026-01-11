@@ -25,7 +25,7 @@
             @for (item of itemsSorted(); track item.id) {
             @switch (item.type) {
             @case ('Text') {
-            <div class="lp-item lp-text" [style.background-color]="item.backgroundColor" [style.color]="item.fontColor" (click)="onItemClick(item)">
+            <div class="lp-item lp-text" [style.background-color]="item.backgroundColor" [style.color]="item.fontColor">
                 {{ item.content }}
             </div>
             }
