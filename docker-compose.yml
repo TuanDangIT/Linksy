@@ -4,10 +4,8 @@ networks:
 services:
   linksy-api:
     depends_on:
-      linksy-db:
-        condition: service_healthy
-      linksy-azurite:
-        condition: service_healthy
+      - linksy-db
+      - linksy-azurite
     container_name: linksy-api
     build:
       context: ./Linksy/src/
@@ -30,10 +28,8 @@ services:
   linksy-web:
     container_name: linksy-web
     depends_on:
-      linksy-api:
-        condition: service_healthy
-      linksy-azurite:
-        condition: service_healthy
+      - linksy-api
+      - linksy-azurite
     build:
       context: ./Linksy.FrontEnd/
       dockerfile: Dockerfile
