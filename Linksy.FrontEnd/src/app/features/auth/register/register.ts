@@ -4,7 +4,7 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth-service';
-import { RegisterRequest, Gender } from '../../../core/types/registerRequest';
+import { RegisterRequest, Gender } from '../../../core/types/auth';
 import { ErrorBox } from '../../../shared/components/error-box/error-box';
 import { toErrorList } from '../../../shared/utils/http-utils';
 

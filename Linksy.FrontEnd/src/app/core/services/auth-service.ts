@@ -4,8 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { ApiResponse } from '../types/apiResponse';
-import { LoginRequest } from '../types/loginRequest';
-import { RegisterRequest } from '../types/registerRequest';
+import { LoginRequest, RegisterRequest } from '../types/auth'
 
 @Injectable({
   providedIn: 'root',
