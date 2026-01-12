@@ -22,11 +22,11 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S angular -u 1001 && \
-    chown -R angular:nodejs /app
+# RUN addgroup -g 1001 -S nodejs && \
+#     adduser -S angular -u 1001 && \
+#     chown -R angular:nodejs /app
 
-USER angular
+# USER angular
 
 EXPOSE 4200
 
