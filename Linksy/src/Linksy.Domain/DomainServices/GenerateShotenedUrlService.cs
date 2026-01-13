@@ -4,11 +4,13 @@ using Linksy.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+[assembly: InternalsVisibleTo("Linksy.Tests.Unit")]
 namespace Linksy.Domain.DomainServices
 {
     internal class GenerateShotenedUrlService : IGenerateShotenedUrlService
